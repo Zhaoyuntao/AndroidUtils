@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="ZButton">
+        <attr name="text_center" format="string"></attr>
+        <attr name="text_center_small" format="string"></attr>
+        <attr name="text_left" format="string"></attr>
+        <attr name="text_right" format="string"></attr>
+        <attr name="percent_bitmap_right" format="float"></attr>
+        <attr name="percent_bitmap_center" format="float"></attr>
+        <attr name="percent_back" format="float"></attr>
+        <attr name="percent_bitmap_left" format="float"></attr>
+        <attr name="textarr" format="string"></attr>
+        <attr name="w_space_text" format="dimension"></attr>
+        <attr name="orientation" format="string">horizontal|vertical</attr>
+        <attr name="textsize" format="dimension"></attr>
+        <attr name="textsize_small" format="dimension"></attr>
+        <attr name="textcolor" format="color"></attr>
+        <attr name="textcolor_choose" format="color"></attr>
+        <attr name="textcolor_disable" format="color"></attr>
+        <attr name="textcolor_click" format="color"></attr>
+        <attr name="textcolor_small" format="color"></attr>
+        <attr name="textcolor_small_choose" format="color"></attr>
+        <attr name="textcolor_small_click" format="color"></attr>
+        <attr name="color_back" format="color"></attr>
+        <attr name="color_back_disable" format="color"></attr>
+        <attr name="color_back_choose" format="color"></attr>
+        <attr name="color_back_click" format="color"></attr>
+        <attr name="color_border_bitmap_center" format="color"></attr>
+        <attr name="color_border" format="color"></attr>
+        <attr name="color_border_choose" format="color"></attr>
+        <attr name="color_border_click" format="color"></attr>
+        <attr name="percent_w" format="float"></attr>
+        <attr name="percent_h" format="float"></attr>
+        <attr name="img_center" format="reference"></attr>
+        <attr name="img_center_choose" format="reference"></attr>
+        <attr name="img_center_disable" format="reference"></attr>
+        <attr name="img_center_click" format="reference"></attr>
+        <attr name="gravity_img_center" format="string"></attr>
+        <attr name="img_back" format="reference"></attr>
+        <attr name="style_img_back" format="string"></attr>
+        <attr name="img_back_choose" format="reference"></attr>
+        <attr name="img_back_click" format="reference"></attr>
+        <attr name="img_left" format="reference"></attr>
+        <attr name="img_right" format="reference"></attr>
+        <attr name="w_space" format="dimension"></attr>
+        <attr name="radius" format="dimension"></attr>
+        <attr name="w_border" format="dimension"></attr>
+        <attr name="color_text_border" format="color"></attr>
+        <attr name="color_circle_border" format="color"></attr>
+        <attr name="drawtextborder" format="boolean">false</attr>
+        <attr name="drawimgborder_center" format="boolean">false</attr>
+        <attr name="isSpinner" format="boolean">false</attr>
+        <attr name="drawcircleimg" format="boolean">false</attr>
+        <attr name="radius_lefttop" format="dimension">0</attr>
+        <attr name="radius_righttop" format="dimension">0</attr>
+        <attr name="radius_leftbottom" format="dimension">0</attr>
+        <attr name="radius_rightbottom" format="dimension">0</attr>
+        <attr name="isautochange" format="boolean">0</attr>
+    </declare-styleable>
+</resources>
