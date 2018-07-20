@@ -5,13 +5,6 @@ buildscript {
     repositories {
         google()
         jcenter()
-        maven{
-//            credentials {
-//                username 'zhaoyuntao'
-//                password 'qq526275'
-//            }
-            url 'https://dl.bintray.com/zhaoyuntao/ZAndroidUtils'
-        }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.0.1'

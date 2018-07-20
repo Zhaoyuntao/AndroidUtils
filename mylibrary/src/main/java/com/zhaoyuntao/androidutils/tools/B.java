@@ -1,6 +1,7 @@
-package com.androidutils.www.mylibrary.tools;
+package com.zhaoyuntao.androidutils.tools;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -40,9 +41,7 @@ public class B {
     }
 
 
-
     /**
-     *
      * @param bitmap_src
      * @return Bitmap
      * @author caizhiming
@@ -182,7 +181,6 @@ public class B {
     }
 
     /**
-     *
      * @param pxValue
      * @return
      */
@@ -192,7 +190,6 @@ public class B {
     }
 
     /**
-     *
      * @param spValue
      * @return
      */
@@ -213,15 +210,14 @@ public class B {
         return bitmap;
     }
 
-    public static Drawable bitmapToDrawable(Bitmap bitmap) {
+    public static Drawable bitmapToDrawable(Resources res, Bitmap bitmap) {
         if (bitmap == null) {
             return null;
         }
-        return new BitmapDrawable(bitmap);
+        return new BitmapDrawable(res, bitmap);
     }
 
     /**
-     *
      * @param bitmap
      * @param percent
      * @return
@@ -248,8 +244,6 @@ public class B {
     public static Bitmap getBitmapById_Percent(Context context, int drawableId, int num) {
         BitmapFactory.Options option = new BitmapFactory.Options();
         option.inPreferredConfig = Bitmap.Config.RGB_565;
-        option.inPurgeable = true;
-        option.inInputShareable = true;
         if (num > 0) {
             option.inSampleSize = num;
         }
@@ -262,12 +256,13 @@ public class B {
         }
     }
 
-    public static Drawable getDrawableById_byPercent(Context context, int drawableId, float percent) {
-        return bitmapToDrawable(getBitmapById_Percent(context, drawableId, 1));
+    public static Drawable getDrawableById_byPercent(Context context, int drawableId, int percent) {
+        return bitmapToDrawable(context.getResources(), getBitmapById_Percent(context, drawableId,
+                percent));
     }
 
     public static Drawable getDrawableById(Context context, int drawableId) {
-        return bitmapToDrawable(getBitmapById_Percent(context, drawableId, 1));
+        return getDrawableById_byPercent(context, drawableId, 1);
     }
 
     public static Bitmap rotate(Bitmap bitmap, float angle) {
@@ -277,16 +272,6 @@ public class B {
         Matrix matrix = new Matrix();
         matrix.setRotate(angle);
         return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, false);
-    }
-
-    public static Drawable rotate(Drawable drawable, float angle) {
-        if (drawable == null) {
-            return null;
-        }
-        Matrix matrix = new Matrix();
-        matrix.setRotate(angle);
-        Bitmap bitmap = drawableToBitmap(drawable);
-        return B.bitmapToDrawable(Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, false));
     }
 
     public static int getIdByName(Context context, String name) {
@@ -299,8 +284,6 @@ public class B {
         bm.compress(Bitmap.CompressFormat.JPEG, 100, baos);
         return baos.toByteArray();
     }
-
-
 
 
     public static Bitmap getBitmapById(Context context, int drawableId) {

@@ -1,4 +1,4 @@
-package com.androidutils.www.mylibrary.component;
+package com.zhaoyuntao.androidutils.component;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -15,15 +15,14 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import com.androidutils.www.mylibrary.R;
-import com.androidutils.www.mylibrary.tools.B;
-import com.androidutils.www.mylibrary.tools.S;
-import com.androidutils.www.mylibrary.tools.TextMeasure;
+import com.zhaoyuntao.androidutils.R;
+import com.zhaoyuntao.androidutils.tools.B;
+import com.zhaoyuntao.androidutils.tools.S;
+import com.zhaoyuntao.androidutils.tools.TextMeasure;
 
 
 /**
  * Created by zhaoyuntao on 2017/11/13.
- *
  */
 
 public class ZButton extends FrameLayout {
@@ -36,11 +35,11 @@ public class ZButton extends FrameLayout {
      * false: click then be chosen, click again can not be unchosen, this will only be unchosen by your code
      * true: click then be chosen,click again can be unchosen,
      */
-    private boolean isAutoChange;
+    private boolean isAutoChange = true;
     private boolean isChoosen = false;
     private boolean isClick = false;
-    private float textSize ;
-    private float textSize_small ;
+    private float textSize;
+    private float textSize_small;
     private float percent_bitmap_center = 0.5f;
     private float percent_bitmap_left = 0.5f;
     private float percent_bitmap_right = 0.5f;
@@ -207,7 +206,7 @@ public class ZButton extends FrameLayout {
         if (attrs != null) {
             TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.ZButton);//
 
-            this.isAutoChange = typedArray.getBoolean(R.styleable.ZButton_isautochange, false);
+            this.isAutoChange = typedArray.getBoolean(R.styleable.ZButton_isautochange, true);
 
             this.text_center = typedArray.getString(R.styleable.ZButton_text_center);//
             this.text_center_small = typedArray.getString(R.styleable.ZButton_text_center_small);//
@@ -283,13 +282,16 @@ public class ZButton extends FrameLayout {
             this.drawCircleImg = typedArray.getBoolean(R.styleable.ZButton_drawcircleimg, false);
 
             this.radius = typedArray.getDimension(R.styleable.ZButton_radius, 0);
-            float minRadius = (radius < (w_border / 2f) ? (w_border / 2f) : radius);
-            radius = minRadius;
 
-            this.radiusArray[0] = typedArray.getDimension(R.styleable.ZButton_radius_lefttop, minRadius);
-            this.radiusArray[1] = typedArray.getDimension(R.styleable.ZButton_radius_righttop, minRadius);
-            this.radiusArray[2] = typedArray.getDimension(R.styleable.ZButton_radius_rightbottom, minRadius);
-            this.radiusArray[3] = typedArray.getDimension(R.styleable.ZButton_radius_leftbottom, minRadius);
+//            float minRadius = ((radius < (w_border / 2f)) ? (w_border / 2f) : radius);
+//            radius = minRadius;
+            if (radius < 0) {
+                radius = 0;
+            }
+            this.radiusArray[0] = typedArray.getDimension(R.styleable.ZButton_radius_lefttop, radius);
+            this.radiusArray[1] = typedArray.getDimension(R.styleable.ZButton_radius_righttop, radius);
+            this.radiusArray[2] = typedArray.getDimension(R.styleable.ZButton_radius_rightbottom, radius);
+            this.radiusArray[3] = typedArray.getDimension(R.styleable.ZButton_radius_leftbottom, radius);
 
             this.style_bitmap_back = typedArray.getString(R.styleable.ZButton_style_img_back);
 
@@ -788,19 +790,15 @@ public class ZButton extends FrameLayout {
         @Override
         protected void onDraw(Canvas canvas) {
 
-
-            if (radius < 0) {
-                radius = 0;
-            }
-
             int w = getWidth();
-            int w_scale = (int) (w * percent_w);
+
             int h = getHeight();
-            int h_scale = (int) (h * percent_h);
+
             if (w == 0 || h == 0) {
                 return;
             }
-
+            int w_scale = (int) (w * percent_w);
+            int h_scale = (int) (h * percent_h);
             int padding = 20;
             Paint paint = new Paint();
             Paint paint_back = new Paint();
@@ -841,7 +839,6 @@ public class ZButton extends FrameLayout {
             //draw background color
             int w_rect = (int) (w * percent_back);
             int h_rect = h;
-            int half_border = 0;
             paint_back.setStyle(Paint.Style.FILL);
             paint_back.setAntiAlias(true);
 
@@ -850,15 +847,15 @@ public class ZButton extends FrameLayout {
             int w_rect_radius_rightbottom = (int) (radiusArray[2] * 2);
             int w_rect_radius_leftbottom = (int) (radiusArray[3] * 2);
             Path path_back = new Path();
-            path_back.moveTo(half_border, radiusArray[0] + half_border);//0
-            path_back.arcTo(new RectF(half_border, half_border, w_rect_radius_lefttop + half_border, w_rect_radius_lefttop + half_border), 180, 90);//1
-            path_back.lineTo(w_rect - radiusArray[1] - half_border, half_border);//2
-            path_back.arcTo(new RectF(w_rect - w_rect_radius_righttop - half_border, half_border, w_rect - half_border, w_rect_radius_righttop + half_border), 270, 90);
-            path_back.lineTo(w_rect - half_border, h_rect - radiusArray[2] - half_border);//4
-            path_back.arcTo(new RectF(w_rect - w_rect_radius_rightbottom - half_border, h_rect - w_rect_radius_rightbottom - half_border, w_rect - half_border, h_rect - half_border), 0, 90);
-            path_back.lineTo(radiusArray[3] + half_border, h_rect - half_border);//6
-            path_back.arcTo(new RectF(half_border, h_rect - w_rect_radius_leftbottom - half_border, w_rect_radius_leftbottom + half_border, h_rect - half_border), 90, 90);
-            path_back.lineTo(half_border, radiusArray[3] + half_border);
+            path_back.moveTo(0, radiusArray[0]);//0
+            path_back.arcTo(new RectF(0, 0, w_rect_radius_lefttop, w_rect_radius_lefttop), 180, 90);//1
+            path_back.lineTo(w_rect - radiusArray[1], 0);//2
+            path_back.arcTo(new RectF(w_rect - w_rect_radius_righttop, 0, w_rect, w_rect_radius_righttop), 270, 90);
+            path_back.lineTo(w_rect, h_rect - radiusArray[2]);//4
+            path_back.arcTo(new RectF(w_rect - w_rect_radius_rightbottom, h_rect - w_rect_radius_rightbottom, w_rect, h_rect), 0, 90);
+            path_back.lineTo(radiusArray[3], h_rect);//6
+            path_back.arcTo(new RectF(0, h_rect - w_rect_radius_leftbottom, w_rect_radius_leftbottom, h_rect), 90, 90);
+            path_back.lineTo(0, radiusArray[3]);
             canvas.drawPath(path_back, paint_back);
 
             //draw background img
@@ -966,7 +963,7 @@ public class ZButton extends FrameLayout {
             Paint paint_text = new Paint();
             paint_text.setAntiAlias(true);
             if (S.isNotEmpty(text_center)) {
-                float []size_text_center=TextMeasure.measure(text_center,textSize);
+                float[] size_text_center = TextMeasure.measure(text_center, textSize);
                 w_text_center = size_text_center[0];
                 h_text_center = size_text_center[1];
             }
@@ -1387,7 +1384,19 @@ public class ZButton extends FrameLayout {
             if (w_border > 0) {
                 int w_rect_border = w;
                 int h_rect_border = h;
-                int half_border2 = (int) (w_border / 2);
+                int half_border = (int) (w_border / 2);
+
+                float[] radiusOfBorder = new float[4];
+                radiusOfBorder[0] = radiusArray[0] - half_border;
+                radiusOfBorder[1] = radiusArray[1] - half_border;
+                radiusOfBorder[2] = radiusArray[2] - half_border;
+                radiusOfBorder[3] = radiusArray[3] - half_border;
+
+                for(int i=0;i<radiusOfBorder.length;i++){
+                    if(radiusOfBorder[i]<0){
+                        radiusOfBorder[i]=0;
+                    }
+                }
 
                 paint_border.setStyle(Paint.Style.STROKE);
                 paint_border.setStrokeWidth(w_border);
@@ -1395,31 +1404,31 @@ public class ZButton extends FrameLayout {
                 //the path
                 Path path_border = new Path();
                 //radius of left top
-                int w_rect_radius_lefttop_border = (int) (radiusArray[0] * 2);
+                int w_rect_radius_lefttop_border = (int) (radiusOfBorder[0] * 2);
                 //radius of right top
-                int w_rect_radius_righttop_border = (int) (radiusArray[1] * 2);
+                int w_rect_radius_righttop_border = (int) (radiusOfBorder[1] * 2);
                 //radius of right bottom
-                int w_rect_radius_rightbottom_border = (int) (radiusArray[2] * 2);
+                int w_rect_radius_rightbottom_border = (int) (radiusOfBorder[2] * 2);
                 //radius of left bottom
-                int w_rect_radius_leftbottom_border = (int) (radiusArray[3] * 2);
+                int w_rect_radius_leftbottom_border = (int) (radiusOfBorder[3] * 2);
                 //left top
-                path_border.moveTo(half_border2, radiusArray[0] + half_border2);//0
+                path_border.moveTo(half_border, radiusOfBorder[0] + half_border);//0
                 //left top
-                path_border.arcTo(new RectF(half_border2, half_border2, w_rect_radius_lefttop_border + half_border2, w_rect_radius_lefttop_border + half_border2), 180, 90);//1
+                path_border.arcTo(new RectF(half_border, half_border, w_rect_radius_lefttop_border + half_border, w_rect_radius_lefttop_border + half_border), 180, 90);//1
                 //right top
-                path_border.lineTo(w_rect_border - radiusArray[1] - half_border2, half_border2);//2
+                path_border.lineTo(w_rect_border - radiusOfBorder[1] - half_border, half_border);//2
                 //right top
-                path_border.arcTo(new RectF(w_rect_border - w_rect_radius_righttop_border - half_border2, half_border2, w_rect_border - half_border2, w_rect_radius_righttop_border + half_border2), 270, 90);
+                path_border.arcTo(new RectF(w_rect_border - w_rect_radius_righttop_border - half_border, half_border, w_rect_border - half_border, w_rect_radius_righttop_border + half_border), 270, 90);
                 //right bottom
-                path_border.lineTo(w_rect_border - half_border2, h_rect_border - radiusArray[2] - half_border2);//4
+                path_border.lineTo(w_rect_border - half_border, h_rect_border - radiusOfBorder[2] - half_border);//4
                 //right bottom
-                path_border.arcTo(new RectF(w_rect_border - w_rect_radius_rightbottom_border - half_border2, h_rect_border - w_rect_radius_rightbottom_border - half_border2, w_rect_border - half_border2, h_rect_border - half_border2), 0, 90);
+                path_border.arcTo(new RectF(w_rect_border - w_rect_radius_rightbottom_border - half_border, h_rect_border - w_rect_radius_rightbottom_border - half_border, w_rect_border - half_border, h_rect_border - half_border), 0, 90);
                 //left bottom
-                path_border.lineTo(radiusArray[3] + half_border2, h_rect_border - half_border2);//6
+                path_border.lineTo(radiusOfBorder[3] + half_border, h_rect_border - half_border);//6
                 //left bottom
-                path_border.arcTo(new RectF(half_border2, h_rect_border - w_rect_radius_leftbottom_border - half_border2, w_rect_radius_leftbottom_border + half_border2, h_rect_border - half_border2), 90, 90);
+                path_border.arcTo(new RectF(half_border, h_rect_border - w_rect_radius_leftbottom_border - half_border, w_rect_radius_leftbottom_border + half_border, h_rect_border - half_border), 90, 90);
                 //left top
-                path_border.lineTo(half_border2, radiusArray[0] + half_border2);
+                path_border.lineTo(half_border, radiusOfBorder[0] + half_border);
 
                 canvas.drawPath(path_border, paint_border);
 
