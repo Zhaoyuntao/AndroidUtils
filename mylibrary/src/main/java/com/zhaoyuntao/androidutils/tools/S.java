@@ -236,21 +236,24 @@ public class S {
         return System.currentTimeMillis() / 1000;
     }
 
-    public static String format(long time, String formation) {
+    public static String formatDate(long time, String formation) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(formation);
         return simpleDateFormat.format(new Date(time));
     }
 
     public static String now() {
-        return format(currentTimeMillis(), "yyyy-MM-dd hh:mm:ss:ss");
+        return formatDate(currentTimeMillis(), "yyyy-MM-dd hh:mm:ss:ss");
     }
 
     public static String now_hms() {
-        return format(currentTimeMillis(), "hh:mm:ss");
+        return formatDate(currentTimeMillis(), "hh:mm:ss");
     }
 
-    public static String format(double number) {
-        DecimalFormat decimalFormat = new DecimalFormat("#.#");
+    public static String formatNumber(double number) {
+        return formatNumber(number,"#.#");
+    }
+    public static String formatNumber(double number, String formation) {
+        DecimalFormat decimalFormat = new DecimalFormat(formation);
         return decimalFormat.format(number);
     }
 }
