@@ -9,13 +9,22 @@ public abstract class ZThread extends Thread {
     private float frame = 1;
     private float frame_real;
     private boolean flag = true;
-
+    private boolean isStart;
     private boolean pause;
 
     private Sleeper sleeper = new Sleeper();
 
     public ZThread(float frame) {
         this.frame = frame;
+    }
+
+    @Override
+    public synchronized void start() {
+        if (isStart) {
+            return;
+        }
+        isStart = true;
+        super.start();
     }
 
     @Override
@@ -37,7 +46,7 @@ public abstract class ZThread extends Thread {
             long during = time_end - time_start;
             double during2 = (1000d / frame);
             long rest = (long) (during2 - during);
-            if (rest > 0) {
+            if (rest > 0 && rest < during2) {
                 try {
                     Thread.sleep(rest);
                 } catch (InterruptedException e) {
@@ -65,8 +74,8 @@ public abstract class ZThread extends Thread {
 
     public void close() {
         flag = false;
-        interrupt();
         pause = false;
+        interrupt();
     }
 
     public void pauseThread() {
