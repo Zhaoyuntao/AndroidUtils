@@ -1,2 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.zhaoyuntao.androidutils" />
+    package="com.zhaoyuntao.androidutils" >
+
+    <uses-permission android:name="android.permission.VIBRATE" />
+</manifest>

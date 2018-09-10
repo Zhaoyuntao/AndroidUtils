@@ -88,4 +88,7 @@ public abstract class ZThread extends Thread {
             sleeper.notifyAll();
         }
     }
+    public boolean isPause(){
+        return pause;
+    }
 }

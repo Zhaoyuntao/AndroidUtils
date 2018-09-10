@@ -7,7 +7,7 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 15
+        minSdkVersion 14
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
@@ -45,7 +45,7 @@ ext {
     libraryDescription = 'some useful utils for android'
     siteUrl = 'https://github.com/zhaoyuntao/utils'
     gitUrl = 'https://github.com/zhaoyuntao/utils'
-    libraryVersion = '1.0.6'
+    libraryVersion = '1.0.8'
     developerId = 'zhaoyuntao'
     developerName = 'zhaoyuntao'
     developerEmail = 'xixitongxue@foxmail.com'
