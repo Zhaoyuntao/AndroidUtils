@@ -6,6 +6,7 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -256,4 +257,14 @@ public class S {
         DecimalFormat decimalFormat = new DecimalFormat(formation);
         return decimalFormat.format(number);
     }
+
+    public static String getRegexString(String srcString,String regexString){
+        Pattern pattern = Pattern.compile(regexString);
+        Matcher m = pattern.matcher(srcString);
+        while(m.find()){
+            return m.group(1);
+        }
+        return "";
+    }
+
 }
