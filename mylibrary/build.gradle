@@ -45,7 +45,7 @@ ext {
     libraryDescription = 'some useful utils for android'
     siteUrl = 'https://github.com/zhaoyuntao/utils'
     gitUrl = 'https://github.com/zhaoyuntao/utils'
-    libraryVersion = '1.0.8'
+    libraryVersion = '1.0.9'
     developerId = 'zhaoyuntao'
     developerName = 'zhaoyuntao'
     developerEmail = 'xixitongxue@foxmail.com'
