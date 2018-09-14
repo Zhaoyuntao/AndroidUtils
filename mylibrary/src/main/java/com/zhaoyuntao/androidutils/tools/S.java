@@ -3,6 +3,7 @@ package com.zhaoyuntao.androidutils.tools;
 import android.util.Log;
 
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -265,6 +266,43 @@ public class S {
             return m.group(1);
         }
         return "";
+    }
+
+
+    public static String format(String dateSrc, String format_src, String format_des) {
+        if (S.isEmpty(dateSrc) || S.isEmpty(format_src) || S.isEmpty(format_des)) {
+            return null;
+        }
+        SimpleDateFormat simpleDateFormat_src = new SimpleDateFormat(format_src);
+        SimpleDateFormat simpleDateFormat_des = new SimpleDateFormat(format_des);
+        try {
+            Date date_src = simpleDateFormat_src.parse(dateSrc);
+            return simpleDateFormat_des.format(date_src);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * more days of date2 than date1
+     *
+     * @return
+     */
+    public static long differentDays(String day_small, String day_big) {
+        if (day_small == null || day_big == null || !Pattern.compile("\\d{8}").matcher(day_small).matches() || !Pattern.compile("\\d{8}").matcher(day_big).matches()) {
+            return -1;
+        }
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
+        long count = 0;
+        try {
+            Date date_before = simpleDateFormat.parse(day_small);
+            Date date_after = simpleDateFormat.parse(day_big);
+            count = (date_after.getTime() - date_before.getTime()) / 86400000;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return count;
     }
 
 }
