@@ -23,9 +23,9 @@ public class SS {
     /**
      */
     private final static String reg_url = "(http|ftp|https):\\/\\/[\\w\\-_]+(\\.[\\w\\-_]+)+([\\w\\-\\.,@?^=%&amp;:/~\\+#]*[\\w\\-\\@?^=%&amp;/~\\+#])?";
-    private static final String tag = "abcd";
-    private static final String tag2 = "sss";
-    private static final String tag3 = "sssss";
+    protected static final String tag = "abcd";
+    protected static final String tag2 = "sss";
+    protected static final String tag3 = "sssss";
 
     protected static boolean flag=true;
 
