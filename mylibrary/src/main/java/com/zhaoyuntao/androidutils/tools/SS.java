@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 
 /**
  */
-public class S {
+public class SS {
 
     /**
      */
@@ -26,6 +26,8 @@ public class S {
     private static final String tag = "abcd";
     private static final String tag2 = "sss";
     private static final String tag3 = "sssss";
+
+    protected static boolean flag=true;
 
     public static boolean isEmpty(String str) {
         return str == null || str.trim().equals("") || str.equalsIgnoreCase("null");
@@ -42,70 +44,85 @@ public class S {
     }
 
     public static void s(String tag, Object o) {
-        tag = S.tag + tag + "[" + new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date(System.currentTimeMillis())) + "]";
-        if (o != null) {
-            Log.i(tag, o.toString());
-        } else {
-            Log.i(tag, "null");
+        if (flag) {
+            tag = SS.tag + tag + "[" + new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date(System.currentTimeMillis())) + "]";
+            if (o != null) {
+                Log.i(tag, o.toString());
+            } else {
+                Log.i(tag, "null");
+            }
         }
     }
 
     public static void s(Object text) {
-        if (text != null) {
-            Log.i(tag, text.toString());
-        } else {
-            Log.i(tag, "null");
+        if (flag) {
+            if (text != null) {
+                Log.i(tag, text.toString());
+            } else {
+                Log.i(tag, "null");
+            }
         }
     }
 
 
     public static void sss(Object text) {
-        if (text != null) {
-            Log.i(tag2, text.toString());
-        } else {
-            Log.i(tag2, "null");
+        if (flag) {
+            if (text != null) {
+                Log.i(tag2, text.toString());
+            } else {
+                Log.i(tag2, "null");
+            }
         }
     }
 
     public static void sssss(Object text) {
-        if (text != null) {
-            Log.i(tag3, text.toString());
-        } else {
-            Log.i(tag3, "null");
+        if (flag) {
+            if (text != null) {
+                Log.i(tag3, text.toString());
+            } else {
+                Log.i(tag3, "null");
+            }
         }
     }
 
     public static void v(Object text) {
-        if (text != null) {
-            Log.i(tag, text.toString());
-        } else {
-            Log.i(tag, "null");
+        if (flag) {
+            if (text != null) {
+                Log.i(tag, text.toString());
+            } else {
+                Log.i(tag, "null");
+            }
         }
     }
 
     public static void d(String text) {
-        if (text != null) {
-            Log.d(tag, text.toString());
-        } else {
-            Log.d(tag, "null");
+        if (flag) {
+            if (text != null) {
+                Log.d(tag, text.toString());
+            } else {
+                Log.d(tag, "null");
+            }
         }
     }
 
     public static void e(Object text) {
-        if (text != null) {
-            Log.e(tag, text.toString());
-        } else {
-            Log.e(tag, "null");
+        if (flag) {
+            if (text != null) {
+                Log.e(tag, text.toString());
+            } else {
+                Log.e(tag, "null");
+            }
         }
     }
 
     public static void e(Exception e) {
-
-        if (e != null) {
-            e.printStackTrace();
-            Log.e(tag, e.toString());
-        } else {
-            Log.e(tag, "null");
+        if (flag) {
+            if (e != null) {
+                e.printStackTrace();
+                Log.e(tag, e.toString());
+            } else {
+                Log.e(tag, "null");
+            }
         }
     }
 
@@ -119,7 +136,7 @@ public class S {
     }
 
     public static boolean isUrl(String url) {
-        if (S.isEmpty(url)) {
+        if (SS.isEmpty(url)) {
             return false;
         }
         if (Pattern.compile(reg_url).matcher(url + "").matches()) {
@@ -221,7 +238,7 @@ public class S {
         try {
             System.arraycopy(src, srcPos, dest, destPos, length);
         } catch (Exception e) {
-//            S.e("Arr copy err:ArryaIndexOutOfBoudsException");
+//            SS.e("Arr copy err:ArryaIndexOutOfBoudsException");
 //			e.printStackTrace();
         }
     }
@@ -252,17 +269,18 @@ public class S {
     }
 
     public static String formatNumber(double number) {
-        return formatNumber(number,"#.#");
+        return formatNumber(number, "#.#");
     }
+
     public static String formatNumber(double number, String formation) {
         DecimalFormat decimalFormat = new DecimalFormat(formation);
         return decimalFormat.format(number);
     }
 
-    public static String getRegexString(String srcString,String regexString){
+    public static String getRegexString(String srcString, String regexString) {
         Pattern pattern = Pattern.compile(regexString);
         Matcher m = pattern.matcher(srcString);
-        while(m.find()){
+        while (m.find()) {
             return m.group(1);
         }
         return "";
@@ -270,7 +288,7 @@ public class S {
 
 
     public static String format(String dateSrc, String format_src, String format_des) {
-        if (S.isEmpty(dateSrc) || S.isEmpty(format_src) || S.isEmpty(format_des)) {
+        if (SS.isEmpty(dateSrc) || SS.isEmpty(format_src) || SS.isEmpty(format_des)) {
             return null;
         }
         SimpleDateFormat simpleDateFormat_src = new SimpleDateFormat(format_src);

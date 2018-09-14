@@ -17,7 +17,7 @@ import android.widget.ImageView;
 
 import com.zhaoyuntao.androidutils.R;
 import com.zhaoyuntao.androidutils.tools.B;
-import com.zhaoyuntao.androidutils.tools.S;
+import com.zhaoyuntao.androidutils.tools.SS;
 import com.zhaoyuntao.androidutils.tools.TextMeasure;
 
 
@@ -962,7 +962,7 @@ public class ZButton extends FrameLayout {
             //calculate size of text
             Paint paint_text = new Paint();
             paint_text.setAntiAlias(true);
-            if (S.isNotEmpty(text_center)) {
+            if (SS.isNotEmpty(text_center)) {
                 float[] size_text_center = TextMeasure.measure(text_center, textSize);
                 w_text_center = size_text_center[0];
                 h_text_center = size_text_center[1];
@@ -1254,7 +1254,7 @@ public class ZButton extends FrameLayout {
             }
 
             //is the text of left need to be drawn?
-            if (S.isNotEmpty(text_center)) {
+            if (SS.isNotEmpty(text_center)) {
 
                 if (orientation.equals(vertical)) {
                     x_text_center_draw = (w - w_text_center) / 2f;

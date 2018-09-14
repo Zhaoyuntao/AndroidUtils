@@ -323,7 +323,7 @@ public class B {
                 bitmap.compress(Bitmap.CompressFormat.WEBP, 100, outputStream);
                 break;
             default:
-                S.e("B:con not compress this bitmap");
+                SS.e("B:con not compress this bitmap");
                 break;
         }
         try {
