@@ -7,6 +7,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -251,6 +252,36 @@ public class SS {
         return System.currentTimeMillis();
     }
 
+    /**
+     * local to utc
+     * @return
+     */
+    public static String local2UTC(){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        sdf.setTimeZone(TimeZone.getTimeZone("gmt"));
+        String gmtTime = sdf.format(new Date());
+        return gmtTime;
+    }
+
+    /**
+     * utc to local
+     * @param utcTime
+     * @return
+     */
+    public static String utc2Local(String utcTime) {
+        SimpleDateFormat utcFormater = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//UTC
+        utcFormater.setTimeZone(TimeZone.getTimeZone("UTC"));
+        Date gpsUTCDate = null;
+        try {
+            gpsUTCDate = utcFormater.parse(utcTime);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        SimpleDateFormat localFormater = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//local
+        localFormater.setTimeZone(TimeZone.getDefault());
+        String localTime = localFormater.format(gpsUTCDate.getTime());
+        return localTime;
+    }
     public static long currentTimeSeconds() {
         return System.currentTimeMillis() / 1000;
     }
