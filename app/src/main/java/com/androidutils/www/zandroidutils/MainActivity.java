@@ -5,6 +5,11 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.zhaoyuntao.androidutils.component.ZButton;
+import com.zhaoyuntao.androidutils.tools.SS;
+import com.zhaoyuntao.androidutils.tools.T;
+
+import java.io.IOException;
+import java.net.Socket;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -14,29 +19,5 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         final ZButton zButton = findViewById(R.id.zbutton);
-        zButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(zButton.isEnabled()){
-                    zButton.setEnabled(false);
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                Thread.sleep(2000);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    zButton.setEnabled(true);
-                                }
-                            });
-                        }
-                    }).start();
-                }
-            }
-        });
     }
 }

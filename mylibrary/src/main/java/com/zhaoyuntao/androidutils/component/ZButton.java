@@ -1,5 +1,6 @@
 package com.zhaoyuntao.androidutils.component;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -12,6 +13,7 @@ import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.ViewGroup;
+import android.view.animation.LinearInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
@@ -32,7 +34,8 @@ public class ZButton extends FrameLayout {
     private String text_right;
     private String textarr;
     /**
-     * false: click then be chosen, click again can not be unchosen, this will only be unchosen by your code
+     * false: click then be chosen, click again can not be unchosen, this will only be unchosen
+     * by your code
      * true: click then be chosen,click again can be unchosen,
      */
     private boolean isAutoChange = true;
@@ -63,6 +66,7 @@ public class ZButton extends FrameLayout {
     private Bitmap drawable_center_click;
     private Bitmap drawable_back;
     private Bitmap drawable_back_choose;
+    private Bitmap drawable_back_disable;
     private Bitmap drawable_back_click;
     private float w_space;
     private float w_space_text;
@@ -201,8 +205,6 @@ public class ZButton extends FrameLayout {
         zImageView = new ZImageView(context);
         zImageView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         addView(zImageView);
-        color_back_choose = color_back;
-        color_back_click = color_back;
         if (attrs != null) {
             TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.ZButton);//
 
@@ -228,6 +230,7 @@ public class ZButton extends FrameLayout {
             this.color_back = typedArray.getColor(R.styleable.ZButton_color_back, color_back);//
             this.color_back_disable = typedArray.getColor(R.styleable.ZButton_color_back_disable, Color.argb(0, 0, 0, 0));//
             this.color_back_choose = typedArray.getColor(R.styleable.ZButton_color_back_choose, color_back);//
+
             this.color_back_click = typedArray.getColor(R.styleable.ZButton_color_back_click, color_back_choose);//
 
             this.color_back_bitmap_center = typedArray.getColor(R.styleable.ZButton_color_border_bitmap_center, color_back_choose);//
@@ -255,6 +258,10 @@ public class ZButton extends FrameLayout {
             this.drawable_back_choose = B.drawableToBitmap(typedArray.getDrawable(R.styleable.ZButton_img_back_choose));
             if (drawable_back_choose == null) {
                 drawable_back_choose = drawable_back;
+            }
+            this.drawable_back_disable = B.drawableToBitmap(typedArray.getDrawable(R.styleable.ZButton_img_center_disable));
+            if (drawable_back_disable == null) {
+                drawable_back_disable = drawable_back;
             }
             this.drawable_back_click = B.drawableToBitmap(typedArray.getDrawable(R.styleable.ZButton_img_back_click));
             if (drawable_back_click == null) {
@@ -339,11 +346,6 @@ public class ZButton extends FrameLayout {
         }
         this.percent_back = percent_back;
         postInvalidate();
-    }
-
-    //    @Override
-    public void drawCanvas(Canvas canvas) {
-
     }
 
     public String getStyle_bitmap_back() {
@@ -768,6 +770,30 @@ public class ZButton extends FrameLayout {
         postInvalidate();
     }
 
+    int w_wave;
+    int h_wave;
+    int x_wave;
+    ValueAnimator waveAnimator;
+
+    public void startWaveAnimation() {
+        waveAnimator = ValueAnimator.ofInt(0, w_wave);
+        waveAnimator.setDuration(2000);
+        waveAnimator.setRepeatCount(ValueAnimator.INFINITE);
+        waveAnimator.setInterpolator(new LinearInterpolator());
+        waveAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                x_wave = (int) valueAnimator.getAnimatedValue();
+                if (x_wave == w_wave) {
+                    x_wave = 0;
+                }
+                postInvalidate();
+            }
+        });
+        waveAnimator.start();
+    }
+
+
     public ImageView getImageView() {
         return zImageView;
     }
@@ -797,6 +823,19 @@ public class ZButton extends FrameLayout {
             if (w == 0 || h == 0) {
                 return;
             }
+
+            if (w_wave == 0) {
+                w_wave = w;
+            }
+
+            if (h_wave == 0) {
+                h_wave = 30;
+            }
+
+            if (waveAnimator == null) {
+                startWaveAnimation();
+            }
+
             int w_scale = (int) (w * percent_w);
             int h_scale = (int) (h * percent_h);
             int padding = 20;
@@ -809,33 +848,47 @@ public class ZButton extends FrameLayout {
                 radius = radius_min;
             }
 
-            Bitmap drawable_back_draw = isChoosen ? (drawable_back_choose == null ? drawable_back : drawable_back_choose) : ZButton.this.drawable_back;
+            Bitmap drawable_back_draw;
+            Bitmap drawable_center_draw;
 
-            Bitmap drawable_center_draw = isChoosen ? (drawable_center_choose == null ? drawable_center : drawable_center_choose) : drawable_center;
-            int textColor_tmp = isChoosen ? textColor_choose : ZButton.this.textColor;
-            int textColor_small_tmp = isChoosen ? textColor_small_choose : ZButton.this.textColor_small;
-            paint_border.setColor(isChoosen ? color_border_choose : color_border);
-
+            int textColor_tmp;
+            int textColor_small_tmp;
+            int borderColor_tmp;
 
             //if disabled , all the active will be forbid .
             if (ZButton.this.isEnabled()) {
-                paint_back.setColor((isChoosen ? color_back_choose : color_back));
-                if (!isAutoChange && isClick) {
-                    drawable_back_draw = (drawable_back_click == null ? (drawable_back_choose == null ? drawable_back : drawable_back_choose) : drawable_back_click);
+                //click is first level
+                if (isClick) {
+                    drawable_back_draw = drawable_back_click;
+                    drawable_center_draw = drawable_center_click;
                     paint_back.setColor(color_back_click);
-                    drawable_center_draw = (drawable_center_click == null ? (drawable_center == null ? drawable_center_choose : drawable_center) : drawable_center_click);
                     textColor_tmp = ZButton.this.textColor_click;
-                    paint_border.setColor(color_border_click);
+                    textColor_small_tmp = textColor_small_click;
+                    borderColor_tmp = color_border_click;
+                } else if (isChoosen) {
+                    drawable_back_draw = drawable_back_choose;
+                    drawable_center_draw = drawable_center_choose;
+                    textColor_tmp = ZButton.this.textColor_choose;
+                    borderColor_tmp = color_border_choose;
+                    textColor_small_tmp = textColor_small_choose;
+                    paint_back.setColor(color_back_choose);
                 } else {
-                    paint_border.setColor(color_border);
+                    drawable_back_draw = drawable_back;
+                    drawable_center_draw = drawable_center;
+                    textColor_tmp = ZButton.this.textColor;
+                    borderColor_tmp = color_border;
+                    textColor_small_tmp = textColor_small;
+                    paint_back.setColor(color_back);
                 }
             } else {
+                drawable_back_draw = drawable_back_disable;
+                drawable_center_draw = drawable_center_disable;
                 paint_back.setColor(color_back_disable);
-                textColor_tmp = textColor_disable;
-                paint_border.setColor(color_border_disable);
-                drawable_center_draw = (drawable_center_disable == null ? drawable_center : drawable_center_disable);
+                textColor_tmp = ZButton.this.textColor_disable;
+                textColor_small_tmp = textColor_small_disable;
+                borderColor_tmp = color_border_disable;
             }
-
+            paint_border.setColor(borderColor_tmp);
             //draw background color
             int w_rect = (int) (w * percent_back);
             int h_rect = h;
@@ -857,6 +910,27 @@ public class ZButton extends FrameLayout {
             path_back.arcTo(new RectF(0, h_rect - w_rect_radius_leftbottom, w_rect_radius_leftbottom, h_rect), 90, 90);
             path_back.lineTo(0, radiusArray[3]);
             canvas.drawPath(path_back, paint_back);
+
+
+            int y_wave = h / 4;
+            Path path_wave = new Path();
+            path_wave.moveTo(-w_wave + x_wave, y_wave);
+            for (int i = -w_wave; i < getWidth() + w_wave; i += w_wave) {
+                path_wave.rQuadTo(w_wave / 4, -h_wave, w_wave / 2, 0);
+                path_wave.rQuadTo(w_wave / 4, h_wave, w_wave / 2, 0);
+            }
+            path_wave.lineTo(w, h);
+            path_wave.lineTo(0, getHeight());
+            path_wave.close();
+            Paint paint_wave = new Paint();
+            paint_wave.setColor(Color.parseColor("#66ccff"));
+            paint_wave.setAntiAlias(true);
+            paint_wave.setStyle(Paint.Style.FILL);
+            canvas.save();
+            canvas.clipPath(path_back);
+            canvas.drawPath(path_wave, paint_wave);
+            canvas.restore();
+
 
             //draw background img
             if (drawable_back_draw != null) {
@@ -1392,9 +1466,9 @@ public class ZButton extends FrameLayout {
                 radiusOfBorder[2] = radiusArray[2] - half_border;
                 radiusOfBorder[3] = radiusArray[3] - half_border;
 
-                for(int i=0;i<radiusOfBorder.length;i++){
-                    if(radiusOfBorder[i]<0){
-                        radiusOfBorder[i]=0;
+                for (int i = 0; i < radiusOfBorder.length; i++) {
+                    if (radiusOfBorder[i] < 0) {
+                        radiusOfBorder[i] = 0;
                     }
                 }
 
@@ -1437,9 +1511,20 @@ public class ZButton extends FrameLayout {
 //        paint.setColor(Color.RED);
 //        paint.setStyle(Paint.Style.FILL);
 //        paint.setStrokeWidth(1);
-//        canvas.drawLine(0, canvas.getHeight() / 2, canvas.getWidth(), canvas.getHeight() / 2,paint);
-//        canvas.drawLine(canvas.getWidth() / 2, 0, canvas.getWidth() / 2, canvas.getHeight(),paint);
+//        canvas.drawLine(0, canvas.getHeight() / 2, canvas.getWidth(), canvas.getHeight() / 2,
+// paint);
+//        canvas.drawLine(canvas.getWidth() / 2, 0, canvas.getWidth() / 2, canvas.getHeight(),
+// paint);
         }
 
+    }
+
+    @Override
+    public void destroyDrawingCache() {
+        super.destroyDrawingCache();
+        if (waveAnimator != null) {
+            waveAnimator = null;
+            waveAnimator.cancel();
+        }
     }
 }

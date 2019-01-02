@@ -14,15 +14,23 @@
         android:background="#00000000"
         app:img_center="@drawable/gotopoint"
         app:img_center_disable="@drawable/gotopoint_disable"
-        app:color_back="#ff0000"
-        app:color_back_disable="#55ff4501"
+        app:color_back="#992233"
+        app:color_back_click="#990033"
+        app:color_back_disable="#666666"
+        app:color_back_choose="#990033"
         app:radius_lefttop="85dp"
         app:radius_rightbottom="85dp"
         app:text_center="xxx"
-        app:textsize="50sp"
+
+        app:text_center_small="small"
+
+        app:text_left="left"
+
+        app:textsize="40sp"
+        app:textsize_small="20sp"
         app:textcolor="#ffffff"
-        app:textcolor_disable="#55eeeeee"
-        app:w_border="50dp"
+        app:textcolor_disable="#666666"
+        app:w_border="5dp"
         app:color_border="#22000000"
         />
 </FrameLayout>

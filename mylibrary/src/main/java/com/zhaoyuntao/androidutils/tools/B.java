@@ -10,6 +10,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PixelFormat;
+import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
@@ -17,6 +18,8 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Environment;
 import android.text.format.DateFormat;
+import android.view.Display;
+import android.view.WindowManager;
 
 
 import java.io.ByteArrayOutputStream;
@@ -67,7 +70,8 @@ public class B {
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
         canvas_des.drawBitmap(bitmap_src, rect, rect, paint);
 
-        Bitmap bitmap_des_final = Bitmap.createBitmap(bitmap_des, (w_bitmap - doubleRadius) / 2, (h_bitmap - doubleRadius) / 2, doubleRadius, doubleRadius);
+        Bitmap bitmap_des_final = Bitmap.createBitmap(bitmap_des, (w_bitmap - doubleRadius) / 2,
+                (h_bitmap - doubleRadius) / 2, doubleRadius, doubleRadius);
         bitmap_des.recycle();
         return bitmap_des_final;
     }
@@ -102,13 +106,30 @@ public class B {
         if (bitmap_src == null) {
             return null;
         }
-        Bitmap bitmap_des = Bitmap.createBitmap(rect_des.width(), rect_des.height(), Bitmap.Config.ARGB_8888);
+        Bitmap bitmap_des = Bitmap.createBitmap(rect_des.width(), rect_des.height(), Bitmap
+                .Config.ARGB_8888);
         Canvas canvas_des = new Canvas(bitmap_des);
         Paint p = new Paint();
         p.setAntiAlias(true);
         p.setStyle(Paint.Style.FILL);
         canvas_des.drawBitmap(bitmap_src, rect_src, rect_des, p);
         return bitmap_des;
+    }
+
+    public static int HORIZONTAL = 0;
+    public static int VERTICAL = 1;
+
+    public static Bitmap reverse(Bitmap bitmap, int i) {
+        Matrix m = new Matrix();
+        if (i == HORIZONTAL) {
+            m.setScale(-1, 1);//水平翻转
+        } else {
+            m.setScale(1, -1);//垂直翻转
+        }
+        int w = bitmap.getWidth();
+        int h = bitmap.getHeight();
+        //生成的翻转后的bitmap
+        return Bitmap.createBitmap(bitmap, 0, 0, w, h, m, true);
     }
 
     public static Bitmap getBitmap_polygon(Bitmap bitmap_src, Path path) {
@@ -119,7 +140,8 @@ public class B {
         if (bitmap_src == null) {
             return null;
         }
-        Bitmap bitmap_des = Bitmap.createBitmap(bitmap_src.getWidth(), bitmap_src.getHeight(), Bitmap.Config.ARGB_8888);
+        Bitmap bitmap_des = Bitmap.createBitmap(bitmap_src.getWidth(), bitmap_src.getHeight(),
+                Bitmap.Config.ARGB_8888);
         Canvas canvas_des = new Canvas(bitmap_des);
         Paint p = new Paint();
         p.setAntiAlias(true);
@@ -140,7 +162,8 @@ public class B {
         if (bitmap_src == null) {
             return null;
         }
-        Bitmap bitmap_des = Bitmap.createBitmap(bitmap_src.getWidth(), bitmap_src.getHeight(), Bitmap.Config.ARGB_8888);
+        Bitmap bitmap_des = Bitmap.createBitmap(bitmap_src.getWidth(), bitmap_src.getHeight(),
+                Bitmap.Config.ARGB_8888);
         Canvas canvas_des = new Canvas(bitmap_des);
         Paint p = new Paint();
         p.setAntiAlias(true);
@@ -202,7 +225,9 @@ public class B {
         if (drawable == null) {
             return null;
         }
-        Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), drawable.getOpacity() != PixelFormat.OPAQUE ? Bitmap.Config.ARGB_8888 : Bitmap.Config.RGB_565);
+        Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable
+                .getIntrinsicHeight(), drawable.getOpacity() != PixelFormat.OPAQUE ? Bitmap
+                .Config.ARGB_8888 : Bitmap.Config.RGB_565);
         Canvas canvas = new Canvas(bitmap);
         //canvas.setBitmap(bitmap);
         drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
@@ -229,7 +254,8 @@ public class B {
     public static Bitmap getBitmapByPercent(Bitmap bitmap, float percent_w, float percent_h) {
         Matrix matrix = new Matrix();
         matrix.postScale(percent_w, percent_h); //长和宽放大缩小的比例
-        Bitmap resizeBmp = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+        Bitmap resizeBmp = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight
+                (), matrix, true);
         return resizeBmp;
     }
 
@@ -250,7 +276,8 @@ public class B {
         if (bitmaps.containsKey(String.valueOf(drawableId))) {
             return bitmaps.get(String.valueOf(drawableId));
         } else {
-            Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), drawableId, option);
+            Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), drawableId,
+                    option);
             bitmaps.put(String.valueOf(drawableId), bitmap);
             return bitmap;
         }
@@ -271,11 +298,13 @@ public class B {
         }
         Matrix matrix = new Matrix();
         matrix.setRotate(angle);
-        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, false);
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix,
+                false);
     }
 
     public static int getIdByName(Context context, String name) {
-        int resID = context.getResources().getIdentifier(name, "drawable", context.getPackageName());
+        int resID = context.getResources().getIdentifier(name, "drawable", context.getPackageName
+                ());
         return resID;
     }
 
@@ -303,7 +332,8 @@ public class B {
      */
     public static String bitmapToFile(Bitmap bitmap, Bitmap.CompressFormat compressFormat) {
         String sdPath = Environment.getExternalStorageDirectory().getPath();
-        String name = new DateFormat().format("yyyyMMddhhmmss", Calendar.getInstance(Locale.CHINA)) + (i++ + ".jpg");
+        String name = new DateFormat().format("yyyyMMddhhmmss", Calendar.getInstance(Locale
+                .CHINA)) + (i++ + ".jpg");
         String picPath = sdPath + "/" + name;
         File file = new File(picPath);
         OutputStream outputStream = null;
@@ -333,5 +363,16 @@ public class B {
             e.printStackTrace();
         }
         return picPath;
+    }
+
+    public static int[] getScreenWH(Context context) {
+        WindowManager windowmanager = (WindowManager) context.getSystemService(Context
+                .WINDOW_SERVICE);
+        Display d = windowmanager.getDefaultDisplay();
+        Point p = new Point();
+        d.getSize(p);
+        int w_screen = p.x; // 屏幕宽（像素）
+        int h_screen = p.y;
+        return new int[]{w_screen, h_screen};
     }
 }

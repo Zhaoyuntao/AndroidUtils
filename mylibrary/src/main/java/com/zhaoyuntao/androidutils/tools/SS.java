@@ -2,6 +2,7 @@ package com.zhaoyuntao.androidutils.tools;
 
 import android.util.Log;
 
+
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -28,7 +29,7 @@ public class SS {
     protected static final String tag2 = "sss";
     protected static final String tag3 = "sssss";
 
-    protected static boolean flag=true;
+    protected static boolean flag = true;
 
     public static boolean isEmpty(String str) {
         return str == null || str.trim().equals("") || str.equalsIgnoreCase("null");
@@ -254,9 +255,10 @@ public class SS {
 
     /**
      * local to utc
+     *
      * @return
      */
-    public static String local2UTC(){
+    public static String local2UTC() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         sdf.setTimeZone(TimeZone.getTimeZone("gmt"));
         String gmtTime = sdf.format(new Date());
@@ -265,6 +267,7 @@ public class SS {
 
     /**
      * utc to local
+     *
      * @param utcTime
      * @return
      */
@@ -282,6 +285,7 @@ public class SS {
         String localTime = localFormater.format(gpsUTCDate.getTime());
         return localTime;
     }
+
     public static long currentTimeSeconds() {
         return System.currentTimeMillis() / 1000;
     }
@@ -353,5 +357,4 @@ public class SS {
         }
         return count;
     }
-
 }
