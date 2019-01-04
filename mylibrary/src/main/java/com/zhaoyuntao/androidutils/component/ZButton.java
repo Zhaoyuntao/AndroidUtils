@@ -28,11 +28,7 @@ import com.zhaoyuntao.androidutils.tools.TextMeasure;
  */
 
 public class ZButton extends FrameLayout {
-    private String text_center;
-    private String text_center_small;
-    private String text_left;
-    private String text_right;
-    private String textarr;
+
     /**
      * false: click then be chosen, click again can not be unchosen, this will only be unchosen
      * by your code
@@ -41,22 +37,48 @@ public class ZButton extends FrameLayout {
     private boolean isAutoChange = true;
     private boolean isChoosen = false;
     private boolean isClick = false;
-    private float textSize;
-    private float textSize_small;
+
     private float percent_bitmap_center = 0.5f;
     private float percent_bitmap_left = 0.5f;
     private float percent_bitmap_right = 0.5f;
     private float radius;
     private float[] radiusArray = {0, 0, 0, 0};
     private float w_border;
-    private int textColor = Color.GRAY;
-    private int textColor_disable = Color.WHITE;
-    private int textColor_small = Color.GRAY;
-    private int textColor_small_disable = Color.WHITE;
-    private int textColor_choose = Color.BLACK;
-    private int textColor_click = Color.BLACK;
-    private int textColor_small_choose = Color.BLACK;
-    private int textColor_small_click = Color.BLACK;
+
+    //center text
+    private String text_center;
+    private float textSize;
+    private int textColor;
+    private int textColor_choose;
+    private int textColor_click;
+    private int textColor_disable;
+    //center small text
+    private String text_center_small;
+    private float textSize_small;
+    private int textColor_small;
+    private int textColor_small_choose;
+    private int textColor_small_click;
+    private int textColor_small_disable;
+    //left text
+    private String text_left;
+    private float textSize_left;
+    private int textColor_left;
+    private int textColor_left_choose;
+    private int textColor_left_click;
+    private int textColor_left_disable;
+    //right text
+    private String text_right;
+    private float textSize_right;
+    private int textColor_right;
+    private int textColor_right_choose;
+    private int textColor_right_click;
+    private int textColor_right_disable;
+
+    //space between bitmap and text
+    private float w_space;
+    //space between center text and small text
+    private float w_space_text;
+
     private int color_text_border;
     private Bitmap drawable_center;
     private Bitmap drawable_left;
@@ -68,8 +90,7 @@ public class ZButton extends FrameLayout {
     private Bitmap drawable_back_choose;
     private Bitmap drawable_back_disable;
     private Bitmap drawable_back_click;
-    private float w_space;
-    private float w_space_text;
+
     private String orientation;
     //background color
     private int color_back = Color.argb(0, 0, 0, 0);
@@ -88,8 +109,6 @@ public class ZButton extends FrameLayout {
 
     private int color_circle_border;
     private boolean drawCircleImg;
-    private float percent_w;
-    private float percent_h;
     public static final String vertical = "vertical";
     public static final String horizontal = "horizontal";
 
@@ -117,6 +136,9 @@ public class ZButton extends FrameLayout {
      * some index values that use by yourself as you wish
      */
     private int index = 0;
+
+    //width and height of view
+    private int w, h;
 
     public ZButton(Context context) {
         super(context);
@@ -206,127 +228,129 @@ public class ZButton extends FrameLayout {
         zImageView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         addView(zImageView);
         if (attrs != null) {
-            TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.ZButton);//
 
-            this.isAutoChange = typedArray.getBoolean(R.styleable.ZButton_isautochange, true);
+            int color_default = Color.parseColor("#888888");
+            int textSize_default = B.sp2px(context, 20);
 
-            this.text_center = typedArray.getString(R.styleable.ZButton_text_center);//
-            this.text_center_small = typedArray.getString(R.styleable.ZButton_text_center_small);//
-            this.textarr = typedArray.getString(R.styleable.ZButton_textarr);//
-            this.text_left = typedArray.getString(R.styleable.ZButton_text_left);//
-            this.text_right = typedArray.getString(R.styleable.ZButton_text_right);//
-            this.textSize = typedArray.getDimension(R.styleable.ZButton_textsize, B.sp2px(context, 20));
-            this.textSize_small = typedArray.getDimension(R.styleable.ZButton_textsize_small, B.sp2px(context, 10));
+            TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.zbutton);//
 
-            this.textColor = typedArray.getColor(R.styleable.ZButton_textcolor, textColor);//
-            this.textColor_choose = typedArray.getColor(R.styleable.ZButton_textcolor_choose, textColor);//
-            this.textColor_disable = typedArray.getColor(R.styleable.ZButton_textcolor_disable, textColor);//
-            this.textColor_click = typedArray.getColor(R.styleable.ZButton_textcolor_click, textColor_choose);//
-            int color_smalltext = Color.parseColor("#888888");
-            this.textColor_small = typedArray.getColor(R.styleable.ZButton_textcolor_small, color_smalltext);//
-            this.textColor_small_choose = typedArray.getColor(R.styleable.ZButton_textcolor_small_choose, color_smalltext);//
-            this.textColor_small_click = typedArray.getColor(R.styleable.ZButton_textcolor_small_click, color_smalltext);//
+            this.wave = typedArray.getBoolean(R.styleable.zbutton_wave, true);
+            this.waveColor = typedArray.getColor(R.styleable.zbutton_wavecolor, Color.WHITE);
+            this.waveColor_choose = typedArray.getColor(R.styleable.zbutton_wavecolor_choose, waveColor);
+            this.waveColor_click = typedArray.getColor(R.styleable.zbutton_wavecolor_click, waveColor);
+            this.waveColor_disable = typedArray.getColor(R.styleable.zbutton_wavecolor_disable, waveColor);
 
-            this.color_back = typedArray.getColor(R.styleable.ZButton_color_back, color_back);//
-            this.color_back_disable = typedArray.getColor(R.styleable.ZButton_color_back_disable, Color.argb(0, 0, 0, 0));//
-            this.color_back_choose = typedArray.getColor(R.styleable.ZButton_color_back_choose, color_back);//
+            this.isAutoChange = typedArray.getBoolean(R.styleable.zbutton_isautochange, true);
 
-            this.color_back_click = typedArray.getColor(R.styleable.ZButton_color_back_click, color_back_choose);//
+            this.text_center = typedArray.getString(R.styleable.zbutton_text_center);//
+            this.textSize = typedArray.getDimension(R.styleable.zbutton_textsize, textSize_default);
+            this.textColor = typedArray.getColor(R.styleable.zbutton_textcolor, textColor);//
+            this.textColor_choose = typedArray.getColor(R.styleable.zbutton_textcolor_choose, textColor);//
+            this.textColor_disable = typedArray.getColor(R.styleable.zbutton_textcolor_disable, textColor);//
+            this.textColor_click = typedArray.getColor(R.styleable.zbutton_textcolor_click, textColor_choose);//
 
-            this.color_back_bitmap_center = typedArray.getColor(R.styleable.ZButton_color_border_bitmap_center, color_back_choose);//
+            this.text_center_small = typedArray.getString(R.styleable.zbutton_text_center_small);//
+            this.textSize_small = typedArray.getDimension(R.styleable.zbutton_textsize_small, textSize_default);
+            this.textColor_small = typedArray.getColor(R.styleable.zbutton_textcolor_small, color_default);//
+            this.textColor_small_choose = typedArray.getColor(R.styleable.zbutton_textcolor_small_choose, color_default);//
+            this.textColor_small_click = typedArray.getColor(R.styleable.zbutton_textcolor_small_click, color_default);//
+            this.textColor_small_disable = typedArray.getColor(R.styleable.zbutton_textcolor_small_disable, color_default);//
 
-            this.color_border = typedArray.getColor(R.styleable.ZButton_color_border, color_border);//
-            this.color_border_choose = typedArray.getColor(R.styleable.ZButton_color_border_choose, color_border);//
-            this.color_border_click = typedArray.getColor(R.styleable.ZButton_color_border_click, color_border_choose);//
+            this.text_left = typedArray.getString(R.styleable.zbutton_text_left);//
+            this.textSize_left = typedArray.getDimension(R.styleable.zbutton_textsize_left, textSize_default);
+            this.textColor_left = typedArray.getColor(R.styleable.zbutton_textcolor_left, color_default);//
+            this.textColor_left_choose = typedArray.getColor(R.styleable.zbutton_textcolor_left_choose, color_default);//
+            this.textColor_left_click = typedArray.getColor(R.styleable.zbutton_textcolor_left_click, color_default);//
+            this.textColor_left_disable = typedArray.getColor(R.styleable.zbutton_textcolor_left_disable, color_default);//
 
-            this.drawable_center = B.drawableToBitmap(typedArray.getDrawable(R.styleable.ZButton_img_center));
-            this.drawable_left = B.drawableToBitmap(typedArray.getDrawable(R.styleable.ZButton_img_left));
-            this.drawable_right = B.drawableToBitmap(typedArray.getDrawable(R.styleable.ZButton_img_right));
-            this.drawable_center_choose = B.drawableToBitmap(typedArray.getDrawable(R.styleable.ZButton_img_center_choose));
+            this.text_right = typedArray.getString(R.styleable.zbutton_text_right);//
+            this.textSize_right = typedArray.getDimension(R.styleable.zbutton_textsize_right, textSize_default);
+            this.textColor_right = typedArray.getColor(R.styleable.zbutton_textcolor_right, color_default);//
+            this.textColor_right_choose = typedArray.getColor(R.styleable.zbutton_textcolor_right_choose, color_default);//
+            this.textColor_right_click = typedArray.getColor(R.styleable.zbutton_textcolor_right_click, color_default);//
+            this.textColor_right_disable = typedArray.getColor(R.styleable.zbutton_textcolor_right_click, color_default);//
+
+            this.color_back = typedArray.getColor(R.styleable.zbutton_color_back, color_back);//
+            this.color_back_disable = typedArray.getColor(R.styleable.zbutton_color_back_disable, Color.argb(0, 0, 0, 0));//
+            this.color_back_choose = typedArray.getColor(R.styleable.zbutton_color_back_choose, color_back);//
+
+            this.color_back_click = typedArray.getColor(R.styleable.zbutton_color_back_click, color_back_choose);//
+
+            this.color_back_bitmap_center = typedArray.getColor(R.styleable.zbutton_color_border_bitmap_center, color_back_choose);//
+
+            this.color_border = typedArray.getColor(R.styleable.zbutton_color_border, color_border);//
+            this.color_border_choose = typedArray.getColor(R.styleable.zbutton_color_border_choose, color_border);//
+            this.color_border_click = typedArray.getColor(R.styleable.zbutton_color_border_click, color_border_choose);//
+
+            this.drawable_center = B.drawableToBitmap(typedArray.getDrawable(R.styleable.zbutton_img_center));
+            this.drawable_left = B.drawableToBitmap(typedArray.getDrawable(R.styleable.zbutton_img_left));
+            this.drawable_right = B.drawableToBitmap(typedArray.getDrawable(R.styleable.zbutton_img_right));
+            this.drawable_center_choose = B.drawableToBitmap(typedArray.getDrawable(R.styleable.zbutton_img_center_choose));
             if (drawable_center_choose == null) {
                 drawable_center_choose = drawable_center;
             }
-            this.drawable_center_disable = B.drawableToBitmap(typedArray.getDrawable(R.styleable.ZButton_img_center_disable));
+            this.drawable_center_disable = B.drawableToBitmap(typedArray.getDrawable(R.styleable.zbutton_img_center_disable));
             if (drawable_center_disable == null) {
                 drawable_center_disable = drawable_center;
             }
-            this.drawable_center_click = B.drawableToBitmap(typedArray.getDrawable(R.styleable.ZButton_img_center_click));
+            this.drawable_center_click = B.drawableToBitmap(typedArray.getDrawable(R.styleable.zbutton_img_center_click));
             if (drawable_center_click == null) {
                 drawable_center_click = drawable_center_choose;
             }
-            this.drawable_back = B.drawableToBitmap(typedArray.getDrawable(R.styleable.ZButton_img_back));
-            this.drawable_back_choose = B.drawableToBitmap(typedArray.getDrawable(R.styleable.ZButton_img_back_choose));
+            this.drawable_back = B.drawableToBitmap(typedArray.getDrawable(R.styleable.zbutton_img_back));
+            this.drawable_back_choose = B.drawableToBitmap(typedArray.getDrawable(R.styleable.zbutton_img_back_choose));
             if (drawable_back_choose == null) {
                 drawable_back_choose = drawable_back;
             }
-            this.drawable_back_disable = B.drawableToBitmap(typedArray.getDrawable(R.styleable.ZButton_img_center_disable));
+            this.drawable_back_disable = B.drawableToBitmap(typedArray.getDrawable(R.styleable.zbutton_img_center_disable));
             if (drawable_back_disable == null) {
                 drawable_back_disable = drawable_back;
             }
-            this.drawable_back_click = B.drawableToBitmap(typedArray.getDrawable(R.styleable.ZButton_img_back_click));
+            this.drawable_back_click = B.drawableToBitmap(typedArray.getDrawable(R.styleable.zbutton_img_back_click));
             if (drawable_back_click == null) {
                 drawable_back_click = drawable_back_choose;
             }
-            this.percent_back = typedArray.getFloat(R.styleable.ZButton_percent_back, 1f);
+            this.percent_back = typedArray.getFloat(R.styleable.zbutton_percent_back, 1f);
             if (percent_back < 0) {
                 percent_back = 0;
             } else if (percent_back > 1) {
                 percent_back = 1;
             }
-            this.orientation = typedArray.getString(R.styleable.ZButton_orientation);
-            this.percent_bitmap_center = typedArray.getFloat(R.styleable.ZButton_percent_bitmap_center, 0.5f);
-            this.percent_bitmap_left = typedArray.getFloat(R.styleable.ZButton_percent_bitmap_left, 0.5f);
-            this.percent_bitmap_right = typedArray.getFloat(R.styleable.ZButton_percent_bitmap_right, 0.5f);
-            this.percent_w = typedArray.getFloat(R.styleable.ZButton_percent_w, 0f);
-            this.percent_h = typedArray.getFloat(R.styleable.ZButton_percent_h, 0f);
-            this.w_space = typedArray.getDimension(R.styleable.ZButton_w_space, 0);
-            this.w_space_text = typedArray.getDimension(R.styleable.ZButton_w_space_text, 0);
-            this.w_border = typedArray.getDimension(R.styleable.ZButton_w_border, 0);
-            this.drawTextBorder = typedArray.getBoolean(R.styleable.ZButton_drawtextborder, false);
-            this.color_text_border = typedArray.getColor(R.styleable.ZButton_color_text_border, Color.BLACK);//
-            this.drawBitmapBorder_center = typedArray.getBoolean(R.styleable.ZButton_drawimgborder_center, false);
-            this.color_circle_border = typedArray.getColor(R.styleable.ZButton_color_circle_border, Color.WHITE);//
-            this.drawCircleImg = typedArray.getBoolean(R.styleable.ZButton_drawcircleimg, false);
 
-            this.radius = typedArray.getDimension(R.styleable.ZButton_radius, 0);
+            this.percent_bitmap_center = typedArray.getFloat(R.styleable.zbutton_percent_bitmap_center, 1f);
+            this.percent_bitmap_left = typedArray.getFloat(R.styleable.zbutton_percent_bitmap_left, 1f);
+            this.percent_bitmap_right = typedArray.getFloat(R.styleable.zbutton_percent_bitmap_right, 1f);
+            this.w_space = typedArray.getDimension(R.styleable.zbutton_w_space, 0);
+            this.w_space_text = typedArray.getDimension(R.styleable.zbutton_w_space_text, 0);
+            this.w_border = typedArray.getDimension(R.styleable.zbutton_w_border, 0);
+            this.drawTextBorder = typedArray.getBoolean(R.styleable.zbutton_drawtextborder, false);
+            this.color_text_border = typedArray.getColor(R.styleable.zbutton_color_text_border, Color.BLACK);//
+            this.drawBitmapBorder_center = typedArray.getBoolean(R.styleable.zbutton_drawimgborder_center, false);
+            this.color_circle_border = typedArray.getColor(R.styleable.zbutton_color_circle_border, Color.WHITE);//
+            this.drawCircleImg = typedArray.getBoolean(R.styleable.zbutton_drawcircleimg, false);
 
-//            float minRadius = ((radius < (w_border / 2f)) ? (w_border / 2f) : radius);
-//            radius = minRadius;
+            this.radius = typedArray.getDimension(R.styleable.zbutton_radius, 0);
             if (radius < 0) {
                 radius = 0;
             }
-            this.radiusArray[0] = typedArray.getDimension(R.styleable.ZButton_radius_lefttop, radius);
-            this.radiusArray[1] = typedArray.getDimension(R.styleable.ZButton_radius_righttop, radius);
-            this.radiusArray[2] = typedArray.getDimension(R.styleable.ZButton_radius_rightbottom, radius);
-            this.radiusArray[3] = typedArray.getDimension(R.styleable.ZButton_radius_leftbottom, radius);
+            this.radiusArray[0] = typedArray.getDimension(R.styleable.zbutton_radius_lefttop, radius);
+            this.radiusArray[1] = typedArray.getDimension(R.styleable.zbutton_radius_righttop, radius);
+            this.radiusArray[2] = typedArray.getDimension(R.styleable.zbutton_radius_rightbottom, radius);
+            this.radiusArray[3] = typedArray.getDimension(R.styleable.zbutton_radius_leftbottom, radius);
 
-            this.style_bitmap_back = typedArray.getString(R.styleable.ZButton_style_img_back);
+            this.style_bitmap_back = typedArray.getString(R.styleable.zbutton_style_img_back);
 
             if (this.style_bitmap_back == null || this.style_bitmap_back.equals("")) {
                 this.style_bitmap_back = style_bitmap_back_clip;
             }
 
-            this.gravity = typedArray.getString(R.styleable.ZButton_gravity_img_center);
+            this.gravity = typedArray.getString(R.styleable.zbutton_gravity_img_center);
             if (gravity == null) {
                 gravity = gravity_both;
             }
-            switch (gravity) {
-                case gravity_both:
-                    break;
-                case gravity_interspace:
-                    break;
-                case gravity_img:
-                    break;
-                case gravity_text:
-                    break;
-                case gravity_left:
-                    break;
-                default:
-                    gravity = gravity_both;
-                    break;
-            }
+            this.orientation = typedArray.getString(R.styleable.zbutton_orientation);
             if (orientation == null) {
-                orientation = horizontal;
+                orientation = vertical;
             }
             typedArray.recycle();
         }
@@ -447,15 +471,6 @@ public class ZButton extends FrameLayout {
         postInvalidate();
     }
 
-    public String getTextarr() {
-        return textarr;
-    }
-
-    public void setTextarr(String textarr) {
-        this.textarr = textarr;
-        postInvalidate();
-    }
-
     public float getPercent_bitmap_left() {
         return percent_bitmap_left;
     }
@@ -565,24 +580,6 @@ public class ZButton extends FrameLayout {
 
     public void setDrawCircleImg(boolean drawCircleImg) {
         this.drawCircleImg = drawCircleImg;
-        postInvalidate();
-    }
-
-    public float getPercent_w() {
-        return percent_w;
-    }
-
-    public void setPercent_w(float percent_w) {
-        this.percent_w = percent_w;
-        postInvalidate();
-    }
-
-    public float getPercent_h() {
-        return percent_h;
-    }
-
-    public void setPercent_h(float percent_h) {
-        this.percent_h = percent_h;
         postInvalidate();
     }
 
@@ -766,16 +763,39 @@ public class ZButton extends FrameLayout {
         this.drawable_center_click = null;
         this.text_center = null;
         this.text_center_small = null;
-        this.textarr = null;
         postInvalidate();
     }
 
-    int w_wave;
-    int h_wave;
-    int x_wave;
+    private int w_wave;
+    private int h_wave;
+    private int x_wave;
+    private int y_wave;
+    private boolean wave;
+    private int waveColor;
+    private int waveColor_click;
+    private int waveColor_choose;
+    private int waveColor_disable;
     ValueAnimator waveAnimator;
 
+    public void setWave(boolean wave) {
+        this.wave = wave;
+        if (wave) {
+            startWaveAnimation();
+        } else {
+            stopAnimation();
+        }
+        postInvalidate();
+    }
+
+    private void stopAnimation() {
+        if (waveAnimator != null && waveAnimator.isRunning()) {
+            waveAnimator = null;
+            waveAnimator.cancel();
+        }
+    }
+
     public void startWaveAnimation() {
+        stopAnimation();
         waveAnimator = ValueAnimator.ofInt(0, w_wave);
         waveAnimator.setDuration(2000);
         waveAnimator.setRepeatCount(ValueAnimator.INFINITE);
@@ -787,6 +807,7 @@ public class ZButton extends FrameLayout {
                 if (x_wave == w_wave) {
                     x_wave = 0;
                 }
+                y_wave = h / 4;
                 postInvalidate();
             }
         });
@@ -816,85 +837,23 @@ public class ZButton extends FrameLayout {
         @Override
         protected void onDraw(Canvas canvas) {
 
-            int w = getWidth();
+            w = getWidth();
 
-            int h = getHeight();
+            h = getHeight();
 
             if (w == 0 || h == 0) {
                 return;
             }
 
-            if (w_wave == 0) {
-                w_wave = w;
-            }
+            float w_half = w / 2f;
+            float h_half = h / 2f;
 
-            if (h_wave == 0) {
-                h_wave = 30;
-            }
-
-            if (waveAnimator == null) {
-                startWaveAnimation();
-            }
-
-            int w_scale = (int) (w * percent_w);
-            int h_scale = (int) (h * percent_h);
-            int padding = 20;
             Paint paint = new Paint();
             Paint paint_back = new Paint();
-            Paint paint_border = new Paint();
 
-            float radius_min = (w > h ? h : w) / 2f;
-            if (radius > radius_min) {
-                radius = radius_min;
-            }
-
-            Bitmap drawable_back_draw;
-            Bitmap drawable_center_draw;
-
-            int textColor_tmp;
-            int textColor_small_tmp;
-            int borderColor_tmp;
-
-            //if disabled , all the active will be forbid .
-            if (ZButton.this.isEnabled()) {
-                //click is first level
-                if (isClick) {
-                    drawable_back_draw = drawable_back_click;
-                    drawable_center_draw = drawable_center_click;
-                    paint_back.setColor(color_back_click);
-                    textColor_tmp = ZButton.this.textColor_click;
-                    textColor_small_tmp = textColor_small_click;
-                    borderColor_tmp = color_border_click;
-                } else if (isChoosen) {
-                    drawable_back_draw = drawable_back_choose;
-                    drawable_center_draw = drawable_center_choose;
-                    textColor_tmp = ZButton.this.textColor_choose;
-                    borderColor_tmp = color_border_choose;
-                    textColor_small_tmp = textColor_small_choose;
-                    paint_back.setColor(color_back_choose);
-                } else {
-                    drawable_back_draw = drawable_back;
-                    drawable_center_draw = drawable_center;
-                    textColor_tmp = ZButton.this.textColor;
-                    borderColor_tmp = color_border;
-                    textColor_small_tmp = textColor_small;
-                    paint_back.setColor(color_back);
-                }
-            } else {
-                drawable_back_draw = drawable_back_disable;
-                drawable_center_draw = drawable_center_disable;
-                paint_back.setColor(color_back_disable);
-                textColor_tmp = ZButton.this.textColor_disable;
-                textColor_small_tmp = textColor_small_disable;
-                borderColor_tmp = color_border_disable;
-            }
-            paint_border.setColor(borderColor_tmp);
             //draw background color
             int w_rect = (int) (w * percent_back);
             int h_rect = h;
-            paint_back.setStyle(Paint.Style.FILL);
-            paint_back.setAntiAlias(true);
-
             int w_rect_radius_lefttop = (int) (radiusArray[0] * 2);
             int w_rect_radius_righttop = (int) (radiusArray[1] * 2);
             int w_rect_radius_rightbottom = (int) (radiusArray[2] * 2);
@@ -909,28 +868,114 @@ public class ZButton extends FrameLayout {
             path_back.lineTo(radiusArray[3], h_rect);//6
             path_back.arcTo(new RectF(0, h_rect - w_rect_radius_leftbottom, w_rect_radius_leftbottom, h_rect), 90, 90);
             path_back.lineTo(0, radiusArray[3]);
+
+            canvas.clipPath(path_back);
+
+
+            Paint paint_border = new Paint();
+
+            float radius_min = (w > h ? h : w) / 2f;
+            if (radius > radius_min) {
+                radius = radius_min;
+            }
+
+            Bitmap drawable_back_draw;
+            Bitmap drawable_center_draw;
+
+            int textColor_tmp;
+            int textColor_small_tmp;
+            int textColor_left_tmp;
+            int textColor_right_tmp;
+            int borderColor_tmp;
+            int waveColor_tmp;
+
+            //if disabled , all the active will be forbid .
+            if (ZButton.this.isEnabled()) {
+                //click is first level
+                if (isClick) {
+                    drawable_back_draw = drawable_back_click;
+                    drawable_center_draw = drawable_center_click;
+                    paint_back.setColor(color_back_click);
+                    textColor_tmp = ZButton.this.textColor_click;
+                    textColor_small_tmp = textColor_small_click;
+                    textColor_left_tmp = textColor_left_click;
+                    textColor_right_tmp = textColor_right_click;
+                    borderColor_tmp = color_border_click;
+                    waveColor_tmp = waveColor_click;
+
+                } else if (isChoosen) {
+                    drawable_back_draw = drawable_back_choose;
+                    drawable_center_draw = drawable_center_choose;
+                    textColor_tmp = ZButton.this.textColor_choose;
+                    borderColor_tmp = color_border_choose;
+                    textColor_small_tmp = textColor_small_choose;
+                    textColor_left_tmp = textColor_left_choose;
+                    textColor_right_tmp = textColor_right_choose;
+                    paint_back.setColor(color_back_choose);
+                    waveColor_tmp = waveColor_choose;
+                } else {
+                    drawable_back_draw = drawable_back;
+                    drawable_center_draw = drawable_center;
+                    textColor_tmp = ZButton.this.textColor;
+                    borderColor_tmp = color_border;
+                    textColor_small_tmp = textColor_small;
+                    textColor_left_tmp = textColor_left;
+                    textColor_right_tmp = textColor_right;
+                    paint_back.setColor(color_back);
+                    waveColor_tmp = waveColor;
+                }
+            } else {
+                drawable_back_draw = drawable_back_disable;
+                drawable_center_draw = drawable_center_disable;
+                paint_back.setColor(color_back_disable);
+                textColor_tmp = ZButton.this.textColor_disable;
+                textColor_small_tmp = textColor_small_disable;
+                textColor_left_tmp = textColor_left_disable;
+                textColor_right_tmp = textColor_right_disable;
+                borderColor_tmp = color_border_disable;
+                waveColor_tmp = waveColor_disable;
+            }
+            paint_border.setColor(borderColor_tmp);
+
+            paint_back.setStyle(Paint.Style.FILL);
+            paint_back.setAntiAlias(true);
+
+
             canvas.drawPath(path_back, paint_back);
 
 
-            int y_wave = h / 4;
-            Path path_wave = new Path();
-            path_wave.moveTo(-w_wave + x_wave, y_wave);
-            for (int i = -w_wave; i < getWidth() + w_wave; i += w_wave) {
-                path_wave.rQuadTo(w_wave / 4, -h_wave, w_wave / 2, 0);
-                path_wave.rQuadTo(w_wave / 4, h_wave, w_wave / 2, 0);
-            }
-            path_wave.lineTo(w, h);
-            path_wave.lineTo(0, getHeight());
-            path_wave.close();
-            Paint paint_wave = new Paint();
-            paint_wave.setColor(Color.parseColor("#66ccff"));
-            paint_wave.setAntiAlias(true);
-            paint_wave.setStyle(Paint.Style.FILL);
-            canvas.save();
-            canvas.clipPath(path_back);
-            canvas.drawPath(path_wave, paint_wave);
-            canvas.restore();
+            if (wave) {
+                if (w_wave == 0) {
+                    w_wave = w;
+                }
 
+                if (h_wave == 0) {
+                    h_wave = 30;
+                }
+
+                if (waveAnimator == null) {
+                    startWaveAnimation();
+                }
+
+
+                Path path_wave = new Path();
+                path_wave.moveTo(-w_wave + x_wave, y_wave);
+                for (int i = -w_wave; i < getWidth() + w_wave; i += w_wave) {
+                    path_wave.rQuadTo(w_wave / 4, -h_wave, w_wave / 2, 0);
+                    path_wave.rQuadTo(w_wave / 4, h_wave, w_wave / 2, 0);
+                }
+                path_wave.lineTo(w, h);
+                path_wave.lineTo(0, getHeight());
+                path_wave.close();
+                Paint paint_wave = new Paint();
+                paint_wave.setColor(waveColor_tmp);
+                paint_wave.setAntiAlias(true);
+                paint_wave.setStyle(Paint.Style.FILL);
+                canvas.save();
+                canvas.clipPath(path_back);
+                canvas.drawPath(path_wave, paint_wave);
+                canvas.restore();
+            }
 
             //draw background img
             if (drawable_back_draw != null) {
@@ -1007,6 +1052,8 @@ public class ZButton extends FrameLayout {
             float h_text_center_small = 0;
             float w_arr_center = 0;
             float h_text_arr = 0;
+            int w_bitmap_center = 0;
+            int h_bitmap_center = 0;
             float h_bitmap_center_draw = 0;
             float w_bitmap_center_draw = 0;
 
@@ -1034,160 +1081,134 @@ public class ZButton extends FrameLayout {
             float h_item_textarr = 0;
 
             //calculate size of text
-            Paint paint_text = new Paint();
-            paint_text.setAntiAlias(true);
             if (SS.isNotEmpty(text_center)) {
                 float[] size_text_center = TextMeasure.measure(text_center, textSize);
                 w_text_center = size_text_center[0];
                 h_text_center = size_text_center[1];
             }
             if (text_center_small != null) {
-                paint_text.setTextSize(textSize_small);
-                float textWidth = paint_text.measureText(text_center_small);
-                Paint.FontMetrics fontMetrics = paint_text.getFontMetrics();
-                float ascent = Math.abs(fontMetrics.ascent);
-                float descent = fontMetrics.descent;
-                w_text_center_small = textWidth;
-                h_text_center_small = Math.abs(descent - ascent);
+                float[] arr = TextMeasure.measure(text_center_small, textSize_small);
+                w_text_center_small = arr[0];
+                h_text_center_small = arr[1];
             }
             if (text_left != null) {
-                paint_text.setTextSize(textSize);
-                float textWidth = paint_text.measureText(text_left);
-                Paint.FontMetrics fontMetrics = paint_text.getFontMetrics();
-                float ascent = Math.abs(fontMetrics.ascent);
-                float descent = fontMetrics.descent;
-                w_text_left = textWidth;
-                h_text_left = Math.abs(descent - ascent);
+                float[] arr = TextMeasure.measure(text_left, textSize_left);
+                w_text_left = arr[0];
+                h_text_left = arr[1];
             }
             if (text_right != null) {
-                paint_text.setTextSize(textSize);
-                float textWidth = paint_text.measureText(text_right);
-                Paint.FontMetrics fontMetrics = paint_text.getFontMetrics();
-                float ascent = Math.abs(fontMetrics.ascent);
-                float descent = fontMetrics.descent;
-                w_text_right = textWidth;
-                h_text_right = Math.abs(descent - ascent);
-            }
-            String[] arr = null;
-            if (textarr != null) {
-                arr = textarr.split("[ |\\|]");
-                if (arr != null) {
-                    for (int i = 0; i < arr.length; i++) {
-                        String text = arr[i];
-                        paint_text.setTextSize(textSize);
-                        float w_text_tmp = paint_text.measureText(text);
-                        Paint.FontMetrics fontMetrics = paint_text.getFontMetrics();
-                        float ascent = Math.abs(fontMetrics.ascent);
-                        float descent = fontMetrics.descent;
-                        h_item_textarr = Math.abs(descent - ascent);
-                        w_arr_center = (w_arr_center > w_text_tmp ? w_arr_center : w_text_tmp);
-                    }
-                    float h_space_item = (w_space_text) * (arr.length - 1);
-                    if (h_space_item < 0) {
-                        h_space_item = 0;
-                    }
-                    h_text_arr = h_item_textarr * arr.length + h_space_item;
-                }
+                float[] arr = TextMeasure.measure(text_right, textSize_right);
+                w_text_right = arr[0];
+                h_text_right = arr[1];
             }
 
-            //draw circle img
-            if (drawCircleImg) {
-                drawable_center_draw = B.getBitmap_circle(drawable_center_draw);
-            }
-            //draw img of center
+            //calculate img w and h of center
             if (drawable_center_draw != null) {
-                int w_bitmap = drawable_center_draw.getWidth();
-                int h_bitmap = drawable_center_draw.getHeight();
+                //draw circle img
+                if (drawCircleImg) {
+                    drawable_center_draw = B.getBitmap_circle(drawable_center_draw);
+                }
+                w_bitmap_center = drawable_center_draw.getWidth();
+                h_bitmap_center = drawable_center_draw.getHeight();
                 if (percent_bitmap_center == 0) {
-                    percent_bitmap_center = 0.5f;
+                    percent_bitmap_center = 1f;
                 }
-                h_bitmap_center_draw = h * percent_bitmap_center;
-                w_bitmap_center_draw = h_bitmap_center_draw * (w_bitmap / (float) h_bitmap);
+                h_bitmap_center_draw = h * percent_bitmap_center * 0.5f;
+                w_bitmap_center_draw = h_bitmap_center_draw * (w_bitmap_center / (float) h_bitmap_center);
+            }
 
-                if (orientation.equals(vertical)) {
-                    x_bitmap_center_draw = (w - w_bitmap_center_draw) / 2f;
-                    y_bitmap_center_draw = (h - (h_bitmap_center_draw + (h_text_arr > 0 ? h_text_arr : (h_text_center + h_text_center_small + w_space_text)) + w_space)) / 2f;
-                } else if (orientation.equals(horizontal)) {
-                    x_bitmap_center_draw = (w - (w_bitmap_center_draw + (w_arr_center > w_text_center ? w_arr_center : w_text_center) + w_space)) / 2f;
-                    y_bitmap_center_draw = (h - h_bitmap_center_draw) / 2f;
-                } else {
-                    x_bitmap_center_draw = (w - w_bitmap_center_draw) / 2f;
-                    y_bitmap_center_draw = (h - h_bitmap_center_draw) / 2f;
-                }
+            //calculate img x and y of center
+            switch (gravity) {
+                case gravity_interspace://重叠在一起
+                case gravity_img://以图片为中心
+                    x_bitmap_center_draw = w_half - w_bitmap_center_draw / 2f;
+                    y_bitmap_center_draw = h_half - h_bitmap_center_draw / 2f;
+                    break;
+                case gravity_text://以文字为中心
+                    x_bitmap_center_draw = w_half - (w_bitmap_center_draw + w_space + w_text_center / 2f);
+                    y_bitmap_center_draw = h_half - (h_bitmap_center_draw + w_space + h_text_center / 2f);
+                    break;
+                case gravity_left://整体靠左
+                    switch (orientation) {
+                        case vertical:
+                            x_text_center_draw = 0;
+                            y_bitmap_center_draw = h_half - (h_bitmap_center_draw + w_space + h_text_center + w_space_text + h_text_center_small) / 2f;
+                            break;
+                        case horizontal:
+                            x_text_center_draw = 0;
+                            y_bitmap_center_draw = h_half - h_bitmap_center_draw / 2f;
+                            break;
+                    }
+                    break;
+                default:
+                    switch (orientation) {
+                        case vertical:
+                            x_bitmap_center_draw = w_half - w_bitmap_center_draw / 2f;
+                            y_bitmap_center_draw = h_half - (h_bitmap_center_draw + w_space + h_text_center + w_space_text + h_text_center_small) / 2f;
+                            break;
+                        case horizontal:
+                            x_bitmap_center_draw = w_half - (w_bitmap_center_draw + w_space + w_text_center) / 2f;
+                            y_bitmap_center_draw = h_half - h_bitmap_center_draw / 2f;
+                            break;
+                    }
+                    break;
+            }
 
+            switch (gravity) {
+                case gravity_interspace://重叠在一起
+                case gravity_text://以文字为中心
+                    x_text_center_draw = w_half - w_text_center / 2f;
+                    y_text_center_draw = h_half - (h_text_center + w_space_text + h_text_center_small) / 2f + h_text_center;
+                    break;
+                case gravity_img://以图片为中心
+                    switch (orientation) {
+                        case vertical:
+                            x_text_center_draw = w_half - w_text_center / 2f;
+                            y_text_center_draw = y_bitmap_center_draw + w_space;
+                            break;
+                        case horizontal:
+                            x_text_center_draw = x_bitmap_center_draw + w_bitmap_center_draw + w_space;
+                            y_text_center_draw = h_half - (h_text_center + w_space_text + h_text_center_small) / 2f + h_text_center;
+                            break;
+                    }
+                    break;
+                case gravity_left://整体靠左
+                    switch (orientation) {
+                        case vertical:
+                            x_text_center_draw = 0;
+                            y_text_center_draw = y_bitmap_center_draw + h_bitmap_center_draw + w_space + h_text_center;
+                            break;
+                        case horizontal:
+                            x_text_center_draw = 0;
+                            y_text_center_draw = h_half - (h_text_center + w_space_text + h_text_center_small) / 2f + h_text_center;
+                            break;
+                    }
+                    break;
+                default://以二者中心为中心
+                    switch (orientation) {
+                        case vertical:
+                            x_text_center_draw = w_half - w_text_center / 2f;
+                            y_text_center_draw = y_bitmap_center_draw + h_bitmap_center_draw + w_space + h_text_center;
+                            break;
+                        case horizontal:
+                            x_text_center_draw = x_bitmap_center_draw + w_bitmap_center_draw + w_space;
+                            y_text_center_draw = h_half - (h_text_center + w_space_text + h_text_center_small) / 2f + h_text_center;
+                            break;
+                    }
+                    break;
+            }
 
-                float x_half = w / 2f;
-                float y_half = h / 2f;
-                switch (gravity) {
-                    case gravity_interspace:
-                        switch (orientation) {
-                            case vertical:
-                                x_bitmap_center_draw = (w - w_bitmap_center_draw) / 2f;
-                                y_bitmap_center_draw = y_half - h_bitmap_center_draw - w_space / 2f;
-                                break;
-                            case horizontal:
-                                x_bitmap_center_draw = x_half - w_bitmap_center_draw - w_space / 2f;
-                                y_bitmap_center_draw = (h - h_bitmap_center_draw) / 2f;
-                                break;
-                        }
-                        break;
-                    case gravity_img:
-                        switch (orientation) {
-                            case vertical:
-                                x_bitmap_center_draw = (w - w_bitmap_center_draw) / 2f;
-                                y_bitmap_center_draw = y_half - h_bitmap_center_draw / 2f;
-                                break;
-                            case horizontal:
-                                x_bitmap_center_draw = x_half - w_bitmap_center_draw / 2f;
-                                y_bitmap_center_draw = (h - h_bitmap_center_draw) / 2f;
-                                break;
-                        }
-                        break;
-                    case gravity_text:
-                        switch (orientation) {
-                            case vertical:
-                                x_bitmap_center_draw = (w - w_bitmap_center_draw) / 2f;
-                                y_bitmap_center_draw = y_half - h_text_center / 2f - h_bitmap_center_draw - w_space;
-                                break;
-                            case horizontal:
-                                x_bitmap_center_draw = x_half - w_text_center / 2f - w_bitmap_center_draw - w_space;
-                                y_bitmap_center_draw = (h - h_bitmap_center_draw) / 2f;
-                                break;
-                        }
-                        break;
-                    case gravity_left:
-                        switch (orientation) {
-                            case vertical:
-                                x_bitmap_center_draw = 0;
-                                y_bitmap_center_draw = y_half - h_text_center / 2f - h_bitmap_center_draw - w_space;
-                                break;
-                            case horizontal:
-                                x_bitmap_center_draw = 0;
-                                y_bitmap_center_draw = (h - h_bitmap_center_draw) / 2f;
+            //根据中间文字坐标来计算小字的坐标
+            x_text_center_small_draw = x_text_center_draw;
+            y_text_center_small_draw = y_text_center_draw + w_space_text + h_text_center_small;
 
-                                break;
-                        }
-                        break;
-                    default:
-                        gravity = gravity_both;
-                        break;
-                }
-                x_bitmap_center_draw -= w_scale;
-                y_bitmap_center_draw -= h_scale;
+            if (drawable_center_draw != null) {
 
-                //scale img
-                Rect rect_src_bitmap = new Rect();
-                rect_src_bitmap.set(0, 0, w_bitmap, h_bitmap);
-                Rect rect_des_bitmap = new Rect();
-                rect_des_bitmap.set(0, 0, (int) w_bitmap_center_draw, (int) h_bitmap_center_draw);
-                drawable_center_draw = B.getBitmap_rect(drawable_center_draw, rect_src_bitmap, rect_des_bitmap);
                 //draw bitmap
                 drawable_center_draw = B.getBitmap_polygon(drawable_center_draw, path_back, (int) x_bitmap_center_draw, (int) y_bitmap_center_draw);
                 //draw bitmap
-                w_bitmap = drawable_center_draw.getWidth();
-                h_bitmap = drawable_center_draw.getHeight();
                 Rect rect_src = new Rect();
-                rect_src.set(0, 0, w_bitmap, h_bitmap);
+                rect_src.set(0, 0, w_bitmap_center, h_bitmap_center);
                 Rect rect_des = new Rect();
                 rect_des.set((int) x_bitmap_center_draw, (int) y_bitmap_center_draw, (int) (x_bitmap_center_draw + w_bitmap_center_draw), (int) (y_bitmap_center_draw + h_bitmap_center_draw));
                 canvas.drawBitmap(drawable_center_draw, rect_src, rect_des, paint);
@@ -1218,69 +1239,6 @@ public class ZButton extends FrameLayout {
                         canvas.drawRect(rect_border, paint);
                     }
                 }
-            } else {
-                x_bitmap_center_draw = w / 2 - w_text_center / 2f;
-                y_bitmap_center_draw = h / 2 - (h_text_center + h_text_center_small) / 2f;
-                w_space = 0;
-
-                float x_half = w / 2f;
-                float y_half = h / 2f;
-                switch (gravity) {
-                    case gravity_interspace:
-                        switch (orientation) {
-                            case vertical:
-                                x_bitmap_center_draw = (w - w_bitmap_center_draw) / 2f;
-                                y_bitmap_center_draw = y_half - h_bitmap_center_draw - w_space / 2f;
-                                break;
-                            case horizontal:
-                                x_bitmap_center_draw = x_half - w_bitmap_center_draw - w_space / 2f;
-                                y_bitmap_center_draw = (h - h_bitmap_center_draw) / 2f;
-                                break;
-                        }
-                        break;
-                    case gravity_img:
-                        switch (orientation) {
-                            case vertical:
-                                x_bitmap_center_draw = (w - w_bitmap_center_draw) / 2f;
-                                y_bitmap_center_draw = y_half - h_bitmap_center_draw / 2f;
-                                break;
-                            case horizontal:
-                                x_bitmap_center_draw = x_half - w_bitmap_center_draw / 2f;
-                                y_bitmap_center_draw = (h - h_bitmap_center_draw) / 2f;
-                                break;
-                        }
-                        break;
-                    case gravity_text:
-                        switch (orientation) {
-                            case vertical:
-                                x_bitmap_center_draw = (w - w_bitmap_center_draw) / 2f;
-                                y_bitmap_center_draw = y_half - h_text_center / 2f - h_bitmap_center_draw - w_space;
-                                break;
-                            case horizontal:
-                                x_bitmap_center_draw = x_half - w_text_center / 2f - w_bitmap_center_draw - w_space;
-                                y_bitmap_center_draw = (h - h_bitmap_center_draw) / 2f;
-                                break;
-                        }
-                        break;
-                    case gravity_left:
-                        switch (orientation) {
-                            case vertical:
-                                x_bitmap_center_draw = 0;
-                                y_bitmap_center_draw = y_half - h_text_center / 2f - h_bitmap_center_draw - w_space;
-                                break;
-                            case horizontal:
-                                x_bitmap_center_draw = 0;
-                                y_bitmap_center_draw = (h - h_bitmap_center_draw) / 2f;
-
-                                break;
-                        }
-                        break;
-                    default:
-                        gravity = gravity_both;
-                        break;
-                }
-                x_bitmap_center_draw -= w_scale;
-                y_bitmap_center_draw -= h_scale;
             }
 
             if (drawable_left_draw != null) {
@@ -1289,13 +1247,13 @@ public class ZButton extends FrameLayout {
                 int h_bitmap = drawable_left_draw.getHeight();
 
                 if (percent_bitmap_left == 0) {
-                    percent_bitmap_left = 0.5f;
+                    percent_bitmap_left = 1f;
                 }
-                h_bitmap_left_draw = h * percent_bitmap_left;
+                h_bitmap_left_draw = h * percent_bitmap_left * 0.5f;
                 w_bitmap_left_draw = h_bitmap_left_draw * (w_bitmap / (float) h_bitmap);
-                w_bitmap_left_hold = (int) (w_bitmap_left_draw > h_bitmap_left_draw ? w_bitmap_left_draw : h_bitmap_left_draw) + padding;
+                w_bitmap_left_hold = (int) (w_bitmap_left_draw > h_bitmap_left_draw ? w_bitmap_left_draw : h_bitmap_left_draw) + w_space;
 
-                x_bitmap_left_draw = (0) + padding;
+                x_bitmap_left_draw = (0) + w_space;
                 y_bitmap_left_draw = (h - h_bitmap_left_draw) / 2f;
 
                 //draw icon
@@ -1310,13 +1268,13 @@ public class ZButton extends FrameLayout {
                 int h_bitmap = drawable_right_draw.getHeight();
 
                 if (percent_bitmap_right == 0) {
-                    percent_bitmap_right = 0.5f;
+                    percent_bitmap_right = 1f;
                 }
-                h_bitmap_right_draw = h * percent_bitmap_right;
+                h_bitmap_right_draw = h * percent_bitmap_right * 0.5f;
                 w_bitmap_right_draw = h_bitmap_right_draw * (w_bitmap / (float) h_bitmap);
-                w_bitmap_right_hold = (int) (w_bitmap_right_draw > h_bitmap_right_draw ? w_bitmap_right_draw : h_bitmap_right_draw) + padding;
+                w_bitmap_right_hold = (int) (w_bitmap_right_draw > h_bitmap_right_draw ? w_bitmap_right_draw : h_bitmap_right_draw) + w_space;
 
-                x_bitmap_right_draw = (w - w_bitmap_right_draw - padding);
+                x_bitmap_right_draw = (w - w_bitmap_right_draw - w_space);
                 y_bitmap_right_draw = (h - h_bitmap_right_draw) / 2f;
 
                 //draw icon
@@ -1327,20 +1285,11 @@ public class ZButton extends FrameLayout {
                 canvas.drawBitmap(drawable_right_draw, rect_src, rect_destination, paint);
             }
 
+
             //is the text of left need to be drawn?
             if (SS.isNotEmpty(text_center)) {
-
-                if (orientation.equals(vertical)) {
-                    x_text_center_draw = (w - w_text_center) / 2f;
-                    y_text_center_draw = y_bitmap_center_draw + h_bitmap_center_draw + w_space + h_text_center + h_text_center_small;
-                } else if (orientation.equals(horizontal)) {
-                    x_text_center_draw = x_bitmap_center_draw + w_bitmap_center_draw + w_space;
-                    y_text_center_draw = (h - (h_text_center_small + w_space_text + h_text_center)) / 2f + h_text_center;
-                } else {
-                    x_text_center_draw = (w - w_text_center) / 2f;
-                    y_text_center_draw = (h + h_text_center) / 2f;
-                }
-                //draw text
+                Paint paint_text = new Paint();
+                paint_text.setAntiAlias(true);
                 paint_text.setColor(textColor_tmp);
                 paint_text.setTextSize(textSize);
                 canvas.drawText(text_center, x_text_center_draw, y_text_center_draw, paint_text);
@@ -1352,108 +1301,74 @@ public class ZButton extends FrameLayout {
                     paint_text.setAntiAlias(true);
                     canvas.drawText(text_center, x_text_center_draw, y_text_center_draw, paint_text);
                 }
+            }
 
-                //is the small text of center need to be drawn?
-                if (text_center_small != null && !text_center_small.equals("")) {
+            //is the small text of center need to be drawn?
+            if (SS.isNotEmpty(text_center_small)) {
 
-                    if (orientation.equals(vertical)) {
-                        x_text_center_small_draw = (w - w_text_center_small) / 2f;
-                        y_text_center_small_draw = y_text_center_draw + h_text_center_small + w_space;
-                    } else if (orientation.equals(horizontal)) {
-                        x_text_center_small_draw = x_bitmap_center_draw + w_bitmap_center_draw + w_space;
-                        y_text_center_small_draw = (h - (h_text_center_small + w_space_text + h_text_center)) / 2f + h_text_center + w_space_text + h_text_center_small;
-                    } else {
-                        x_text_center_small_draw = (w - w_text_center_small) / 2f;
-                        y_text_center_small_draw = (h + h_text_center_small) / 2f;
-                    }
-                    //draw text
-                    paint_text.setColor(textColor_small_tmp);
-                    paint_text.setTextSize(textSize_small);
-                    canvas.drawText(text_center_small, x_text_center_small_draw, y_text_center_small_draw, paint_text);
+                if (orientation.equals(vertical)) {
 
-                    if (drawTextBorder) {
-                        paint_text.setStyle(Paint.Style.STROKE);
-                        paint_text.setStrokeWidth(1);
-                        paint_text.setColor(color_text_border);
-                        paint_text.setAntiAlias(true);
-                        canvas.drawText(text_center_small, x_text_center_small_draw, y_text_center_small_draw, paint_text);
-                    }
+                } else if (orientation.equals(horizontal)) {
+
+                } else {
+                    y_text_center_small_draw = (h + h_text_center_small) / 2f;
+                }
+
+                Paint paint_text_small = new Paint();
+                paint_text_small.setAntiAlias(true);
+                paint_text_small.setColor(textColor_small_tmp);
+                paint_text_small.setTextSize(textSize_small);
+                canvas.drawText(text_center_small, x_text_center_small_draw, y_text_center_small_draw, paint_text_small);
+
+                if (drawTextBorder) {
+                    paint_text_small.setStyle(Paint.Style.STROKE);
+                    paint_text_small.setStrokeWidth(1);
+                    paint_text_small.setColor(color_text_border);
+                    paint_text_small.setAntiAlias(true);
+                    canvas.drawText(text_center_small, x_text_center_small_draw, y_text_center_small_draw, paint_text_small);
                 }
             }
             //is the text of left need to be drawn?
-            if (text_left != null && !text_left.equals("")) {
+            if (SS.isNotEmpty(text_left)) {
                 x_text_left_draw = 0 + h_text_left / 2f + w_bitmap_left_hold;
                 y_text_left_draw = (h - h_text_left) / 2f + h_text_left;
                 y_text_left_draw -= h_text_left / 8f;
-                //draw text
-                paint_text.setColor(textColor_tmp);
-                canvas.drawText(text_left, x_text_left_draw, y_text_left_draw, paint_text);
+
+                Paint paint_text_left = new Paint();
+                paint_text_left.setAntiAlias(true);
+                paint_text_left.setColor(textColor_left_tmp);
+                paint_text_left.setTextSize(textSize_left);
+                canvas.drawText(text_left, x_text_left_draw, y_text_left_draw, paint_text_left);
 
                 if (drawTextBorder) {
-                    paint_text.setStyle(Paint.Style.STROKE);
-                    paint_text.setStrokeWidth(1);
-                    paint_text.setColor(color_text_border);
-                    paint_text.setAntiAlias(true);
-                    canvas.drawText(text_left, x_text_left_draw, y_text_left_draw, paint_text);
+                    paint_text_left.setStyle(Paint.Style.STROKE);
+                    paint_text_left.setStrokeWidth(1);
+                    paint_text_left.setColor(color_text_border);
+                    paint_text_left.setAntiAlias(true);
+                    canvas.drawText(text_left, x_text_left_draw, y_text_left_draw, paint_text_left);
                 }
             }
             //is the text of right need to be drawn?
-            if (text_right != null && !text_right.equals("")) {
+            if (SS.isNotEmpty(text_right)) {
                 x_text_right_draw = w - w_text_right - +h_text_right / 2f - w_bitmap_right_hold;
                 y_text_right_draw = (h - h_text_right) / 2f + h_text_right;
                 y_text_right_draw -= h_text_right / 8f;
-                //draw text
-                paint_text.setColor(textColor_tmp);
-                canvas.drawText(text_right, x_text_right_draw, y_text_right_draw, paint_text);
+
+                Paint paint_text_right = new Paint();
+                paint_text_right.setAntiAlias(true);
+                paint_text_right.setColor(textColor_right_tmp);
+                paint_text_right.setTextSize(textSize_right);
+                canvas.drawText(text_right, x_text_right_draw, y_text_right_draw, paint_text_right);
 
                 if (drawTextBorder) {
-                    paint_text.setStyle(Paint.Style.STROKE);
-                    paint_text.setStrokeWidth(1);
-                    paint_text.setColor(color_text_border);
-                    paint_text.setAntiAlias(true);
-                    canvas.drawText(text_right, x_text_right_draw, y_text_right_draw, paint_text);
+                    paint_text_right.setStyle(Paint.Style.STROKE);
+                    paint_text_right.setStrokeWidth(1);
+                    paint_text_right.setColor(color_text_border);
+                    paint_text_right.setAntiAlias(true);
+                    canvas.drawText(text_right, x_text_right_draw, y_text_right_draw, paint_text_right);
                 }
             }
 
-            float x_text_item_draw = 0;//x
-            float y_text_item_draw = 0;
-            float w_item_arr_tmp = 0;//width
-            if (textarr != null && arr != null) {
-                for (int i = 0; i < arr.length; i++) {
-
-
-                    String text = arr[i];
-                    w_item_arr_tmp = paint_text.measureText(text);
-
-                    //is the text need to be drawn?
-                    if (text != null && !text.equals("")) {
-                        float h_y_item_now = (h_item_textarr + w_space_text) * (i + 1) - w_space_text;
-                        if (orientation.equals(vertical)) {
-                            x_text_item_draw = (w - w_item_arr_tmp) / 2f;
-                            y_text_item_draw = y_bitmap_center_draw + h_bitmap_center_draw + w_space + h_y_item_now;
-                        } else if (orientation.equals(horizontal)) {
-                            x_text_item_draw = (w - (w_arr_center + w_bitmap_center_draw + w_space)) / 2f + w_bitmap_center_draw + w_space + (w_arr_center - w_item_arr_tmp) / 2f;
-                            y_text_item_draw = (h - h_text_arr) / 2f + h_y_item_now;
-                        } else {
-                            x_text_item_draw = (w - w_item_arr_tmp) / 2f;
-                            y_text_item_draw = (h - h_text_arr) / 2f + h_y_item_now;
-                        }
-                        //draw text
-                        paint_text.setStyle(Paint.Style.FILL);
-                        paint_text.setColor(textColor_tmp);
-                        canvas.drawText(text, x_text_item_draw, y_text_item_draw, paint_text);
-
-                        if (drawTextBorder) {
-                            paint_text.setStyle(Paint.Style.STROKE);
-                            paint_text.setStrokeWidth(1);
-                            paint_text.setColor(color_text_border);
-                            paint_text.setAntiAlias(true);
-                            canvas.drawText(text, x_text_item_draw, y_text_item_draw, paint_text);
-                        }
-                    }
-                }
-
-            }
 
             if (w_border > 0) {
                 int w_rect_border = w;
@@ -1522,9 +1437,6 @@ public class ZButton extends FrameLayout {
     @Override
     public void destroyDrawingCache() {
         super.destroyDrawingCache();
-        if (waveAnimator != null) {
-            waveAnimator = null;
-            waveAnimator.cancel();
-        }
+        stopAnimation();
     }
 }

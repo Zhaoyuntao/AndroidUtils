@@ -8,8 +8,8 @@ import android.graphics.Paint;
 
 public class TextMeasure {
 
-    public static float[] measure(String text,float textsize){
-        Paint p=new Paint();
+    public static float[] measure(String text, float textsize) {
+        Paint p = new Paint();
         p.setTextSize(textsize);
         float textWidth = p.measureText(text);
         Paint.FontMetrics fontMetrics = p.getFontMetrics();
@@ -19,6 +19,9 @@ public class TextMeasure {
         float bottom = fontMetrics.bottom;
         float w_text = textWidth;
         float h_text = Math.abs(descent - ascent);
-        return new float[]{w_text,h_text};
+        if (w_text < 0) {
+            w_text = 0;
+        }
+        return new float[]{w_text, h_text};
     }
 }

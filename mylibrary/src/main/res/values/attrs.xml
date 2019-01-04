@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <declare-styleable name="ZButton">
+    <declare-styleable name="zbutton">
         <!-- Text on center -->
         <attr name="text_center" format="string"></attr>
         <attr name="textcolor" format="color"></attr>
@@ -12,18 +12,25 @@
         <attr name="textsize" format="dimension"></attr>
         <!-- Text on left -->
         <attr name="text_left" format="string"></attr>
+        <attr name="textsize_left" format="dimension"></attr>
+        <attr name="textcolor_left" format="color"></attr>
+        <attr name="textcolor_left_choose" format="color"></attr>
+        <attr name="textcolor_left_click" format="color"></attr>
+        <attr name="textcolor_left_disable" format="color"></attr>
         <!-- Text on right -->
-
         <attr name="text_right" format="string"></attr>
+        <attr name="textsize_right" format="dimension"></attr>
+        <attr name="textcolor_right" format="color"></attr>
+        <attr name="textcolor_right_choose" format="color"></attr>
+        <attr name="textcolor_right_click" format="color"></attr>
+        <attr name="textcolor_right_disable" format="color"></attr>
         <!-- Small Text -->
         <attr name="text_center_small" format="string"></attr>
         <attr name="textsize_small" format="dimension"></attr>
         <attr name="textcolor_small" format="color"></attr>
         <attr name="textcolor_small_choose" format="color"></attr>
         <attr name="textcolor_small_click" format="color"></attr>
-
-        <!-- Text array -->
-        <attr name="textarr" format="string"></attr>
+        <attr name="textcolor_small_disable" format="color"></attr>
 
         <!-- Width between text of center and small text-->
         <attr name="w_space_text" format="dimension"></attr>
@@ -50,10 +57,6 @@
         <attr name="color_border" format="color"></attr>
         <attr name="color_border_choose" format="color"></attr>
         <attr name="color_border_click" format="color"></attr>
-
-        <!-- Scale of bitmap on center-->
-        <attr name="percent_w" format="float"></attr>
-        <attr name="percent_h" format="float"></attr>
 
         <!-- Bitmaps -->
         <attr name="img_center" format="reference"></attr>
@@ -95,6 +98,13 @@
         <attr name="radius_rightbottom" format="dimension">0</attr>
 
         <!-- Is backgroundcolor autochange and state of button will changed at the moment-->
-        <attr name="isautochange" format="boolean">0</attr>
+        <attr name="isautochange" format="boolean">false</attr>
+
+        <!--show wave-->
+        <attr name="wave" format="boolean">false</attr>
+        <attr name="wavecolor" format="color">#66ccff</attr>
+        <attr name="wavecolor_click" format="color">#66ccff</attr>
+        <attr name="wavecolor_choose" format="color">#66ccff</attr>
+        <attr name="wavecolor_disable" format="color">#66ccff</attr>
     </declare-styleable>
 </resources>
