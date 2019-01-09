@@ -234,7 +234,7 @@ public class ZButton extends FrameLayout {
 
             TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.zbutton);//
 
-            this.wave = typedArray.getBoolean(R.styleable.zbutton_wave, true);
+            this.wave = typedArray.getBoolean(R.styleable.zbutton_wave, false);
             this.waveColor = typedArray.getColor(R.styleable.zbutton_wavecolor, Color.WHITE);
             this.waveColor_choose = typedArray.getColor(R.styleable.zbutton_wavecolor_choose, waveColor);
             this.waveColor_click = typedArray.getColor(R.styleable.zbutton_wavecolor_click, waveColor);
@@ -302,7 +302,7 @@ public class ZButton extends FrameLayout {
             if (drawable_back_choose == null) {
                 drawable_back_choose = drawable_back;
             }
-            this.drawable_back_disable = B.drawableToBitmap(typedArray.getDrawable(R.styleable.zbutton_img_center_disable));
+            this.drawable_back_disable = B.drawableToBitmap(typedArray.getDrawable(R.styleable.zbutton_img_back_disable));
             if (drawable_back_disable == null) {
                 drawable_back_disable = drawable_back;
             }
@@ -789,8 +789,8 @@ public class ZButton extends FrameLayout {
 
     private void stopAnimation() {
         if (waveAnimator != null && waveAnimator.isRunning()) {
-            waveAnimator = null;
             waveAnimator.cancel();
+            waveAnimator = null;
         }
     }
 
@@ -1114,7 +1114,7 @@ public class ZButton extends FrameLayout {
                     percent_bitmap_center = 1f;
                 }
                 h_bitmap_center_draw = h * percent_bitmap_center * 0.5f;
-                w_bitmap_center_draw = h_bitmap_center_draw * (w_bitmap_center / (float) h_bitmap_center);
+                w_bitmap_center_draw = h_bitmap_center_draw * (((float)w_bitmap_center) /  h_bitmap_center);
             }
 
             //calculate img x and y of center
@@ -1204,8 +1204,6 @@ public class ZButton extends FrameLayout {
 
             if (drawable_center_draw != null) {
 
-                //draw bitmap
-                drawable_center_draw = B.getBitmap_polygon(drawable_center_draw, path_back, (int) x_bitmap_center_draw, (int) y_bitmap_center_draw);
                 //draw bitmap
                 Rect rect_src = new Rect();
                 rect_src.set(0, 0, w_bitmap_center, h_bitmap_center);

@@ -65,6 +65,7 @@
         <attr name="img_center_click" format="reference"></attr>
         <attr name="img_back" format="reference"></attr>
         <attr name="img_back_choose" format="reference"></attr>
+        <attr name="img_back_disable" format="reference"></attr>
         <attr name="img_back_click" format="reference"></attr>
         <attr name="img_left" format="reference"></attr>
         <attr name="img_right" format="reference"></attr>
