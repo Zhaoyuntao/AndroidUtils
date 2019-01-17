@@ -22,6 +22,9 @@ import com.zhaoyuntao.androidutils.tools.B;
 import com.zhaoyuntao.androidutils.tools.SS;
 import com.zhaoyuntao.androidutils.tools.TextMeasure;
 
+import java.util.HashMap;
+import java.util.Map;
+
 
 /**
  * Created by zhaoyuntao on 2017/11/13.
@@ -140,6 +143,9 @@ public class ZButton extends FrameLayout {
     //width and height of view
     private int w, h;
 
+    //互斥的button
+    private Map<ZButton, ZButton> mapFriend;
+
     public ZButton(Context context) {
         super(context);
         init(context, null);
@@ -186,13 +192,75 @@ public class ZButton extends FrameLayout {
         postInvalidate();
     }
 
+    private void addFriend2(ZButton zButton) {
+        if (mapFriend == null) {
+            mapFriend = new HashMap<>();
+        }
+        mapFriend.put(zButton, zButton);
+    }
+
+    public ZButton addFriend(ZButton zButton) {
+        if (zButton != this) {
+            if (mapFriend != null) {
+                for (ZButton zButton1 : mapFriend.keySet()) {
+                    zButton1.addFriend2(zButton);
+                    zButton.addFriend2(zButton1);
+                }
+            }
+            this.addFriend2(zButton);
+            zButton.addFriend2(this);
+        }
+        return this;
+    }
+
+    private void removeFriend2(ZButton zButton) {
+        if (mapFriend != null) {
+            mapFriend.remove(zButton);
+        }
+    }
+
+    /**
+     * 参数中的这个button将会被互斥组内所有的button所抛弃
+     *
+     * @param zButton
+     */
+    public void removeFriend(ZButton zButton) {
+        if (zButton != this) {
+            if (mapFriend != null) {
+                for (ZButton zButton1 : mapFriend.keySet()) {
+                    zButton1.removeFriend2(zButton);
+                    zButton.removeFriend2(zButton1);
+                }
+            }
+            removeFriend2(zButton);
+            if (zButton != null) {
+                zButton.removeFriend2(this);
+            }
+        }
+    }
+
+    public void clearFriend() {
+        if (mapFriend != null) {
+            mapFriend.clear();
+        }
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (isClickable()) {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     if (this.isAutoChange) {
-                        isChoosen = !isChoosen;
+                        if(isChoosen()){
+                            //当没有互斥按钮时才可以自由改变其未被选中的状态
+                            if(mapFriend==null||mapFriend.size()==0){
+                                setChoosen(false);
+                            }else{
+                                //当存在互斥按钮时, 该按钮无法通过被点击改变其被选中的状态
+                            }
+                        }else {
+                            setChoosen(true);
+                        }
                     }
                     isClick = true;
                     break;
@@ -208,16 +276,6 @@ public class ZButton extends FrameLayout {
             postInvalidate();
         }
         return super.onTouchEvent(event);
-    }
-
-    @Override
-    public void setClickable(boolean clickable) {
-        super.setClickable(clickable);
-        if (clickable) {
-            setChoosen(true);
-        } else {
-            setChoosen(false);
-        }
     }
 
     ZImageView zImageView;
@@ -439,9 +497,20 @@ public class ZButton extends FrameLayout {
         postInvalidate();
     }
 
-    public void setChoosen(boolean isChoosen) {
+    private void setSelfChoosen(boolean isChoosen) {
         this.isChoosen = isChoosen;
         postInvalidate();
+    }
+
+    public void setChoosen(boolean isChoosen) {
+        setSelfChoosen(isChoosen);
+        if (mapFriend != null && isChoosen) {
+            for (ZButton zButton : mapFriend.keySet()) {
+                if (zButton != null) {
+                    zButton.setSelfChoosen(false);
+                }
+            }
+        }
     }
 
     @Override
@@ -1114,7 +1183,7 @@ public class ZButton extends FrameLayout {
                     percent_bitmap_center = 1f;
                 }
                 h_bitmap_center_draw = h * percent_bitmap_center * 0.5f;
-                w_bitmap_center_draw = h_bitmap_center_draw * (((float)w_bitmap_center) /  h_bitmap_center);
+                w_bitmap_center_draw = h_bitmap_center_draw * (((float) w_bitmap_center) / h_bitmap_center);
             }
 
             //calculate img x and y of center
@@ -1436,5 +1505,6 @@ public class ZButton extends FrameLayout {
     public void destroyDrawingCache() {
         super.destroyDrawingCache();
         stopAnimation();
+        clearFriend();
     }
 }
