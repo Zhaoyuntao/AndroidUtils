@@ -1,12 +1,14 @@
 package com.zhaoyuntao.androidutils.tools;
 
 
+import java.util.Timer;
+
 /**
  * Created by zhaoyuntao on 2018/7/4.
  */
 
 public abstract class ZThread extends Thread {
-    private float frame = 1;
+    private float frame;
     private float frame_real;
     private boolean flag = true;
     private boolean isStart;
@@ -16,11 +18,16 @@ public abstract class ZThread extends Thread {
 
     public ZThread(float frame) {
         this.frame = frame;
+        setPriority(10);
     }
 
     @Override
     public synchronized void start() {
         if (isStart) {
+            return;
+        }
+        if (frame <= 0) {
+            S.e("frame must be bigger than 0");
             return;
         }
         isStart = true;
@@ -29,6 +36,7 @@ public abstract class ZThread extends Thread {
 
     @Override
     public void run() {
+
         while (flag) {
             if (pause) {
                 synchronized (sleeper) {
@@ -40,13 +48,15 @@ public abstract class ZThread extends Thread {
                     }
                 }
             }
-            long time_start = System.currentTimeMillis();
+            double interval = (1000d / frame);
+            //计算当前开始时间
+            long time_start = S.currentTimeMillis();
+            //计算本次循环的最快结束时间
+            long time_end = (long) (time_start + interval);
             todo();
-            long time_end = System.currentTimeMillis();
-            long during = time_end - time_start;
-            double during2 = (1000d / frame);
-            long rest = (long) (during2 - during);
-            if (rest > 0 && rest < during2) {
+            long time_now = S.currentTimeMillis();
+            long rest = time_end - time_now;
+            if (rest > 0) {
                 try {
                     Thread.sleep(rest);
                 } catch (InterruptedException e) {
@@ -54,9 +64,12 @@ public abstract class ZThread extends Thread {
                     return;
                 }
             }
-            time_end = System.currentTimeMillis();
-            during = time_end - time_start;
-            frame_real = (float) (((double) (int) ((double) 1000 / during * 10)) / 10);
+            //计算频率
+            long time_end2 = S.currentTimeMillis();
+            long during = time_end2 - time_start;
+            frame_real = (long) (10000d / during) / 10f;
+            S.s("ZThread","frame of zthread:" + frame_real);
+//            S.s("time_start:" + time_start + "=======time_end:" + time_end + "==============time_end2:" );//+ time_end2 + "==========================during:" + during + "=============rest:" + rest + "============" + frame_real);
         }
     }
 
@@ -88,7 +101,12 @@ public abstract class ZThread extends Thread {
             sleeper.notifyAll();
         }
     }
-    public boolean isPause(){
+
+    public boolean isPause() {
         return pause;
+    }
+
+    public void setFrame(float frame) {
+        this.frame = frame;
     }
 }

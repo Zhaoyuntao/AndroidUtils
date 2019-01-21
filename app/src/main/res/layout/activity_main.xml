@@ -8,6 +8,8 @@
     android:gravity="center"
     tools:context="com.androidutils.www.zandroidutils.MainActivity">
 
+
+
     <com.zhaoyuntao.androidutils.component.ZButton
         android:id="@+id/zbutton"
         android:layout_gravity="center"
@@ -28,7 +30,7 @@
         app:text_center_small="small"
         app:wave="false"
         app:wavecolor="#ff0000"
-        app:textsize="40sp"
+        app:textsize="10sp"
         app:textsize_small="20sp"
         app:textcolor="#ffffff"
         app:textcolor_disable="#666666"
@@ -37,7 +39,6 @@
         app:w_space_text="10dp"
         app:percent_bitmap_center="1"
         app:orientation="vertical"
-        app:gravity_img_center="left"
         />
     <com.zhaoyuntao.androidutils.component.ZButton
         android:id="@+id/zbutton0"
@@ -164,7 +165,7 @@
         app:text_right="right"
         app:wave="false"
         app:wavecolor="#0000ff"
-        app:textsize="40sp"
+        app:textsize="10sp"
         app:textsize_small="20sp"
         app:textcolor="#ffffff"
         app:percent_back="0.6"
@@ -175,5 +176,11 @@
         app:percent_bitmap_center="1"
         app:orientation="vertical"
         app:gravity_img_center="center_interspace"
+        />
+
+    <com.zhaoyuntao.androidutils.component.FingerControl
+        android:id="@+id/fingercontrol"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
         />
 </LinearLayout>
