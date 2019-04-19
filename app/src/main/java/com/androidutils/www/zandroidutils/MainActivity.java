@@ -43,11 +43,26 @@ public class MainActivity extends AppCompatActivity {
         final ZButton zButton2 = findViewById(R.id.zbutton2);
         final ZButton zButton3 = findViewById(R.id.zbutton3);
         zButton.addFriend(zButton0).addFriend(zButton1).addFriend(zButton2);//.addFriend(zButton3);
-//        zButton3.setChoosen(true);
-        zButton3.setOnClickListener(new View.OnClickListener() {
+        zButton.setText_center("打开");
+        zButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                T.t(MainActivity.this, "3");
+                floatWindowHelper.show(true);
+            }
+        });
+        zButton0.setText_center("最小化");
+        zButton0.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                    floatWindowHelper.miniSize();
+            }
+        });
+        zButton1.setText_center("关闭");
+        zButton1.setOnClickListener(new View.OnClickListener() {
+            boolean issmall=true;
+            @Override
+            public void onClick(View v) {
+                    floatWindowHelper.cancel();
             }
         });
 
@@ -84,19 +99,21 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        floatWindowHelper.show();
+        floatWindowHelper.show(false);
     }
+
+
 
     @Override
     public void finish() {
-        floatWindowHelper.cancel();
+
         zThread.close();
         super.finish();
     }
 
     @Override
     protected void onStop() {
-
+        floatWindowHelper.cancel();
         super.onStop();
     }
 }

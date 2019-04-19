@@ -3,8 +3,11 @@ package com.zhaoyuntao.androidutils.component;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.PixelFormat;
+import android.net.Uri;
 import android.os.Build;
+import android.provider.Settings;
 import android.support.annotation.RequiresApi;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -17,6 +20,7 @@ import android.widget.FrameLayout;
 import com.zhaoyuntao.androidutils.R;
 import com.zhaoyuntao.androidutils.tools.B;
 import com.zhaoyuntao.androidutils.tools.S;
+import com.zhaoyuntao.androidutils.tools.T;
 
 /**
  * Created by feijie.xfj on 17/11/19.
@@ -96,12 +100,25 @@ public class FloatWindowHelper {
                 public void onClick(View v) {
                     if (!isSmall) {
                         miniSize();
+                        windowView.findViewById(R.id.close).setBackgroundResource(R.drawable.logviewresume);
                     } else {
                         normalSize();
+                        windowView.findViewById(R.id.close).setBackgroundResource(R.drawable.logviewclose);
                     }
                 }
             });
         }
+    }
+
+    private OnSizeChangedListener onSizeChangedListener;
+
+    public void setOnSizeChangedListener(OnSizeChangedListener onSizeChangedListener) {
+        this.onSizeChangedListener = onSizeChangedListener;
+    }
+
+    public interface OnSizeChangedListener{
+        void whenMiniSize();
+        void whenNormalSize();
     }
 
     private WindowManager.LayoutParams initWindowParams() {
@@ -160,27 +177,67 @@ public class FloatWindowHelper {
         return params;
     }
 
-    public void show() {
-        normalSize();
+    public boolean judgePermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            return Settings.canDrawOverlays(context);
+        } else {
+            return true;
+        }
+    }
+
+    public void show(boolean requestPermission) {
+        if (requestPermission) {
+            //如果没有权限
+            if (!judgePermission()) {
+                new ZDialog(context).setTitle("开启权限").setMessage("请打开日志权限").setTouchCancelable(true).setButton1OnClickListener("取消", new ZDialog.OnClickListener() {
+                    @Override
+                    public void onClick(ZDialog dialog) {
+                        dialog.cancel();
+                    }
+                }).setButton3OnClickListener("前往设置", new ZDialog.OnClickListener() {
+                    @Override
+                    public void onClick(ZDialog dialog) {
+                        dialog.cancel();
+                        context.startActivity(new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + context.getPackageName())));
+                    }
+                }).show();
+            }
+
+            if (judgePermission()) {
+                normalSize();
+            }
+        } else {
+            if (judgePermission()) {
+                normalSize();
+            }
+        }
     }
 
     /**
      * 最小化
      */
     public void miniSize() {
+        if (!judgePermission()) {
+            return;
+        }
         isSmall = true;
         initWindowParams();
         if (windowView != null && windowView.getParent() != null) {
             container.setVisibility(View.GONE);
             windowManager.updateViewLayout(windowView, params);
+            if(onSizeChangedListener!=null){
+                onSizeChangedListener.whenMiniSize();
+            }
         }
-
     }
 
     /**
      * 最大化
      */
     public void normalSize() {
+        if (!judgePermission()) {
+            return;
+        }
         isSmall = false;
         initWindowParams();
         container.setVisibility(View.VISIBLE);
@@ -188,6 +245,9 @@ public class FloatWindowHelper {
             windowManager.addView(windowView, params);
         } else {
             windowManager.updateViewLayout(windowView, params);
+        }
+        if(onSizeChangedListener!=null){
+            onSizeChangedListener.whenNormalSize();
         }
     }
 

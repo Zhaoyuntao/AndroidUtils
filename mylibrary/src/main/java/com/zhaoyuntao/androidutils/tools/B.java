@@ -17,6 +17,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Environment;
+import android.support.v4.content.ContextCompat;
 import android.text.format.DateFormat;
 import android.view.Display;
 import android.view.WindowManager;
@@ -255,7 +256,9 @@ public class B {
         String rex = "^#([0-9a-fA-F]{6})$";
         return Pattern.compile(rex).matcher(hexColorString).matches();
     }
-
+    public static int getColor(int colorId,Context context){
+        return  ContextCompat.getColor(context,colorId);
+    }
     /**
      * 随机获取一个颜色值
      *

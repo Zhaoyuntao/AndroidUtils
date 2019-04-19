@@ -25,7 +25,6 @@ import android.widget.ScrollView;
 import android.widget.Toast;
 
 import com.zhaoyuntao.androidutils.tools.B;
-import com.zhaoyuntao.androidutils.tools.S;
 import com.zhaoyuntao.androidutils.tools.T;
 import com.zhaoyuntao.androidutils.tools.TimeTrigger;
 
@@ -47,7 +46,7 @@ public class LoggerView extends ScrollView {
 
     private static final int MIN_FLING_DISTANCE = 100;
 
-    private static final int MAX_LOG_LINE = 1000;
+    private static final int MAX_LOG_LINE = 200;
 
     private long mLastActionTime;
 
@@ -170,7 +169,6 @@ public class LoggerView extends ScrollView {
     boolean autoScroll = true;
 
     private void setAutoScroll(boolean autoScroll) {
-        S.ss("set auto:" + autoScroll);
         this.autoScroll = autoScroll;
         mCanDirectAppend = autoScroll;
     }

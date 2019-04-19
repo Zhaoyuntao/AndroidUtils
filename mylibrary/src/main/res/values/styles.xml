@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="zbutton_dialog">
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:layout_marginBottom">15dp</item>
+        <item name="color_back">#f4f4f4</item>
+        <item name="color_back_click">@color/black_30_transparent</item>
+        <item name="color_back_choose">@color/black_30_transparent</item>
+        <item name="textsize">12sp</item>
+        <item name="textcolor">@color/black_30_transparent</item>
+        <item name="textcolor_disable">#666666</item>
+        <item name="textcolor_click">#f4f4f4</item>
+        <item name="textcolor_choose">#f4f4f4</item>
+        <item name="w_border">1px</item>
+        <item name="color_border">@color/black_20_transparent</item>
+        <item name="percent_bitmap_center">1</item>
+    </style>
+
+</resources>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:background="@color/white"
+    android:gravity="center"
+    android:orientation="vertical">
+
+
+    <LinearLayout
+        android:id="@+id/title"
+        android:paddingRight="60dp"
+        android:paddingLeft="60dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <com.zhaoyuntao.androidutils.component.ZButton
+            android:id="@+id/bt_1"
+            style="@style/zbutton_dialog"
+            android:layout_width="120dp"
+            android:layout_height="32dp"
+            android:layout_marginLeft="30dp"
+            android:visibility="gone"
+            app:radius_leftbottom="16dp"
+            app:radius_lefttop="16dp"
+            app:text_center="取消" />
+
+        <com.zhaoyuntao.androidutils.component.ZButton
+            android:id="@+id/bt_2"
+            style="@style/zbutton_dialog"
+            android:layout_width="120dp"
+            android:layout_height="32dp"
+            android:visibility="gone"
+            app:radius="0dp"
+            app:text_center="终止" />
+
+
+        <com.zhaoyuntao.androidutils.component.ZButton
+            android:id="@+id/bt_3"
+            style="@style/zbutton_dialog"
+            android:layout_width="120dp"
+            android:layout_height="32dp"
+            android:layout_marginRight="30dp"
+            android:visibility="gone"
+            app:radius_rightbottom="16dp"
+            app:radius_righttop="16dp"
+            app:text_center="确定" />
+    </LinearLayout>
+
+</LinearLayout>
