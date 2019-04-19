@@ -22,7 +22,6 @@ public class ScaleBar extends View {
     private float radius_circle;
     private int w_view, h_view;
     private float w_line = 4;
-    private Context context;
 
     public void setCallBack(CallBack callBack) {
         this.callBack = callBack;
@@ -47,7 +46,6 @@ public class ScaleBar extends View {
     }
 
     private void init(Context context) {
-        this.context = context;
     }
 
     @Override
@@ -59,8 +57,8 @@ public class ScaleBar extends View {
             return;
         }
         float radius_dp = 10;
-        radius_circle = B.dip2px(context, radius_dp);
-        float w_progress = B.dip2px(context, 2);
+        radius_circle = B.dip2px(getContext(), radius_dp);
+        float w_progress = B.dip2px(getContext(), 2);
         if (position == -1) {
             position = radius_circle;
         }

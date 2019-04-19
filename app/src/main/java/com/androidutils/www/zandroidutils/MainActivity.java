@@ -28,8 +28,6 @@ public class MainActivity extends AppCompatActivity {
         floatWindowHelper.setDownListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                S.ss("down===?");
-                T.t(MainActivity.this,"auto");
                 contentLoggerView.scrollBottom();
             }
         });

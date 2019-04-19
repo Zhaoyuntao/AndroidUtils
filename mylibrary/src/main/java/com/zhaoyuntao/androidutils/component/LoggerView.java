@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.Editable;
@@ -77,7 +78,7 @@ public class LoggerView extends ScrollView {
     private void initView(Context context) {
         setOverScrollMode(OVER_SCROLL_NEVER);
         logger = new Logger(context);
-        logger.setLayoutParams(new ScrollView.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+        logger.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
         logger.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -100,6 +101,14 @@ public class LoggerView extends ScrollView {
             }
         });
         addView(logger);
+    }
+
+    @Override
+    protected void onScrollChanged(int l, int t, int oldl, int oldt) {
+        super.onScrollChanged(l, t, oldl, oldt);
+        if (!autoScroll && logger.getMeasuredHeight() == (getScrollY() + getHeight())) {
+            setAutoScroll(true);
+        }
     }
 
     public void setTextSize(float size) {
@@ -160,8 +169,8 @@ public class LoggerView extends ScrollView {
 
     boolean autoScroll = true;
 
-    public void setAutoScroll(boolean autoScroll) {
-        S.ss("set auto:"+autoScroll);
+    private void setAutoScroll(boolean autoScroll) {
+        S.ss("set auto:" + autoScroll);
         this.autoScroll = autoScroll;
         mCanDirectAppend = autoScroll;
     }
@@ -207,11 +216,11 @@ public class LoggerView extends ScrollView {
 
                                     int px = B.dip2px(getContext(), 30);
 
-                                    mClipWindow.showAtLocation(LoggerView.this, Gravity.NO_GRAVITY, (int) event.getRawX() - px, (int) event.getRawY() - px);//- parent.getScrollY());
+                                    mClipWindow.showAtLocation(logger, Gravity.NO_GRAVITY, (int) event.getX() - px, (int) event.getY() - px - parent.getScrollY());
                                 }
                             }
                         }
-                        //todo
+
                         return true;
                     }
 

@@ -42,10 +42,10 @@ public class S {
     protected final String tag3 = "abcdefg";
 
 
-    private static final int I = 0;
-    private static final int E = 1;
-    private static final int D = 2;
-    private static final int V = 3;
+    public static final int I = 0;
+    public static final int E = 1;
+    public static final int D = 2;
+    public static final int V = 3;
 
     /**
      * log记录相关----------------------------------------------------------------------------
