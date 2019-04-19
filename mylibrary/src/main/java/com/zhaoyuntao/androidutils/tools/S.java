@@ -51,9 +51,9 @@ public class S {
      * log记录相关----------------------------------------------------------------------------
      */
     public static class LogItem {
-        long time;
-        String log;
-        int type;
+        public long time;
+        public String log;
+        public int type;
 
         public LogItem(String log) {
             this(log, I);
