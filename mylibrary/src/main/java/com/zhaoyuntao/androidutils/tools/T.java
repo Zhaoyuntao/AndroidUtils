@@ -13,11 +13,11 @@ public class T {
     private static boolean access = true;
 
     public static void s(Context context, String content) {
-        SS.s(content);
+        S.s(content);
         t(context, content);
     }
     public static void e(Context context, String content) {
-        SS.e(content);
+        S.e(content);
         t(context, content);
     }
 

@@ -1,6 +1,8 @@
 package com.zhaoyuntao.androidutils.tools;
 
 
+import android.util.Log;
+
 import java.util.Timer;
 
 /**
@@ -27,7 +29,7 @@ public abstract class ZThread extends Thread {
             return;
         }
         if (frame <= 0) {
-            S.e("frame must be bigger than 0");
+            Log.e("ZThread", "frame must be bigger than 0");
             return;
         }
         isStart = true;
@@ -68,7 +70,7 @@ public abstract class ZThread extends Thread {
             long time_end2 = S.currentTimeMillis();
             long during = time_end2 - time_start;
             frame_real = (long) (10000d / during) / 10f;
-            S.s("ZThread","frame of zthread:" + frame_real);
+            Log.i("ZThread", "frame of zthread:" + frame_real);
 //            S.s("time_start:" + time_start + "=======time_end:" + time_end + "==============time_end2:" );//+ time_end2 + "==========================during:" + during + "=============rest:" + rest + "============" + frame_real);
         }
     }
@@ -86,9 +88,14 @@ public abstract class ZThread extends Thread {
     protected abstract void todo();
 
     public void close() {
+        Log.i("ZThread","zthread close");
         flag = false;
         pause = false;
         interrupt();
+    }
+
+    public boolean isClose() {
+        return !flag || isInterrupted();
     }
 
     public void pauseThread() {

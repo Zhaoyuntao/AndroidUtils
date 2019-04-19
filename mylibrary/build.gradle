@@ -3,6 +3,7 @@ android {
     compileSdkVersion 26
 
     lintOptions {
+        checkReleaseBuilds false
         abortOnError false
     }
 
@@ -28,9 +29,9 @@ android {
             }
         }
         tasks.withType(Javadoc) { //兼容中文
-            options.addStringOption('Xdoclint:none','-quiet')
-            options.addStringOption('encoding','UTF-8')
-            options{
+            options.addStringOption('Xdoclint:none', '-quiet')
+            options.addStringOption('encoding', 'UTF-8')
+            options {
                 encoding "UTF-8"
                 charSet 'UTF-8'
                 links "http://docs.oracle.com/javase/7/docs/api"
@@ -42,8 +43,6 @@ android {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support:appcompat-v7:26.1.0'
-    //okhttp
-    compile 'com.squareup.okhttp3:okhttp:3.10.0'
 }
 ext {
     bintrayRepo = 'utils'
@@ -54,7 +53,7 @@ ext {
     libraryDescription = 'some useful utils for android'
     siteUrl = 'https://github.com/Zhaoyuntao/AndroidUtils'
     gitUrl = 'https://github.com/Zhaoyuntao/AndroidUtils.git'
-    libraryVersion = '1.6.0'
+    libraryVersion = '1.6.4'
     developerId = 'zhaoyuntao'
     developerName = 'zhaoyuntao'
     developerEmail = 'xixitongxue@foxmail.com'

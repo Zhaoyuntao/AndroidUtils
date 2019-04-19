@@ -56,7 +56,7 @@ public class SP {
         if (getSharedPreferences(context).contains(key)) {
             return getSharedPreferences(context).getInt(key, defaultvalue);
         } else {
-            SS.e("not contains:" + key );
+            S.e("not contains:" + key );
         }
         return defaultvalue;
     }

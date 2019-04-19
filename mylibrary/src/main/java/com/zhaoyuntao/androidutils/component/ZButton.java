@@ -18,9 +18,8 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.zhaoyuntao.androidutils.R;
-import com.zhaoyuntao.androidutils.tools.B;
-import com.zhaoyuntao.androidutils.tools.SS;
-import com.zhaoyuntao.androidutils.tools.TextMeasure;
+import com.zhaoyuntao.androidutils.tools.*;
+import com.zhaoyuntao.androidutils.tools.S;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,9 +36,9 @@ public class ZButton extends FrameLayout {
      * by your code
      * true: click then be chosen,click again can be unchosen,
      */
-    private boolean isAutoChange = true;
-    private boolean isChoosen = false;
-    private boolean isClick = false;
+    private boolean isAutoChange;
+    private boolean isChoosen;
+    private boolean isClick;
 
     private float percent_bitmap_center = 0.5f;
     private float percent_bitmap_left = 0.5f;
@@ -193,10 +192,13 @@ public class ZButton extends FrameLayout {
     }
 
     private void addFriend2(ZButton zButton) {
-        if (mapFriend == null) {
-            mapFriend = new HashMap<>();
+        if (zButton != null) {
+            if (mapFriend == null) {
+                mapFriend = new HashMap<>();
+            }
+            mapFriend.put(zButton, zButton);
+            setAutoChange(true);
         }
-        mapFriend.put(zButton, zButton);
     }
 
     public ZButton addFriend(ZButton zButton) {
@@ -251,14 +253,14 @@ public class ZButton extends FrameLayout {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     if (this.isAutoChange) {
-                        if(isChoosen()){
+                        if (isChoosen()) {
                             //当没有互斥按钮时才可以自由改变其未被选中的状态
-                            if(mapFriend==null||mapFriend.size()==0){
+                            if (mapFriend == null || mapFriend.size() == 0) {
                                 setChoosen(false);
-                            }else{
+                            } else {
                                 //当存在互斥按钮时, 该按钮无法通过被点击改变其被选中的状态
                             }
-                        }else {
+                        } else {
                             setChoosen(true);
                         }
                     }
@@ -287,7 +289,7 @@ public class ZButton extends FrameLayout {
         addView(zImageView);
         if (attrs != null) {
 
-            int color_default = Color.parseColor("#888888");
+            int color_default = Color.rgb(88, 88, 88);
             int textSize_default = B.sp2px(context, 20);
 
             TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.zbutton);//
@@ -298,10 +300,10 @@ public class ZButton extends FrameLayout {
             this.waveColor_click = typedArray.getColor(R.styleable.zbutton_wavecolor_click, waveColor);
             this.waveColor_disable = typedArray.getColor(R.styleable.zbutton_wavecolor_disable, waveColor);
 
-            this.isAutoChange = typedArray.getBoolean(R.styleable.zbutton_isautochange, true);
+            this.isAutoChange = typedArray.getBoolean(R.styleable.zbutton_isautochange, false);
 
             this.text_center = typedArray.getString(R.styleable.zbutton_text_center);//
-            this.textSize = typedArray.getDimension(R.styleable.zbutton_textsize, textSize_default);
+            this.textSize = typedArray.getDimension(R.styleable.zbutton_textsize, textSize_default);//
             this.textColor = typedArray.getColor(R.styleable.zbutton_textcolor, textColor);//
             this.textColor_choose = typedArray.getColor(R.styleable.zbutton_textcolor_choose, textColor);//
             this.textColor_disable = typedArray.getColor(R.styleable.zbutton_textcolor_disable, textColor);//
@@ -1150,7 +1152,7 @@ public class ZButton extends FrameLayout {
             float h_item_textarr = 0;
 
             //calculate size of text
-            if (SS.isNotEmpty(text_center)) {
+            if (com.zhaoyuntao.androidutils.tools.S.isNotEmpty(text_center)) {
                 float[] size_text_center = TextMeasure.measure(text_center, textSize);
                 w_text_center = size_text_center[0];
                 h_text_center = size_text_center[1];
@@ -1354,7 +1356,7 @@ public class ZButton extends FrameLayout {
 
 
             //is the text of left need to be drawn?
-            if (SS.isNotEmpty(text_center)) {
+            if (S.isNotEmpty(text_center)) {
                 Paint paint_text = new Paint();
                 paint_text.setAntiAlias(true);
                 paint_text.setColor(textColor_tmp);
@@ -1371,7 +1373,7 @@ public class ZButton extends FrameLayout {
             }
 
             //is the small text of center need to be drawn?
-            if (SS.isNotEmpty(text_center_small)) {
+            if (S.isNotEmpty(text_center_small)) {
 
                 if (orientation.equals(vertical)) {
 
@@ -1396,7 +1398,7 @@ public class ZButton extends FrameLayout {
                 }
             }
             //is the text of left need to be drawn?
-            if (SS.isNotEmpty(text_left)) {
+            if (S.isNotEmpty(text_left)) {
                 x_text_left_draw = 0 + h_text_left / 2f + w_bitmap_left_hold;
                 y_text_left_draw = (h - h_text_left) / 2f + h_text_left;
                 y_text_left_draw -= h_text_left / 8f;
@@ -1416,7 +1418,7 @@ public class ZButton extends FrameLayout {
                 }
             }
             //is the text of right need to be drawn?
-            if (SS.isNotEmpty(text_right)) {
+            if (S.isNotEmpty(text_right)) {
                 x_text_right_draw = w - w_text_right - +h_text_right / 2f - w_bitmap_right_hold;
                 y_text_right_draw = (h - h_text_right) / 2f + h_text_right;
                 y_text_right_draw -= h_text_right / 8f;

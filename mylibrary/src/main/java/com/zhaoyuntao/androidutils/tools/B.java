@@ -32,6 +32,8 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Random;
+import java.util.regex.Pattern;
 
 /**
  */
@@ -70,8 +72,7 @@ public class B {
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
         canvas_des.drawBitmap(bitmap_src, rect, rect, paint);
 
-        Bitmap bitmap_des_final = Bitmap.createBitmap(bitmap_des, (w_bitmap - doubleRadius) / 2,
-                (h_bitmap - doubleRadius) / 2, doubleRadius, doubleRadius);
+        Bitmap bitmap_des_final = Bitmap.createBitmap(bitmap_des, (w_bitmap - doubleRadius) / 2, (h_bitmap - doubleRadius) / 2, doubleRadius, doubleRadius);
         bitmap_des.recycle();
         return bitmap_des_final;
     }
@@ -106,8 +107,7 @@ public class B {
         if (bitmap_src == null) {
             return null;
         }
-        Bitmap bitmap_des = Bitmap.createBitmap(rect_des.width(), rect_des.height(), Bitmap
-                .Config.ARGB_8888);
+        Bitmap bitmap_des = Bitmap.createBitmap(rect_des.width(), rect_des.height(), Bitmap.Config.ARGB_8888);
         Canvas canvas_des = new Canvas(bitmap_des);
         Paint p = new Paint();
         p.setAntiAlias(true);
@@ -116,9 +116,29 @@ public class B {
         return bitmap_des;
     }
 
+    public static String toHexColorString(int color) {
+        StringBuffer sb = new StringBuffer();
+        String R = Integer.toHexString(Color.red(color));
+        String G = Integer.toHexString(Color.green(color));
+        String B = Integer.toHexString(Color.blue(color));
+        R = R.length() == 1 ? "0" + R : R;
+        G = G.length() == 1 ? "0" + G : G;
+        B = B.length() == 1 ? "0" + B : B;
+        sb.append("#");
+        sb.append(R);
+        sb.append(G);
+        sb.append(B);
+        return sb.toString();
+    }
+
     public static int HORIZONTAL = 0;
     public static int VERTICAL = 1;
 
+    /**
+     * @param bitmap
+     * @param i
+     * @return
+     */
     public static Bitmap reverse(Bitmap bitmap, int i) {
         Matrix m = new Matrix();
         if (i == HORIZONTAL) {
@@ -140,8 +160,7 @@ public class B {
         if (bitmap_src == null) {
             return null;
         }
-        Bitmap bitmap_des = Bitmap.createBitmap(bitmap_src.getWidth(), bitmap_src.getHeight(),
-                Bitmap.Config.ARGB_8888);
+        Bitmap bitmap_des = Bitmap.createBitmap(bitmap_src.getWidth(), bitmap_src.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas_des = new Canvas(bitmap_des);
         Paint p = new Paint();
         p.setAntiAlias(true);
@@ -162,8 +181,7 @@ public class B {
         if (bitmap_src == null) {
             return null;
         }
-        Bitmap bitmap_des = Bitmap.createBitmap(bitmap_src.getWidth(), bitmap_src.getHeight(),
-                Bitmap.Config.ARGB_8888);
+        Bitmap bitmap_des = Bitmap.createBitmap(bitmap_src.getWidth(), bitmap_src.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas_des = new Canvas(bitmap_des);
         Paint p = new Paint();
         p.setAntiAlias(true);
@@ -225,14 +243,26 @@ public class B {
         if (drawable == null) {
             return null;
         }
-        Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable
-                .getIntrinsicHeight(), drawable.getOpacity() != PixelFormat.OPAQUE ? Bitmap
-                .Config.ARGB_8888 : Bitmap.Config.RGB_565);
+        Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), drawable.getOpacity() != PixelFormat.OPAQUE ? Bitmap.Config.ARGB_8888 : Bitmap.Config.RGB_565);
         Canvas canvas = new Canvas(bitmap);
         //canvas.setBitmap(bitmap);
         drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
         drawable.draw(canvas);
         return bitmap;
+    }
+
+    public static boolean isLegalHexColorString(String hexColorString) {
+        String rex = "^#([0-9a-fA-F]{6})$";
+        return Pattern.compile(rex).matcher(hexColorString).matches();
+    }
+
+    /**
+     * 随机获取一个颜色值
+     *
+     * @return
+     */
+    public static int getRandomColor() {
+        return Color.rgb(new Random().nextInt(256), new Random().nextInt(256), new Random().nextInt(256));
     }
 
     public static Drawable bitmapToDrawable(Resources res, Bitmap bitmap) {
@@ -254,8 +284,7 @@ public class B {
     public static Bitmap getBitmapByPercent(Bitmap bitmap, float percent_w, float percent_h) {
         Matrix matrix = new Matrix();
         matrix.postScale(percent_w, percent_h); //长和宽放大缩小的比例
-        Bitmap resizeBmp = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight
-                (), matrix, true);
+        Bitmap resizeBmp = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
         return resizeBmp;
     }
 
@@ -276,16 +305,14 @@ public class B {
         if (bitmaps.containsKey(String.valueOf(drawableId))) {
             return bitmaps.get(String.valueOf(drawableId));
         } else {
-            Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), drawableId,
-                    option);
+            Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), drawableId, option);
             bitmaps.put(String.valueOf(drawableId), bitmap);
             return bitmap;
         }
     }
 
     public static Drawable getDrawableById_byPercent(Context context, int drawableId, int percent) {
-        return bitmapToDrawable(context.getResources(), getBitmapById_Percent(context, drawableId,
-                percent));
+        return bitmapToDrawable(context.getResources(), getBitmapById_Percent(context, drawableId, percent));
     }
 
     public static Drawable getDrawableById(Context context, int drawableId) {
@@ -298,13 +325,11 @@ public class B {
         }
         Matrix matrix = new Matrix();
         matrix.setRotate(angle);
-        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix,
-                false);
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, false);
     }
 
     public static int getIdByName(Context context, String name) {
-        int resID = context.getResources().getIdentifier(name, "drawable", context.getPackageName
-                ());
+        int resID = context.getResources().getIdentifier(name, "drawable", context.getPackageName());
         return resID;
     }
 
@@ -332,8 +357,7 @@ public class B {
      */
     public static String bitmapToFile(Bitmap bitmap, Bitmap.CompressFormat compressFormat) {
         String sdPath = Environment.getExternalStorageDirectory().getPath();
-        String name = new DateFormat().format("yyyyMMddhhmmss", Calendar.getInstance(Locale
-                .CHINA)) + (i++ + ".jpg");
+        String name = new DateFormat().format("yyyyMMddhhmmss", Calendar.getInstance(Locale.CHINA)) + (i++ + ".jpg");
         String picPath = sdPath + "/" + name;
         File file = new File(picPath);
         OutputStream outputStream = null;
@@ -353,7 +377,7 @@ public class B {
                 bitmap.compress(Bitmap.CompressFormat.WEBP, 100, outputStream);
                 break;
             default:
-                SS.e("B:con not compress this bitmap");
+                S.e("B:con not compress this bitmap");
                 break;
         }
         try {
@@ -366,8 +390,7 @@ public class B {
     }
 
     public static int[] getScreenWH(Context context) {
-        WindowManager windowmanager = (WindowManager) context.getSystemService(Context
-                .WINDOW_SERVICE);
+        WindowManager windowmanager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         Display d = windowmanager.getDefaultDisplay();
         Point p = new Point();
         d.getSize(p);

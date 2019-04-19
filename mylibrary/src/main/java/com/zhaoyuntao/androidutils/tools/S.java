@@ -1,131 +1,333 @@
 package com.zhaoyuntao.androidutils.tools;
 
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 
 
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
  */
-public class SS {
-
+public class S {
     /**
+     * ip正则表达式
      */
     private final static String ip_regular = "((?:(?:25[0-5]|2[0-4]\\d|((1\\d{2})|([1-9]?\\d)))" + "\\" + ".){3}(?:25[0-5]|2[0-4]\\d|((1\\d{2})|([1-9]?\\d))))";
     /**
+     * 端口号正则表达式
      */
     private final static String port_regular = "^([1-9][0-9]{0," + "3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]{1}|6553[0-5])$";
     /**
+     * url网址正则表达式
      */
     private final static String reg_url = "(http|ftp|https):\\/\\/[\\w\\-_]+(\\.[\\w\\-_]+)+([\\w\\-\\.,@?^=%&amp;:/~\\+#]*[\\w\\-\\@?^=%&amp;/~\\+#])?";
-    protected static final String tag = "abcd";
-    protected static final String tag2 = "sss";
-    protected static final String tag3 = "sssss";
 
-    protected static boolean flag = true;
 
+    /**
+     * 日志tag
+     */
+    protected final String tag = "abcd";
+    protected final String tag1 = "abcde";
+    protected final String tag2 = "abcdef";
+    protected final String tag3 = "abcdefg";
+
+
+    private static final int I = 0;
+    private static final int E = 1;
+    private static final int D = 2;
+    private static final int V = 3;
+
+    /**
+     * log记录相关----------------------------------------------------------------------------
+     */
+    public static class LogItem {
+        long time;
+        String log;
+        int type;
+
+        public LogItem(String log) {
+            this(log, I);
+        }
+
+        public LogItem(String log, int type) {
+            this.log = log;
+            this.time = S.currentTimeMillis();
+            this.type = type;
+        }
+
+        @Override
+        public String toString() {
+            return log;
+        }
+    }
+
+    private static S s;
+    /**
+     * 日志缓存
+     */
+    private List<LogItem> list = new ArrayList<>();
+    /**
+     * 最大缓存数
+     */
+    private int maxSize = 2000;
+
+    public static CallBack callBack;
+
+    private S() {
+
+    }
+
+    public interface CallBack {
+        void whenLog(LogItem logItem);
+    }
+
+    public Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+
+            if (msg.obj instanceof LogItem) {
+                LogItem logItem = (LogItem) msg.obj;
+
+                if (callBack != null) {
+                    callBack.whenLog(logItem);
+                }
+            }
+        }
+    };
+
+    private static S getS() {
+        synchronized (S.class) {
+            if (s == null) {
+                synchronized (S.class) {
+                    s = new S();
+                }
+            }
+        }
+        return s;
+    }
+
+    /**
+     * 日志开关
+     */
+    private boolean flag = true;
+    /**
+     * 日志缓存开关
+     */
+    private boolean cache = true;
+
+    /**
+     * 设置日志开关
+     *
+     * @param flag
+     */
+    public static void setFlag(boolean flag) {
+        getS().flag = flag;
+    }
+
+    /**
+     * 设置日志缓存开关
+     *
+     * @param cache
+     */
+    public static void setCache(boolean cache) {
+        getS().cache = cache;
+    }
+
+    /**
+     * 设置日志最大缓存数
+     *
+     * @param maxSize
+     */
+    public static void setMaxSize(int maxSize) {
+        getS().maxSize = maxSize;
+    }
+
+    /**
+     * 清空日志缓存
+     */
+    public static void clearLog() {
+        synchronized (Lock.class) {
+            getS().list.clear();
+        }
+    }
+
+    private void log(String tag, Object o, int type) {
+        if (o == null) {
+            o = "null";
+        } else if (o instanceof Exception) {
+            ((Exception) (o)).printStackTrace();
+        }
+
+        S s = getS();
+        long now = currentTimeMillis();
+
+        String tagAddTime = tag + "[" + new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date(now)) + "]";
+        if (s.flag) {
+            switch (type) {
+                case I:
+                    Log.i(tagAddTime, o.toString());
+                    break;
+                case E:
+                    Log.e(tagAddTime, o.toString());
+                    break;
+                case V:
+                    Log.v(tagAddTime, o.toString());
+                    break;
+                case D:
+                    Log.d(tagAddTime, o.toString());
+                    break;
+            }
+        }
+
+        LogItem logItem = new LogItem(String.valueOf(o),type);
+        addLogSelf(logItem);
+    }
+
+    private void addLogSelf(LogItem logItem) {
+        if (logItem != null) {
+            synchronized (Lock.class) {
+                if (cache) {
+                    if (maxSize > 0 && list.size() > maxSize) {
+                        list.remove(0);
+                    }
+                    s.list.add(logItem);
+                }
+            }
+            if (isNotEmpty(tag) && tag.equals(s.tag)) {
+                Message message = new Message();
+                message.obj = logItem;
+                handler.sendMessage(message);
+            }
+        }
+    }
+
+    public static void addLog(LogItem logItem) {
+        getS().addLogSelf(logItem);
+    }
+
+    /**
+     * 获取log缓存
+     *
+     * @return
+     */
+    public static List<LogItem> getLogCache() {
+        List<LogItem> logItems = new ArrayList<>();
+        synchronized (Lock.class) {
+            for (int i = 0; i < logItems.size(); i++) {
+                logItems.add(s.list.get(i));
+            }
+        }
+        return logItems;
+    }
+
+    class Lock {
+    }
+    //私有log函数--------------------------------------
+
+    private void s_self(Object o) {
+        log(tag, o, I);
+    }
+
+    private void s_self(String tag, Object o) {
+        log(tag, o, I);
+    }
+
+    private void ss_self(Object o) {
+        log(tag1, o, I);
+    }
+
+    private void sss_self(Object o) {
+        log(tag2, o, I);
+    }
+
+    private void ssss_self(Object o) {
+        log(tag3, o, I);
+    }
+
+    public void e_self(Object o) {
+        log(tag, o, E);
+    }
+
+    public void e_self(String tag, Object o) {
+        log(tag, o, E);
+    }
+
+    public void ee_self(Object o) {
+        log(tag1, o, E);
+    }
+
+    public void eee_self(Object o) {
+        log(tag2, o, E);
+    }
+
+    public void eeee_self(Object o) {
+        log(tag3, o, E);
+    }
+
+    //对外提供------------------------------------------
+
+    public static void s(Object o) {
+        getS().s_self(o);
+    }
+
+    public static void s(String tag, Object o) {
+        getS().s_self(tag, o);
+    }
+
+    public static void ss(Object o) {
+        getS().ss_self(o);
+    }
+
+    public static void sss(Object o) {
+        getS().sss_self(o);
+    }
+
+    public static void ssss(Object o) {
+        getS().ssss_self(o);
+    }
+
+    public static void e(Object o) {
+        getS().e_self(o);
+    }
+
+    public static void e(String tag, Object o) {
+        getS().e_self(tag, o);
+    }
+
+    public static void ee(Object o) {
+        getS().ee_self(o);
+    }
+
+    public static void eee(Object o) {
+        getS().eee_self(o);
+    }
+
+    public static void eeee(Object o) {
+        getS().eeee_self(o);
+    }
+
+    //------------------------------------------------------其他功能-------------------------------------------------------------
+
+    /**
+     * @param str
+     * @return
+     */
     public static boolean isEmpty(String str) {
         return str == null || str.trim().equals("") || str.equalsIgnoreCase("null");
     }
 
     public static boolean isNotEmpty(String str) {
         return !isEmpty(str);
-    }
-
-    public static void s(Object text, boolean flag) {
-        if (flag) {
-            s(text);
-        }
-    }
-
-    public static void s(String tag, Object o) {
-        if (flag) {
-            tag = SS.tag + tag + "[" + new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date(System.currentTimeMillis())) + "]";
-            if (o != null) {
-                Log.i(tag, o.toString());
-            } else {
-                Log.i(tag, "null");
-            }
-        }
-    }
-
-    public static void s(Object text) {
-        if (flag) {
-            if (text != null) {
-                Log.i(tag, text.toString());
-            } else {
-                Log.i(tag, "null");
-            }
-        }
-    }
-
-
-    public static void sss(Object text) {
-        if (flag) {
-            if (text != null) {
-                Log.i(tag2, text.toString());
-            } else {
-                Log.i(tag2, "null");
-            }
-        }
-    }
-
-    public static void sssss(Object text) {
-        if (flag) {
-            if (text != null) {
-                Log.i(tag3, text.toString());
-            } else {
-                Log.i(tag3, "null");
-            }
-        }
-    }
-
-    public static void v(Object text) {
-        if (flag) {
-            if (text != null) {
-                Log.i(tag, text.toString());
-            } else {
-                Log.i(tag, "null");
-            }
-        }
-    }
-
-    public static void d(String text) {
-        if (flag) {
-            if (text != null) {
-                Log.d(tag, text.toString());
-            } else {
-                Log.d(tag, "null");
-            }
-        }
-    }
-
-    public static void e(Object text) {
-        if (flag) {
-            if (text != null) {
-                Log.e(tag, text.toString());
-            } else {
-                Log.e(tag, "null");
-            }
-        }
-    }
-
-    public static void e(Exception e) {
-        if (flag) {
-            if (e != null) {
-                e.printStackTrace();
-                Log.e(tag, e.toString());
-            } else {
-                Log.e(tag, "null");
-            }
-        }
     }
 
     public static boolean isIp(String ip) {
@@ -138,7 +340,7 @@ public class SS {
     }
 
     public static boolean isUrl(String url) {
-        if (SS.isEmpty(url)) {
+        if (S.isEmpty(url)) {
             return false;
         }
         if (Pattern.compile(reg_url).matcher(url + "").matches()) {
@@ -240,13 +442,9 @@ public class SS {
         try {
             System.arraycopy(src, srcPos, dest, destPos, length);
         } catch (Exception e) {
-//            SS.e("Arr copy err:ArryaIndexOutOfBoudsException");
+//            S.e("Arr copy err:ArryaIndexOutOfBoudsException");
 //			e.printStackTrace();
         }
-    }
-
-    public static void e(String abcdef, Object e) {
-        e(e);
     }
 
     public static long currentTimeMillis() {
@@ -323,7 +521,7 @@ public class SS {
 
 
     public static String format(String dateSrc, String format_src, String format_des) {
-        if (SS.isEmpty(dateSrc) || SS.isEmpty(format_src) || SS.isEmpty(format_des)) {
+        if (S.isEmpty(dateSrc) || S.isEmpty(format_src) || S.isEmpty(format_des)) {
             return null;
         }
         SimpleDateFormat simpleDateFormat_src = new SimpleDateFormat(format_src);

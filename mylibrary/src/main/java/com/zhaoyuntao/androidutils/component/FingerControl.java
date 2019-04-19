@@ -15,6 +15,7 @@ import android.view.animation.LinearInterpolator;
 
 import com.zhaoyuntao.androidutils.R;
 import com.zhaoyuntao.androidutils.tools.B;
+import com.zhaoyuntao.androidutils.tools.S;
 import com.zhaoyuntao.androidutils.tools.VibratorTool;
 import com.zhaoyuntao.androidutils.tools.ZThread;
 
