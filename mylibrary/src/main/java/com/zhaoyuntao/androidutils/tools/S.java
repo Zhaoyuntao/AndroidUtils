@@ -46,6 +46,8 @@ public class S {
     public static final int E = 1;
     public static final int D = 2;
     public static final int V = 3;
+    public static final int DEBUGI = 10;
+    public static final int DEBUGE = 11;
 
     /**
      * log记录相关----------------------------------------------------------------------------
@@ -175,9 +177,11 @@ public class S {
         if (s.flag) {
             switch (type) {
                 case I:
+                case DEBUGI:
                     Log.i(tagAddTime, o.toString());
                     break;
                 case E:
+                case DEBUGE:
                     Log.e(tagAddTime, o.toString());
                     break;
                 case V:
@@ -189,11 +193,11 @@ public class S {
             }
         }
 
-        LogItem logItem = new LogItem(String.valueOf(o),type);
-        addLogSelf(logItem);
+        LogItem logItem = new LogItem(String.valueOf(o), type);
+        addLogSelf(tag, logItem);
     }
 
-    private void addLogSelf(LogItem logItem) {
+    private void addLogSelf(String tag, LogItem logItem) {
         if (logItem != null) {
             synchronized (Lock.class) {
                 if (cache) {
@@ -203,7 +207,7 @@ public class S {
                     s.list.add(logItem);
                 }
             }
-            if (isNotEmpty(tag) && tag.equals(s.tag)) {
+            if (isNotEmpty(tag) && (logItem.type == DEBUGE || logItem.type == DEBUGI)) {
                 Message message = new Message();
                 message.obj = logItem;
                 handler.sendMessage(message);
@@ -211,8 +215,8 @@ public class S {
         }
     }
 
-    public static void addLog(LogItem logItem) {
-        getS().addLogSelf(logItem);
+    public static void addLog(String tag, LogItem logItem) {
+        getS().addLogSelf(tag, logItem);
     }
 
     /**
@@ -234,86 +238,134 @@ public class S {
     }
     //私有log函数--------------------------------------
 
-    private void s_self(Object o) {
-        log(tag, o, I);
+    private void s_self(Object o, int type) {
+        log(tag, o, type);
     }
 
-    private void s_self(String tag, Object o) {
-        log(tag, o, I);
+    private void s_self(String tag, Object o, int type) {
+        log(tag, o, type);
     }
 
-    private void ss_self(Object o) {
-        log(tag1, o, I);
+    private void ss_self(Object o, int type) {
+        log(tag1, o, type);
     }
 
-    private void sss_self(Object o) {
-        log(tag2, o, I);
+    private void sss_self(Object o, int type) {
+        log(tag2, o, type);
     }
 
-    private void ssss_self(Object o) {
-        log(tag3, o, I);
+    private void ssss_self(Object o, int type) {
+        log(tag3, o, type);
     }
 
-    public void e_self(Object o) {
-        log(tag, o, E);
+    public void e_self(Object o, int type) {
+        log(tag, o, type);
     }
 
-    public void e_self(String tag, Object o) {
-        log(tag, o, E);
+    public void e_self(String tag, Object o, int type) {
+        log(tag, o, type);
     }
 
-    public void ee_self(Object o) {
-        log(tag1, o, E);
+    public void ee_self(Object o, int type) {
+        log(tag1, o, type);
     }
 
-    public void eee_self(Object o) {
-        log(tag2, o, E);
+    public void eee_self(Object o, int type) {
+        log(tag2, o, type);
     }
 
-    public void eeee_self(Object o) {
-        log(tag3, o, E);
+    public void eeee_self(Object o, int type) {
+        log(tag3, o, type);
     }
+
 
     //对外提供------------------------------------------
+    //normal log just show
 
     public static void s(Object o) {
-        getS().s_self(o);
+        getS().s_self(o, I);
     }
 
     public static void s(String tag, Object o) {
-        getS().s_self(tag, o);
+        getS().s_self(tag, o, I);
     }
 
     public static void ss(Object o) {
-        getS().ss_self(o);
+        getS().ss_self(o, I);
     }
 
     public static void sss(Object o) {
-        getS().sss_self(o);
+        getS().sss_self(o, I);
     }
 
     public static void ssss(Object o) {
-        getS().ssss_self(o);
+        getS().ssss_self(o, I);
     }
 
+    public static void s_d(Object o) {
+        getS().s_self(o, DEBUGI);
+    }
+
+    //debug log for callback using.
+
+    public static void s_d(String tag, Object o) {
+        getS().s_self(tag, o, DEBUGI);
+    }
+
+    public static void ss_d(Object o) {
+        getS().ss_self(o, DEBUGI);
+    }
+
+    public static void sss_d(Object o) {
+        getS().sss_self(o, DEBUGI);
+    }
+
+    public static void ssss_d(Object o) {
+        getS().ssss_self(o, DEBUGI);
+    }
+
+    //normal log just show
+
     public static void e(Object o) {
-        getS().e_self(o);
+        getS().e_self(o, E);
     }
 
     public static void e(String tag, Object o) {
-        getS().e_self(tag, o);
+        getS().e_self(tag, o, E);
     }
 
     public static void ee(Object o) {
-        getS().ee_self(o);
+        getS().ee_self(o, E);
     }
 
     public static void eee(Object o) {
-        getS().eee_self(o);
+        getS().eee_self(o, E);
     }
 
     public static void eeee(Object o) {
-        getS().eeee_self(o);
+        getS().eeee_self(o, E);
+    }
+
+    //debug log for callback using.
+
+    public static void e_d(Object o) {
+        getS().e_self(o, DEBUGE);
+    }
+
+    public static void e_d(String tag, Object o) {
+        getS().e_self(tag, o, DEBUGE);
+    }
+
+    public static void ee_d(Object o) {
+        getS().ee_self(o, DEBUGE);
+    }
+
+    public static void eee_d(Object o) {
+        getS().eee_self(o, DEBUGE);
+    }
+
+    public static void eeee_d(Object o) {
+        getS().eeee_self(o, DEBUGE);
     }
 
     //------------------------------------------------------其他功能-------------------------------------------------------------

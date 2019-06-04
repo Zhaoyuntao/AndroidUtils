@@ -116,8 +116,9 @@ public class FloatWindowHelper {
         this.onSizeChangedListener = onSizeChangedListener;
     }
 
-    public interface OnSizeChangedListener{
+    public interface OnSizeChangedListener {
         void whenMiniSize();
+
         void whenNormalSize();
     }
 
@@ -185,32 +186,26 @@ public class FloatWindowHelper {
         }
     }
 
-    public void show(boolean requestPermission) {
-        if (requestPermission) {
-            //如果没有权限
-            if (!judgePermission()) {
-                new ZDialog(context).setTitle("开启权限").setMessage("请打开日志权限").setTouchCancelable(true).setButton1OnClickListener("取消", new ZDialog.OnClickListener() {
-                    @Override
-                    public void onClick(ZDialog dialog) {
-                        dialog.cancel();
-                    }
-                }).setButton3OnClickListener("前往设置", new ZDialog.OnClickListener() {
-                    @Override
-                    public void onClick(ZDialog dialog) {
-                        dialog.cancel();
-                        context.startActivity(new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + context.getPackageName())));
-                    }
-                }).show();
-            }
-
-            if (judgePermission()) {
-                normalSize();
-            }
-        } else {
-            if (judgePermission()) {
-                normalSize();
-            }
+    public void requestPermission(final Context context) {
+        //如果没有权限
+        if (!judgePermission()) {
+            new ZDialog(context).setTitle("开启权限").setMessage("请打开日志权限").setTouchCancelable(true).setButton1OnClickListener("取消", new ZDialog.OnClickListener() {
+                @Override
+                public void onClick(ZDialog dialog) {
+                    dialog.cancel();
+                }
+            }).setButton2OnClickListener("前往设置", new ZDialog.OnClickListener() {
+                @Override
+                public void onClick(ZDialog dialog) {
+                    dialog.cancel();
+                    context.startActivity(new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + context.getPackageName())));
+                }
+            }).show();
         }
+    }
+
+    public void show() {
+        normalSize();
     }
 
     /**
@@ -225,7 +220,7 @@ public class FloatWindowHelper {
         if (windowView != null && windowView.getParent() != null) {
             container.setVisibility(View.GONE);
             windowManager.updateViewLayout(windowView, params);
-            if(onSizeChangedListener!=null){
+            if (onSizeChangedListener != null) {
                 onSizeChangedListener.whenMiniSize();
             }
         }
@@ -246,7 +241,7 @@ public class FloatWindowHelper {
         } else {
             windowManager.updateViewLayout(windowView, params);
         }
-        if(onSizeChangedListener!=null){
+        if (onSizeChangedListener != null) {
             onSizeChangedListener.whenNormalSize();
         }
     }
