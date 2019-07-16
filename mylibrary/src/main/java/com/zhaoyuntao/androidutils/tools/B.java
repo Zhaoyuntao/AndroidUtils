@@ -1,5 +1,6 @@
 package com.zhaoyuntao.androidutils.tools;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -14,8 +15,10 @@ import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Environment;
 import android.support.v4.content.ContextCompat;
 import android.text.format.DateFormat;
@@ -23,11 +26,13 @@ import android.view.Display;
 import android.view.WindowManager;
 
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -37,6 +42,7 @@ import java.util.Random;
 import java.util.regex.Pattern;
 
 /**
+ *
  */
 public class B {
 
@@ -117,6 +123,12 @@ public class B {
         return bitmap_des;
     }
 
+    /**
+     * int颜色转16进制字符串格式
+     *
+     * @param color
+     * @return
+     */
     public static String toHexColorString(int color) {
         StringBuffer sb = new StringBuffer();
         String R = Integer.toHexString(Color.red(color));
@@ -132,17 +144,42 @@ public class B {
         return sb.toString();
     }
 
-    public static int HORIZONTAL = 0;
-    public static int VERTICAL = 1;
+    /**
+     * 字符串是否符合16进制颜色格式
+     *
+     * @param hexColorString
+     * @return
+     */
+    public static boolean isLegalHexColorString(String hexColorString) {
+        String rex = "^#([0-9a-fA-F]{6})|#([0-9a-fA-F]{8})$";
+        return Pattern.compile(rex).matcher(hexColorString).matches();
+    }
 
     /**
+     * 16进制颜色字符串转int
+     *
+     * @param hexColorString
+     * @return
+     */
+    public static int hexColorToIntColor(String hexColorString) {
+        if (isLegalHexColorString(hexColorString)) {
+            return Color.parseColor(hexColorString);
+        } else {
+            return Color.WHITE;
+        }
+    }
+
+
+    /**
+     * 镜像翻转图片
+     *
      * @param bitmap
-     * @param i
+     * @param i      0:HORIZONTAL other:VERTICAL
      * @return
      */
     public static Bitmap reverse(Bitmap bitmap, int i) {
         Matrix m = new Matrix();
-        if (i == HORIZONTAL) {
+        if (i == 0) {
             m.setScale(-1, 1);//水平翻转
         } else {
             m.setScale(1, -1);//垂直翻转
@@ -151,6 +188,46 @@ public class B {
         int h = bitmap.getHeight();
         //生成的翻转后的bitmap
         return Bitmap.createBitmap(bitmap, 0, 0, w, h, m, true);
+    }
+
+    /**
+     * 将图片修剪成一个给定size的新图片,不会失真, 但是会被裁剪, 原始图片先缩放,然后再裁剪
+     *
+     * @param w
+     * @param h
+     * @return
+     */
+    public static Bitmap clip(int w, int h, Bitmap bitmap) {
+        float propprtion_src = (float) bitmap.getWidth() / bitmap.getHeight();
+        float propprtion_des = (float) w / h;
+        //取材宽度
+        int h_tmp = 0;
+        int w_tmp = 0;
+        //宽图片变成窄图片
+        if (propprtion_src > propprtion_des) {
+            h_tmp = bitmap.getHeight();
+            w_tmp = (int) (h_tmp * propprtion_des);
+        } else {
+            w_tmp = bitmap.getWidth();
+            h_tmp = (int) (w_tmp / propprtion_des);
+        }
+        //计算需要裁剪的区域的x开始坐标和y开始坐标
+        int x_start = (int) ((bitmap.getWidth() - w_tmp) / 2f);
+        int y_start = (int) ((bitmap.getHeight() - h_tmp) / 2f);
+        //进行裁剪
+        Bitmap bitmap_des = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap_des);
+
+        Rect rect_draw = new Rect();
+        rect_draw.set(0, 0, w, h);
+
+        Rect rect_src = new Rect();
+        rect_src.set(x_start, y_start, x_start + w_tmp, y_start + h_tmp);
+
+        Paint paint = new Paint();
+        canvas.drawBitmap(bitmap, rect_src, rect_draw, paint);
+
+        return bitmap_des;
     }
 
     public static Bitmap getBitmap_polygon(Bitmap bitmap_src, Path path) {
@@ -209,6 +286,7 @@ public class B {
     }
 
     /**
+     *
      */
     public static int dip2px(Context context, float dpValue) {
         final float scale = context.getResources().getDisplayMetrics().density;
@@ -216,6 +294,7 @@ public class B {
     }
 
     /**
+     *
      */
     public static int px2dip(Context context, float pxValue) {
         final float scale = context.getResources().getDisplayMetrics().density;
@@ -252,13 +331,10 @@ public class B {
         return bitmap;
     }
 
-    public static boolean isLegalHexColorString(String hexColorString) {
-        String rex = "^#([0-9a-fA-F]{6})$";
-        return Pattern.compile(rex).matcher(hexColorString).matches();
+    public static int getColor(int colorId, Context context) {
+        return ContextCompat.getColor(context, colorId);
     }
-    public static int getColor(int colorId,Context context){
-        return  ContextCompat.getColor(context,colorId);
-    }
+
     /**
      * 随机获取一个颜色值
      *
@@ -349,6 +425,7 @@ public class B {
 
 
     /**
+     *
      */
     public static String bitmapToFile(Bitmap bitmap) {
         return bitmapToFile(bitmap, Bitmap.CompressFormat.JPEG);
@@ -357,6 +434,7 @@ public class B {
     static int i = 0;
 
     /**
+     *
      */
     public static String bitmapToFile(Bitmap bitmap, Bitmap.CompressFormat compressFormat) {
         String sdPath = Environment.getExternalStorageDirectory().getPath();
@@ -400,5 +478,66 @@ public class B {
         int w_screen = p.x; // 屏幕宽（像素）
         int h_screen = p.y;
         return new int[]{w_screen, h_screen};
+    }
+
+    /**
+     * 通过uri获取图片并进行压缩
+     *
+     * @param uri
+     */
+    public static Bitmap getBitmapFormUri(Activity ac, Uri uri) throws IOException {
+        InputStream input = ac.getContentResolver().openInputStream(uri);
+        BitmapFactory.Options onlyBoundsOptions = new BitmapFactory.Options();
+        onlyBoundsOptions.inJustDecodeBounds = true;
+        onlyBoundsOptions.inDither = true;//optional
+        onlyBoundsOptions.inPreferredConfig = Bitmap.Config.ARGB_8888;//optional
+        BitmapFactory.decodeStream(input, null, onlyBoundsOptions);
+        input.close();
+        int originalWidth = onlyBoundsOptions.outWidth;
+        int originalHeight = onlyBoundsOptions.outHeight;
+        if ((originalWidth == -1) || (originalHeight == -1)) return null;
+        //图片分辨率以480x800为标准
+        float hh = 800f;//这里设置高度为800f
+        float ww = 480f;//这里设置宽度为480f
+        //缩放比。由于是固定比例缩放，只用高或者宽其中一个数据进行计算即可
+        int be = 1;//be=1表示不缩放
+        if (originalWidth > originalHeight && originalWidth > ww) {//如果宽度大的话根据宽度固定大小缩放
+            be = (int) (originalWidth / ww);
+        } else if (originalWidth < originalHeight && originalHeight > hh) {//如果高度高的话根据宽度固定大小缩放
+            be = (int) (originalHeight / hh);
+        }
+        if (be <= 0) be = 1;
+        //比例压缩
+        BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
+        bitmapOptions.inSampleSize = be;//设置缩放比例
+        bitmapOptions.inDither = true;//optional
+        bitmapOptions.inPreferredConfig = Bitmap.Config.ARGB_8888;//optional
+        input = ac.getContentResolver().openInputStream(uri);
+        Bitmap bitmap = BitmapFactory.decodeStream(input, null, bitmapOptions);
+        input.close();
+
+        return compressImage(bitmap);//再进行质量压缩
+    }
+
+    /**
+     * 质量压缩方法:100kb
+     *
+     * @param image
+     * @return
+     */
+    public static Bitmap compressImage(Bitmap image) {
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        image.compress(Bitmap.CompressFormat.JPEG, 100, baos);//质量压缩方法，这里100表示不压缩，把压缩后的数据存放到baos中
+        int options = 100;
+        while (baos.toByteArray().length / 1024 > 100) {  //循环判断如果压缩后图片是否大于100kb,大于继续压缩
+            baos.reset();//重置baos即清空baos
+            //第一个参数 ：图片格式 ，第二个参数： 图片质量，100为最高，0为最差  ，第三个参数：保存压缩后的数据的流
+            image.compress(Bitmap.CompressFormat.JPEG, options, baos);//这里压缩options%，把压缩后的数据存放到baos中
+            options -= 10;//每次都减少10
+        }
+        ByteArrayInputStream isBm = new ByteArrayInputStream(baos.toByteArray());//把压缩后的数据baos存放到ByteArrayInputStream中
+        Bitmap bitmap = BitmapFactory.decodeStream(isBm, null, null);//把ByteArrayInputStream数据生成图片
+        return bitmap;
     }
 }

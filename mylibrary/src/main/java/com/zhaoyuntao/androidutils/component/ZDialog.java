@@ -29,12 +29,16 @@ public class ZDialog extends Dialog {
     private FrameLayout container_content;
 
     private ZButton zButton_1, zButton_2, zButton_3;
+    private float titleTextSize;
+    private float messageTextSize;
 
 
     /* methods: Dialog */
 
     public ZDialog(Context context) {
         super(context, R.style.zdialog);
+        titleTextSize =20;
+        messageTextSize = 16;
         w_view = B.getScreenWH(context)[0];
         frameLayout = LayoutInflater.from(context).inflate(R.layout.layout_dialog, null);
         container_content = (FrameLayout) frameLayout.findViewById(R.id.container);
@@ -42,12 +46,45 @@ public class ZDialog extends Dialog {
         zButton_1 = frameLayout.findViewById(R.id.bt_1);
         zButton_2 = frameLayout.findViewById(R.id.bt_2);
         zButton_3 = frameLayout.findViewById(R.id.bt_3);
-        setButton1OnClickListener(null,false);
-        setButton2OnClickListener(null,false);
-        setButton3OnClickListener(null,false);
+        setButtonTextSize(18);
+        setButton1OnClickListener(null, false);
+        setButton2OnClickListener(null, false);
+        setButton3OnClickListener(null, false);
         getWindow().setWindowAnimations(R.style.zdialog);
         setContentView(frameLayout, new FrameLayout.LayoutParams(w_view, ViewGroup.LayoutParams.WRAP_CONTENT));
         setGravity(Gravity.BOTTOM);
+    }
+
+    public ZButton getButton1() {
+        return zButton_1;
+    }
+
+    public ZButton getButton2() {
+        return zButton_2;
+    }
+
+    public ZButton getButton3() {
+        return zButton_3;
+    }
+
+    public void setButtonTextSize(float textSize) {
+        zButton_1.setTextSize(textSize);
+        zButton_2.setTextSize(textSize);
+        zButton_3.setTextSize(textSize);
+    }
+
+    public void setMessageTextSize(float textSize) {
+        this.messageTextSize = textSize;
+        if (messageTextView != null) {
+            messageTextView.setTextSize(messageTextSize);
+        }
+    }
+
+    public void setTitleTextSize(float textSize) {
+        this.titleTextSize = textSize;
+        if (titleTextView != null) {
+            titleTextView.setTextSize(titleTextSize);
+        }
     }
 
     public void setCustomContext(Object customContext) {
@@ -63,18 +100,20 @@ public class ZDialog extends Dialog {
         return this;
     }
 
+    TextView titleTextView;
+
     public ZDialog setTitle(String text) {
         container_title.removeAllViews();
-        TextView textView = new TextView(getContext());
+        titleTextView = new TextView(getContext());
         int color = ContextCompat.getColor(getContext(), R.color.black_70_transparent);
-        textView.setTextColor(color);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, B.dip2px(getContext(), 20));
+        titleTextView.setTextColor(color);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         lp.gravity = Gravity.CENTER;
-        lp.setMargins(20, 40, 20, 0);
-        textView.setLayoutParams(lp);
-        textView.setTextSize(15);
-        textView.setText(text);
-        container_title.addView(textView);
+        lp.setMargins(20, 30, 20, 0);
+        titleTextView.setLayoutParams(lp);
+        titleTextView.setTextSize(titleTextSize);
+        titleTextView.setText(text);
+        container_title.addView(titleTextView);
 
         return this;
     }
@@ -101,21 +140,23 @@ public class ZDialog extends Dialog {
         return this;
     }
 
+    TextView messageTextView;
+
     public ZDialog setText(String text, int gravity) {
         if (S.isEmpty(text)) {
             return this;
         }
         container_content.removeAllViews();
-        TextView textView = new TextView(getContext());
-        textView.setTextColor(ContextCompat.getColor(getContext(), R.color.black_30_transparent));
+        messageTextView = new TextView(getContext());
+        messageTextView.setTextColor(ContextCompat.getColor(getContext(), R.color.black_30_transparent));
         FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         lp.gravity = Gravity.LEFT;
         lp.setMargins(80, 20, 80, 40);
-        textView.setLayoutParams(lp);
-        textView.setText(text);
-//        textView.setTextSize(14);
-        textView.setGravity(gravity);
-        container_content.addView(textView);
+        messageTextView.setLayoutParams(lp);
+        messageTextView.setText(text);
+        messageTextView.setTextSize(messageTextSize);
+        messageTextView.setGravity(gravity);
+        container_content.addView(messageTextView);
         return this;
     }
 
@@ -190,7 +231,7 @@ public class ZDialog extends Dialog {
         View.OnClickListener onClickListener1 = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(onClickListener!=null) {
+                if (onClickListener != null) {
                     onClickListener.onClick(ZDialog.this);
                 }
                 ZDialog.this.cancel();

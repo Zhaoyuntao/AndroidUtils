@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <declare-styleable name="zbutton">
+    <declare-styleable name="ZButton">
         <!-- Text on center -->
         <attr name="text_center" format="string"></attr>
         <attr name="textcolor" format="color"></attr>
@@ -48,11 +48,16 @@
 
         <!--Orientation of text and bitmap-->
         <attr name="orientation" format="string">horizontal|vertical</attr>
+        <!--background orientation-->
+        <attr name="orientation_shader" format="string">
 
-        <attr name="color_back" format="color"></attr>
-        <attr name="color_back_disable" format="color"></attr>
-        <attr name="color_back_choose" format="color"></attr>
-        <attr name="color_back_click" format="color"></attr>
+        </attr>
+        <!--background color-->
+        <attr name="color_back" format="string"></attr>
+        <attr name="color_back_disable" format="string"></attr>
+        <attr name="color_back_choose" format="string"></attr>
+        <attr name="color_back_click" format="string"></attr>
+        <!--border-->
         <attr name="color_border_bitmap_center" format="color"></attr>
         <attr name="color_border" format="color"></attr>
         <attr name="color_border_choose" format="color"></attr>
@@ -107,5 +112,17 @@
         <attr name="wavecolor_click" format="color">#66ccff</attr>
         <attr name="wavecolor_choose" format="color">#66ccff</attr>
         <attr name="wavecolor_disable" format="color">#66ccff</attr>
+    </declare-styleable>
+    <declare-styleable name="TabDigit">
+        <attr name="textSize" format="dimension" />
+        <attr name="padding" format="dimension" />
+        <attr name="cornerSize" format="dimension" />
+        <attr name="textColor" format="color" />
+        <attr name="backgroundColor" format="color" />
+        <attr name="reverseRotation" format="boolean" />
+    </declare-styleable>
+    <declare-styleable name="ZScaleBar">
+        <attr name="w_progress" format="dimension" />
+        <attr name="radius_circle" format="dimension" />
     </declare-styleable>
 </resources>

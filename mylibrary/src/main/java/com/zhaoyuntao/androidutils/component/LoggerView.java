@@ -535,7 +535,7 @@ public class LoggerView extends ScrollView {
 
         @Override
         public String toString() {
-            return "start:" + start + ", end=" + end;
+            return "play:" + start + ", end=" + end;
         }
     }
 }

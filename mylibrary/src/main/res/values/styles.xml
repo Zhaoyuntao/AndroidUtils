@@ -6,15 +6,23 @@
         <item name="android:layout_marginBottom">15dp</item>
         <item name="color_back">#f4f4f4</item>
         <item name="color_back_click">@color/black_30_transparent</item>
-        <item name="color_back_choose">@color/black_30_transparent</item>
         <item name="textsize">12sp</item>
         <item name="textcolor">@color/black_30_transparent</item>
         <item name="textcolor_disable">#666666</item>
         <item name="textcolor_click">#f4f4f4</item>
-        <item name="textcolor_choose">#f4f4f4</item>
         <item name="w_border">1px</item>
         <item name="color_border">@color/black_20_transparent</item>
         <item name="percent_bitmap_center">1</item>
     </style>
-
+    <style name="Permission"/>
+    <style name="Permission.Theme">
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowDisablePreview">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:backgroundDimEnabled">false</item>
+    </style>
 </resources>
