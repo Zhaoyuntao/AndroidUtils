@@ -17,6 +17,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
+ *
  */
 public class S {
     /**
@@ -48,6 +49,41 @@ public class S {
     public static final int V = 3;
     public static final int DEBUGI = 10;
     public static final int DEBUGE = 11;
+
+    public static byte[] longToByteArr(long b) {
+        byte[] tmp = new byte[8];
+        for (int i = 0; i < tmp.length; i++) {
+            tmp[i] = (byte) ((b >> (8 * i)) & 0xff);
+        }
+        return tmp;
+    }
+    public static long byteArrToLong(byte[] c) {
+        long tmp = 0;
+        if (c != null && c.length == 8) {
+            for (int i = 0; i < 8; i++) {
+                tmp |= ((c[i] & 0xff) << (8 * i));
+            }
+        }
+        return tmp;
+    }
+
+    public static byte[] intToByteArr(int b) {
+        byte[] tmp = new byte[4];
+        for (int i = 0; i < tmp.length; i++) {
+            tmp[i] = (byte) ((b >> (4 * i)) & 0xff);
+        }
+        return tmp;
+    }
+
+    public static int byteArrToInt(byte[] c) {
+        int tmp = 0;
+        if (c != null && c.length == 4) {
+            for (int i = 0; i < 4; i++) {
+                tmp |= ((c[i] & 0xff) << (4 * i));
+            }
+        }
+        return tmp;
+    }
 
     /**
      * log记录相关----------------------------------------------------------------------------
@@ -383,6 +419,9 @@ public class S {
     }
 
     public static boolean isIp(String ip) {
+        if (S.isEmpty(ip)) {
+            return false;
+        }
         if (Pattern.compile(ip_regular).matcher(ip + "").matches()) {
             return true;
         } else {

@@ -15,7 +15,6 @@ import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
-import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -29,15 +28,14 @@ import android.view.WindowManager;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Random;
 import java.util.regex.Pattern;
 
@@ -45,13 +43,7 @@ import java.util.regex.Pattern;
  *
  */
 public class B {
-
-    private static Map<String, Bitmap> bitmaps = new HashMap<>();
-
-    public static void close() {
-        bitmaps.clear();
-    }
-
+    public static String path_system = Environment.getExternalStorageDirectory().getAbsolutePath();
 
     /**
      * @param bitmap_src
@@ -381,13 +373,8 @@ public class B {
         if (num > 0) {
             option.inSampleSize = num;
         }
-        if (bitmaps.containsKey(String.valueOf(drawableId))) {
-            return bitmaps.get(String.valueOf(drawableId));
-        } else {
-            Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), drawableId, option);
-            bitmaps.put(String.valueOf(drawableId), bitmap);
-            return bitmap;
-        }
+        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), drawableId, option);
+        return bitmap;
     }
 
     public static Drawable getDrawableById_byPercent(Context context, int drawableId, int percent) {
@@ -415,9 +402,153 @@ public class B {
     public static byte[] bitmapToBytes(Bitmap bm) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bm.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-        return baos.toByteArray();
+        byte[] data = baos.toByteArray();
+        try {
+            baos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return data;
     }
 
+    public static Bitmap bytesToBitmap(byte[] data) {
+        return BitmapFactory.decodeByteArray(data, 0, data.length);
+    }
+
+
+    public static void saveBitmap_JPEG(Bitmap bitmap, String bitmapName, String dirChild, int quality) {
+        saveBitmap(bitmap, bitmapName, dirChild, Bitmap.CompressFormat.JPEG, quality);
+    }
+
+    public static void saveBitmap_PNG(Bitmap bitmap, String bitmapName, String dirChild, int quality) {
+        saveBitmap(bitmap, bitmapName, dirChild, Bitmap.CompressFormat.PNG, quality);
+    }
+
+    public static void saveBitmap(Bitmap bitmap, String bitmapName, String dirChild, Bitmap.CompressFormat compressFormat, int quality) {
+        if (bitmap == null || S.isEmpty(bitmapName)) {
+            return;
+        }
+        bitmapName = bitmapName.trim();
+        switch (compressFormat) {
+            case PNG:
+                if (!bitmapName.endsWith(".png")) {
+                    bitmapName += ".png";
+                }
+                break;
+            case JPEG:
+                if (!bitmapName.endsWith(".jpg")) {
+                    bitmapName += ".jpg";
+                }
+                break;
+            default:
+                S.e("B.saveBitmap:err:不支持的图片格式!" + compressFormat);
+                return;
+        }
+        dirChild = dirChild.trim();
+        if (dirChild.startsWith("/")) {
+            dirChild = dirChild.substring(1);
+        }
+        if (dirChild.endsWith("/")) {
+            dirChild = dirChild.substring(dirChild.length() - 1);
+        }
+        String path_pic = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + dirChild + "/";
+        File dir = new File(path_pic);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+
+        bitmapName = bitmapName.trim();
+        if (bitmapName.startsWith("/")) {
+            bitmapName = bitmapName.substring(1);
+        }
+        if (bitmapName.endsWith("/")) {
+            bitmapName = bitmapName.substring(bitmapName.length() - 1);
+        }
+
+        File f = new File(path_pic, bitmapName);
+        if (f.exists()) {
+            f.delete();
+            try {
+                f.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            FileOutputStream out = new FileOutputStream(f);
+            bitmap.compress(compressFormat, quality, out);
+            out.flush();
+            out.close();
+            S.s("bitmap[" + f.getAbsolutePath() + "]保存成功");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            S.e(e);
+        } catch (IOException e) {
+            e.printStackTrace();
+            S.e(e);
+        }
+    }
+
+    public static void getBitmapByThread(String filename, CallBack callBack) {
+        BitmapReader bitmapReader = new BitmapReader(filename, callBack);
+        bitmapReader.start();
+    }
+
+
+    public static Bitmap compress(Bitmap bitmap, int kbs) {
+        int size_bitmap = bitmap.getByteCount();
+        S.s("压缩前:" + bitmap.getByteCount());
+        int maxSize = kbs * 1024;
+        S.s("要求大小:" + maxSize);
+        //计算压缩比例
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        if (kbs <= 0) {
+            options.inSampleSize = 1;
+        } else {
+            float percent = ((float) size_bitmap) / maxSize;
+            S.s("percent:" + percent);
+            int sampleSize = (int) Math.sqrt(percent) + 1;
+            S.s("sampleSize:" + sampleSize);
+            options.inSampleSize = sampleSize;
+        }
+        options.inJustDecodeBounds = false;
+
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+        byte[] data = byteArrayOutputStream.toByteArray();
+        try {
+            byteArrayOutputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Bitmap bitmap2 = BitmapFactory.decodeByteArray(data, 0, data.length, options);
+        S.s("压缩后:" + bitmap2.getByteCount() + " 压缩比:" + (float) size_bitmap / bitmap2.getByteCount() + "  w:" + bitmap2.getWidth() + " h:" + bitmap2.getHeight());
+        return bitmap2;
+    }
+
+    public static Bitmap getBitmap(String bitmapName) {
+        bitmapName = bitmapName.trim();
+        if (bitmapName.startsWith("/")) {
+            bitmapName = bitmapName.substring(1);
+        }
+        if (bitmapName.endsWith("/")) {
+            bitmapName = bitmapName.substring(bitmapName.length() - 1);
+        }
+        if (S.isNotEmpty(bitmapName)) {
+            S.s("getBitmap:正在读取文件:" + path_system + "/" + bitmapName);
+            Bitmap bitmap = BitmapFactory.decodeFile(path_system + "/" + bitmapName);
+            return bitmap;
+        } else {
+            S.e("getBitmap:face.bitmapName is null");
+        }
+        return null;
+    }
+
+    public interface CallBack {
+
+        void whenBitmapReady(Bitmap bitmap);
+    }
 
     public static Bitmap getBitmapById(Context context, int drawableId) {
         return getBitmapById_Percent(context, drawableId, 1);

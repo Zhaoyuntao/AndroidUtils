@@ -23,6 +23,10 @@ public abstract class ZThread extends Thread {
         setPriority(10);
     }
 
+    public ZThread() {
+        this(1000f);
+    }
+
     @Override
     public synchronized void start() {
         if (isStart) {
@@ -36,9 +40,12 @@ public abstract class ZThread extends Thread {
         super.start();
     }
 
+    protected void init() {
+    }
+
     @Override
     public void run() {
-
+        init();
         while (flag) {
             if (pause) {
                 synchronized (sleeper) {
@@ -88,7 +95,7 @@ public abstract class ZThread extends Thread {
     protected abstract void todo();
 
     public void close() {
-        Log.i("ZThread","zthread close");
+        Log.i("ZThread", "zthread close");
         flag = false;
         pause = false;
         interrupt();

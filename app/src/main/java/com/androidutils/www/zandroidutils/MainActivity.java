@@ -4,34 +4,27 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.View;
 import android.widget.CompoundButton;
 
-import com.zhaoyuntao.androidutils.camera.CameraView;
 import com.zhaoyuntao.androidutils.component.FloatWindowHelper;
 import com.zhaoyuntao.androidutils.component.LoggerView;
 import com.zhaoyuntao.androidutils.component.ZSwitchButton;
 import com.zhaoyuntao.androidutils.component.ZScaleBar;
 import com.zhaoyuntao.androidutils.component.ZButton;
-import com.zhaoyuntao.androidutils.component.ZVideoView;
+import com.zhaoyuntao.androidutils.net.Msg;
+import com.zhaoyuntao.androidutils.net.ZSocket;
 import com.zhaoyuntao.androidutils.permission.runtime.Permission;
 import com.zhaoyuntao.androidutils.tools.B;
 import com.zhaoyuntao.androidutils.tools.S;
-import com.zhaoyuntao.androidutils.tools.T;
 import com.zhaoyuntao.androidutils.tools.ZP;
+
+import java.io.File;
 
 public class MainActivity extends Activity {
 
     FloatWindowHelper floatWindowHelper;
     LoggerView contentLoggerView;
-
-    CameraView cameraView;
-
-//    AvcEncoder avcEncoder;
-
-    ZVideoView zVideoView;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +35,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ZP.p(activity(),  new ZP.CallBack() {
+        ZP.p(activity(), new ZP.CallBack() {
             @Override
             public void whenGranted() {
 
@@ -52,7 +45,7 @@ public class MainActivity extends Activity {
             public void whenDenied() {
 
             }
-        },Permission.CAMERA,Permission.WRITE_EXTERNAL_STORAGE,Permission.READ_EXTERNAL_STORAGE,Permission.RECORD_AUDIO);
+        }, Permission.CAMERA, Permission.WRITE_EXTERNAL_STORAGE, Permission.READ_EXTERNAL_STORAGE, Permission.RECORD_AUDIO);
 
         findViewById(R.id.back).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,99 +54,85 @@ public class MainActivity extends Activity {
             }
         });
 
-        final ZButton before=findViewById(R.id.before);
-        final ZButton after=findViewById(R.id.after);
 
-        ZSwitchButton switchButton=findViewById(R.id.switchbutton);
+        final ZButton progress = findViewById(R.id.progress);
+
+        ZSwitchButton switchButton = findViewById(R.id.switchbutton);
         switchButton.setOnPerformCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                S.s("isChecked---> by hand:"+isChecked);
-                buttonView.setChecked(true);
+                S.s("isChecked---> by hand:" + isChecked);
+                if (isChecked) {
+                    progress.showProgress(true);
+                } else {
+                    progress.showProgress(false);
+                }
             }
         });
-        switchButton.setChecked(true);
+        switchButton.setChecked(false);
 
-        cameraView = findViewById(R.id.cameraview);
-        cameraView.setCameraId(0);
-        cameraView.setOverturn(false);
-        cameraView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-        cameraView.setCallBack(new CameraView.CallBack() {
-            @Override
-            public void whenGotBitmap(Bitmap bitmap, byte[] data) {
-                before.setDrawable_back(bitmap);
-                Bitmap b2=B.clip(bitmap.getWidth(),bitmap.getHeight()/2,bitmap);
-                after.setDrawable_back(b2);
-//                S.s("b2: w:"+b2.getWidth()+" h:"+b2.getHeight());
-            }
-
-            @Override
-            public void whenCameraCreated() {
-
-            }
-        });
-
-//        final TabDigit tabDigit = findViewById(R.id.tab);
-
-        ZButton zButton = findViewById(R.id.zbutton1);
+        final ZButton zButton = findViewById(R.id.zbutton1);
         zButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                tabDigit.setNextIndex();
-                if (cameraView.isRecording()) {
-                    T.t(activity(), "停止录像");
-                    S.s("停止录像");
-                    cameraView.stopRecord();
-                } else {
-                    T.t(activity(), "正在录像");
-                    S.s("正在录像");
-                    cameraView.startRecord(Environment.getExternalStorageDirectory().getAbsolutePath() + "/abcde/", "test1.mp4");
-                }
+
+                ZSocket.getInstance().downloadFile("/abcsss/dp.mp4", new ZSocket.FileDownloadResult() {
+                    @Override
+                    public void whenDownloadFinished(String filename) {
+                        S.s("文件下载完毕:" + filename);
+                    }
+
+                    @Override
+                    public void whenDownloadingFile(String filename, float percent) {
+                        S.s("正在下载文件:" + percent);
+                    }
+
+                    @Override
+                    public void whenStartDownload(String filename,long filesize) {
+                        S.s("开始下载文件:"+filename+" 文件大小:"+((double)filesize/1024/1024)+"Mb ["+filesize+"]");
+                    }
+                });
+//                ZSocket.getInstance().setReceiver(new ZSocket.Receiver() {
+//                    @Override
+//                    public void whenGotResult(Msg msg) {
+//                        S.s("接到消息:"+new String(msg.msg));
+//                    }
+//                });
+//                ZSocket.getInstance().send("hello");
+//                ZSocket.getInstance().ask("ASK", new ZSocket.AskResult() {
+//                    @Override
+//                    public void whenGotResult(Msg msg) {
+//                        if (msg.type == Msg.STRING) {
+//                            String content = new String(msg.msg);
+//                            S.s("接到消息:" + content);
+//                            if (content.equals("ASK")) {
+//                                ZSocket.getInstance().answer(msg.id, "Got it");
+//                            }
+//                        }
+//                    }
+//                });
             }
 
         });
+        ZSocket.getInstance().setFileServer(new ZSocket.FileServer() {
+            @Override
+            public void whenSomeOneAskFile(String id,String ip, String filename) {
+                S.s("下载文件请求:"+filename);
+                File file=new File(B.path_system,filename);
+                if(file.exists()){
+                    ZSocket.getInstance().sendFile(id,ip,file);
+                }else{
+                    S.e("文件不存在,无法回复");
+                }
+            }
+        });
 
 
-        zVideoView = findViewById(R.id.zvideoview);
 
 
-        zVideoView.setVideo(Environment.getExternalStorageDirectory().getAbsolutePath() + "/abcde/test1.mp4");
-        zVideoView.play();
-
-
-//
-//        ZThread zThread = new ZThread(1) {
-//            @Override
-//            protected void todo() {
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-////                        tabDigit.setNextIndex();
-//                        WeatherTool.getWeather(new WeatherTool.CallBack() {
-//
-//                            @Override
-//                            public void whenGotWeather(List<Weather> weathers) {
-//
-//                            }
-//
-//                            @Override
-//                            public void whenFailed(String msg) {
-//
-//                            }
-//                        });
-//                    }
-//                });
-//            }
-//        };
-//        zThread.play();
-
-        ZScaleBar scaleBar=findViewById(R.id.scalebar);
+        ZScaleBar scaleBar = findViewById(R.id.scalebar);
         scaleBar.setPercent(0.5f);
+
     }
 
     private void initLogger() {
@@ -181,7 +160,7 @@ public class MainActivity extends Activity {
 
     @Override
     public void finish() {
-
+        ZSocket.getInstance().close();
         super.finish();
     }
 

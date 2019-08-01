@@ -2,6 +2,7 @@
 <resources>
 
     <declare-styleable name="ZButton">
+        <attr name="progress" format="boolean"></attr>
         <!-- Text on center -->
         <attr name="text_center" format="string"></attr>
         <attr name="textcolor" format="color"></attr>

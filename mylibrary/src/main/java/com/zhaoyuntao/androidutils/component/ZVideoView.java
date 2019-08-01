@@ -33,7 +33,7 @@ public class ZVideoView extends FrameLayout implements TextureView.SurfaceTextur
     private String mUrl;
     private ZScaleBar scaleBar;
     private int MSG_PROFRESS = 0;
-
+    private CallBack callBack;
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -118,6 +118,9 @@ public class ZVideoView extends FrameLayout implements TextureView.SurfaceTextur
 
     public void play() {
         handler.sendEmptyMessage(MSG_PROFRESS);
+        if (callBack != null) {
+            callBack.whenStart();
+        }
     }
 
     private void initAudioManager() {
@@ -153,6 +156,9 @@ public class ZVideoView extends FrameLayout implements TextureView.SurfaceTextur
 //                    S.s("onCompletion");
                     handler_completed.sendEmptyMessage(MSG_PROFRESS);
                     handler.removeMessages(MSG_PROFRESS);
+                    if (callBack != null) {
+                        callBack.whenEnd();
+                    }
                 }
             });
             mMediaPlayer.setOnBufferingUpdateListener(new IMediaPlayer.OnBufferingUpdateListener() {
@@ -253,5 +259,15 @@ public class ZVideoView extends FrameLayout implements TextureView.SurfaceTextur
         }
         handler.removeMessages(MSG_PROFRESS);
         super.destroyDrawingCache();
+    }
+
+    public void setCallBack(CallBack callBack) {
+        this.callBack = callBack;
+    }
+
+    public interface CallBack {
+        void whenStart();
+
+        void whenEnd();
     }
 }

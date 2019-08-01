@@ -513,8 +513,8 @@ public class TabDigit extends View {
                 // 修正失真
                 float[] mValues = new float[9];
                 rotateMatrix.getValues(mValues);                //获取数值
-                S.s("scale:" + scale);
-                S.s("arr:        " + Arrays.toString(mValues));
+//                S.s("scale:" + scale);
+//                S.s("arr:        " + Arrays.toString(mValues));
 //            mValues[6] = mValues[6] / scale;            //数值修正
 //            mValues[7] = mValues[7] / scale;            //数值修正
 //            mValues[8] = mValues[8] / scale;            //数值修正

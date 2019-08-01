@@ -13,12 +13,14 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Shader;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import com.zhaoyuntao.androidutils.R;
 import com.zhaoyuntao.androidutils.tools.*;
@@ -154,6 +156,8 @@ public class ZButton extends FrameLayout {
 
     //互斥的button
     private Map<ZButton, ZButton> mapFriend;
+    //是否显示progress
+    private boolean isProgressType;
 
     public ZButton(Context context) {
         super(context);
@@ -257,6 +261,25 @@ public class ZButton extends FrameLayout {
         }
     }
 
+    ProgressBar progressBar;
+
+    public void showProgress(boolean visibility) {
+        if (progressBar == null) {
+            progressBar = new ProgressBar(getContext());
+            ZButton.LayoutParams lp = new ZButton.LayoutParams(B.dip2px(getContext(), 50), B.dip2px(getContext(), 50));
+            lp.gravity = Gravity.CENTER;
+            progressBar.setLayoutParams(lp);
+        }
+
+        if (visibility) {
+            addView(progressBar);
+            progressBar.setVisibility(VISIBLE);
+        } else {
+            removeView(progressBar);
+            progressBar.setVisibility(INVISIBLE);
+        }
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (isClickable()) {
@@ -325,6 +348,8 @@ public class ZButton extends FrameLayout {
             int textSize_default = B.sp2px(context, 20);
 
             TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.ZButton);//
+
+            this.isProgressType = typedArray.getBoolean(R.styleable.ZButton_progress, false);
 
             this.wave = typedArray.getBoolean(R.styleable.ZButton_wave, false);
             this.waveColor = typedArray.getColor(R.styleable.ZButton_wavecolor, Color.WHITE);
@@ -465,7 +490,12 @@ public class ZButton extends FrameLayout {
             }
             typedArray.recycle();
         }
-
+        if(this.isProgressType){
+           this.color_back=new int[]{Color.argb(0,0,0,0)};
+           this.color_back_disable=new int[]{Color.argb(0,0,0,0)};
+           this.color_back_choose=new int[]{Color.argb(0,0,0,0)};
+           this.color_back_click=new int[]{Color.argb(0,0,0,0)};
+        }
     }
 
     private int[] getColorsFromAttr(String colorStr) {
@@ -753,7 +783,7 @@ public class ZButton extends FrameLayout {
 
     public void setTextSize(float textSize) {
 
-        this.textSize = B.sp2px(getContext(),textSize);
+        this.textSize = B.sp2px(getContext(), textSize);
         flush();
     }
 
