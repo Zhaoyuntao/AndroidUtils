@@ -15,6 +15,7 @@ public abstract class ZThread extends Thread {
     private boolean flag = true;
     private boolean isStart;
     private boolean pause;
+    private long timeStart;
 
     private Sleeper sleeper = new Sleeper();
 
@@ -37,6 +38,7 @@ public abstract class ZThread extends Thread {
             return;
         }
         isStart = true;
+        timeStart=S.currentTimeMillis();
         super.start();
     }
 
@@ -122,5 +124,9 @@ public abstract class ZThread extends Thread {
 
     public void setFrame(float frame) {
         this.frame = frame;
+    }
+
+    public long getTimeStart() {
+        return timeStart;
     }
 }

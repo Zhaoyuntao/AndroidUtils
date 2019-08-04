@@ -2,7 +2,6 @@ package com.androidutils.www.zandroidutils;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.CompoundButton;
@@ -12,14 +11,12 @@ import com.zhaoyuntao.androidutils.component.LoggerView;
 import com.zhaoyuntao.androidutils.component.ZSwitchButton;
 import com.zhaoyuntao.androidutils.component.ZScaleBar;
 import com.zhaoyuntao.androidutils.component.ZButton;
-import com.zhaoyuntao.androidutils.net.Msg;
 import com.zhaoyuntao.androidutils.net.ZSocket;
 import com.zhaoyuntao.androidutils.permission.runtime.Permission;
 import com.zhaoyuntao.androidutils.tools.B;
 import com.zhaoyuntao.androidutils.tools.S;
+import com.zhaoyuntao.androidutils.tools.T;
 import com.zhaoyuntao.androidutils.tools.ZP;
-
-import java.io.File;
 
 public class MainActivity extends Activity {
 
@@ -75,24 +72,47 @@ public class MainActivity extends Activity {
         zButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                ZSocket.getInstance().downloadFile("/abcsss/dp.mp4", new ZSocket.FileDownloadResult() {
+                final long time_start=S.currentTimeMillis();
+                ZSocket.getInstance().downloadFile("dp.mp4", new ZSocket.FileDownloadResult() {
                     @Override
-                    public void whenDownloadFinished(String filename) {
-                        S.s("文件下载完毕:" + filename);
+                    public void whenTimeOut() {
+                        T.t(activity(),"请求超时");
                     }
 
                     @Override
-                    public void whenDownloadingFile(String filename, float percent) {
-                        S.s("正在下载文件:" + percent);
+                    public void whenFileNotFind(String filename) {
+                        S.e("文件未找到,无法下载:"+filename);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                T.t(activity(),"文件不存在,无法下载");
+                            }
+                        });
                     }
 
                     @Override
-                    public void whenStartDownload(String filename,long filesize) {
-                        S.s("开始下载文件:"+filename+" 文件大小:"+((double)filesize/1024/1024)+"Mb ["+filesize+"]");
+                    public void whenDownloadCompleted(final String filename) {
+                        final long during=S.currentTimeMillis()-time_start;
+                        S.s("文件下载完毕:" + filename+" 耗时:"+during);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                T.t(activity(),"文件下载完毕:" + filename+" 耗时:"+during);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void whenDownloading(String filename, float percent) {
+//                        S.s("正在下载文件:" + percent);
+                    }
+
+                    @Override
+                    public void whenStartDownloading(String filename, long filesize) {
+//                        S.s("开始下载文件:"+filename+" 文件大小:"+((double)filesize/1024/1024)+"Mb ["+filesize+"]");
                     }
                 });
-//                ZSocket.getInstance().setReceiver(new ZSocket.Receiver() {
+//                ZSocket.getInstance().setReceiver(new ZSocket.ReceiverResult() {
 //                    @Override
 //                    public void whenGotResult(Msg msg) {
 //                        S.s("接到消息:"+new String(msg.msg));
@@ -114,21 +134,6 @@ public class MainActivity extends Activity {
             }
 
         });
-        ZSocket.getInstance().setFileServer(new ZSocket.FileServer() {
-            @Override
-            public void whenSomeOneAskFile(String id,String ip, String filename) {
-                S.s("下载文件请求:"+filename);
-                File file=new File(B.path_system,filename);
-                if(file.exists()){
-                    ZSocket.getInstance().sendFile(id,ip,file);
-                }else{
-                    S.e("文件不存在,无法回复");
-                }
-            }
-        });
-
-
-
 
         ZScaleBar scaleBar = findViewById(R.id.scalebar);
         scaleBar.setPercent(0.5f);

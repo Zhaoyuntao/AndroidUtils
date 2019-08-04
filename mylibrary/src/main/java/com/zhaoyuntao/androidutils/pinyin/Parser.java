@@ -8,7 +8,7 @@ import java.io.*;
  * 
  * There are two types of parse methods: DOM methods which parse into a DOM tree
  * and SAX methods in which the parser calls a client-provided hander.  The XML can be proved
- * either as characters (in a String, character array, or Reader) or as bytes 
+ * either as characters (in a String, character array, or FilePieceReader) or as bytes
  * (in a File, byte array, or InputStream).  In the latter case the Unicode encoding is
  * first guessed by looking at the first few characters and then possibly confirmed
  * by reading an encoding declaration on the first line of the XML.  In some cases the declared

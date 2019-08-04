@@ -8,7 +8,6 @@ import java.util.Arrays;
 public class Msg {
     public String id;
     public String ip;
-    public int port;
     public byte[] msg;
     //文件大小
     public long filesize;
@@ -16,14 +15,22 @@ public class Msg {
     public int count;
     //当前消息包的位置
     public int index;
-    //当前文件包写入位置
-    public long position;
     public byte type;
     public String filename;
-    public static final byte STRING = 0;
-    public static final byte BITMAP = 1;
-    public static final byte VIDEO = 2;
-    public static final byte FILE = 3;
+    public static final byte HEARTBIT = 0;
+    public static final byte LOGOUT = 1;
+    public static final byte ASK = 10;
+    public static final byte ANSWER = 11;
+    public static final byte BITMAP = 12;
+    //文件块消息
+    public static final byte FILE_PIECE = 13;
+    //客户端请求文件块
+    public static final byte ASK_FILE_PIECE = 14;
+    //文件信息
+    public static final byte FILE_INFO = 15;
+    //客户端请求文件信息
+    public static final byte ASK_FILE_INFO = 16;
+    public static final byte FILE_CHECK = 17;
 
     //id占100字节
     private static int idByteArrLen = 100;
@@ -41,21 +48,6 @@ public class Msg {
 
     public static String getRandomId() {
         return "socketid" + S.currentTimeMillis();
-    }
-
-    public static String getType(byte type) {
-        switch (type) {
-            case STRING:
-                return "字符串";
-            case BITMAP:
-                return "Bitmap图片";
-            case VIDEO:
-                return "视频文件";
-            case FILE:
-                return "文件";
-            default:
-                return "未知";
-        }
     }
 
     //组包:类型:1字节,id:100字节,文件块长度:4,文件块下标:4,文件名:4+200,正文:不定,总长度=213+正文长度
@@ -89,9 +81,9 @@ public class Msg {
         data = Arrays.copyOf(data, data.length + index.length);
         System.arraycopy(index, 0, data, data.length - index.length, index.length);
         //文件块写入位置,8字节
-        byte[] position = S.longToByteArr(msg.position);
-        data = Arrays.copyOf(data, data.length + position.length);
-        System.arraycopy(position, 0, data, data.length - position.length, position.length);
+//        byte[] position = S.longToByteArr(msg.position);
+//        data = Arrays.copyOf(data, data.length + position.length);
+//        System.arraycopy(position, 0, data, data.length - position.length, position.length);
 
         //文件名相关
         byte[] filenameArr = null;
@@ -155,9 +147,9 @@ public class Msg {
             msg.index = S.byteArrToInt(Arrays.copyOfRange(data, 0, 4));
             data = Arrays.copyOfRange(data, 4, data.length);
 
-            //文件块写入位置
-            msg.position = S.byteArrToLong(Arrays.copyOfRange(data, 0, 8));
-            data = Arrays.copyOfRange(data, 8, data.length);
+//            //文件块写入位置
+//            msg.position = S.byteArrToLong(Arrays.copyOfRange(data, 0, 8));
+//            data = Arrays.copyOfRange(data, 8, data.length);
         }
         //文件名
         if (data.length >= filenameByteArrLen + 4) {
@@ -175,4 +167,5 @@ public class Msg {
         msg.msg = Arrays.copyOfRange(data, 0, data.length);
         return msg;
     }
+
 }

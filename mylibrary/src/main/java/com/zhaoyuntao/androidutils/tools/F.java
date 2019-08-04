@@ -8,13 +8,13 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 
 public class F {
-
-    private static Map<File, Task> map = new HashMap<>();
 
     /**
      * 同步拆分文件
@@ -39,7 +39,7 @@ public class F {
                 packages = Arrays.copyOf(packages, packages.length + 1);
                 packages[packages.length - 1] = data;
             }
-//            S.s("文件大小:" + all);
+//            S.s("文件大小:" + count);
 //            S.s("拆分总数:" + packages.length + " 每份:" + size + " 总和:" + (packages.length * size - tail));
             randomAccessFile.close();
         } catch (FileNotFoundException e) {
@@ -51,6 +51,8 @@ public class F {
         }
         return packages;
     }
+
+
 
     /**
      * 异步拆分文件
@@ -64,9 +66,10 @@ public class F {
             private FileInputStream fileInputStream;
             private RandomAccessFile randomAccessFile;
             private int count;
-            private int index = 0;
-            private int position = 0;
+            private int index;
+            private int position;
             private int filesize;
+
             @Override
             protected void init() {
                 try {
@@ -100,9 +103,9 @@ public class F {
                     if (num < data.length) {
                         data = Arrays.copyOf(data, num);
                     }
-                    S.s("得到第[" + index + "/" + count + "]个片段,大小:" + num + "写入位置计算:" + position);
+//                    S.s("得到第[" + index + "/" + count + "]个片段,大小:" + num + "写入位置计算:" + position);
                     if (callBack != null) {
-                        callBack.whenGotPiece(Arrays.copyOf(data, data.length), index++, count, position, filesize,this);
+                        callBack.whenGotPiece(Arrays.copyOf(data, data.length), index++, count, position, filesize, this);
                     }
                     position += num;
                 } catch (IOException e) {
@@ -127,6 +130,7 @@ public class F {
         zThread.start();
         return zThread;
     }
+
 
     /**
      * 拆分byte arr,同步
@@ -174,136 +178,6 @@ public class F {
         return data;
     }
 
-    public static class TaskMsg {
-        public long position;
-        public int index;
-        byte[] data;
-    }
-
-    public static class Task extends ZThread {
-        RandomAccessFile randomAccessFile;
-        BlockingDeque<TaskMsg> blockingDeque;
-        File file;
-        CallBack callBack;
-        private int countNow;
-        private int all;
-        public Task(File file, CallBack callBack) {
-            this.callBack = callBack;
-            this.all = callBack.getCount();
-            this.file = file;
-            blockingDeque = new LinkedBlockingDeque<>();
-            if (file.exists()) {
-                file.delete();
-            }
-            try {
-                file.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            try {
-                randomAccessFile = new RandomAccessFile(file, "rw");
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-                S.e(e);
-            }
-        }
-
-        public void addPiece(byte[] data, long writePosition,int index) {
-            TaskMsg taskMsg = new TaskMsg();
-            taskMsg.data = data;
-            taskMsg.position = writePosition;
-            taskMsg.index=index;
-            blockingDeque.add(taskMsg);
-        }
-
-        @Override
-        protected void init() {
-            if(callBack!=null){
-                callBack.whenStartDownloading(file.getAbsolutePath());
-            }
-        }
-
-        @Override
-        protected void todo() {
-            boolean completed = false;
-            try {
-                TaskMsg taskMsg = blockingDeque.take();
-                countNow++;
-                byte[] data = taskMsg.data;
-                randomAccessFile.seek(taskMsg.position);
-                randomAccessFile.write(data);
-                S.s("正在接收文件[" + countNow + "/" + all + "]["+taskMsg.index+"] 数据长度:" + data.length + " 写入位置:" + taskMsg.position);
-                if (callBack != null) {
-                    callBack.whenDownloading(file.getAbsolutePath(),countNow / (float)all);
-                }
-                if (countNow >= all) {
-//                    S.s("文件块全部接收完毕,总个数:" + all);
-                    completed = true;
-                }
-
-            } catch (InterruptedException e) {
-                completed = true;
-                e.printStackTrace();
-            } catch (FileNotFoundException e) {
-                completed = true;
-                e.printStackTrace();
-            } catch (IOException e) {
-                completed = true;
-                e.printStackTrace();
-            } finally {
-                if (completed) {
-                    close();
-                }
-            }
-        }
-
-
-        @Override
-        public void close() {
-            map.remove(file);
-            if (randomAccessFile != null) {
-                try {
-                    randomAccessFile.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (callBack != null) {
-                callBack.whenWriteOk(file.getAbsolutePath());
-            }
-            super.close();
-        }
-
-        public interface CallBack {
-            void whenWriteOk(String filename);
-
-            void whenDownloading(String filename,float percent);
-
-            int getCount();
-
-            void whenStartDownloading(String filename);
-        }
-    }
-
-
-    /**
-     * 组合文件,需要与closeFile一起使用
-     *
-     * @param file
-     * @param data
-     */
-    public static void assembleFile(final int index,final File file, final byte[] data, final long position, Task.CallBack callBack) {
-        if (file == null || data == null) {
-            return;
-        }
-        Task task = map.get(file);
-        if (task == null) {
-            task = new Task(file, callBack);
-            map.put(file, task);
-            task.start();
-        }
-        task.addPiece(data, position,index);
-    }
 
     /**
      * 组合文件,异步
@@ -367,8 +241,12 @@ public class F {
 
 
     public interface CallBack {
-        void whenGotPiece(byte[] data, int index, int count, int position, long filesize,ZThread zThread);
+        void whenGotPiece(byte[] data, int index, int count, int position, long filesize, ZThread zThread);
 
+    }
+
+    public interface FileInfo {
+        void whenGotFileInfo(byte[] info);
     }
 
     public interface Result {
