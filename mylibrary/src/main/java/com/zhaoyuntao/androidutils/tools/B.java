@@ -507,9 +507,9 @@ public class B {
             options.inSampleSize = 1;
         } else {
             float percent = ((float) size_bitmap) / maxSize;
-            S.s("percent:" + percent);
+//            S.s("percent:" + percent);
             int sampleSize = (int) Math.sqrt(percent) + 1;
-            S.s("sampleSize:" + sampleSize);
+//            S.s("sampleSize:" + sampleSize);
             options.inSampleSize = sampleSize;
         }
         options.inJustDecodeBounds = false;

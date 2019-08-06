@@ -1,4 +1,3 @@
-
 package com.zhaoyuntao.androidutils.component;
 
 import android.animation.Animator;
@@ -7,9 +6,11 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
@@ -21,6 +22,7 @@ import android.view.MotionEvent;
 import android.view.ViewConfiguration;
 
 import com.zhaoyuntao.androidutils.R;
+import com.zhaoyuntao.androidutils.tools.B;
 
 public class ZSwitchButton extends android.support.v7.widget.AppCompatCheckBox {
 
@@ -143,23 +145,35 @@ public class ZSwitchButton extends android.support.v7.widget.AppCompatCheckBox {
 
         mWidth = mFrame.getIntrinsicWidth();
         mHeight = mFrame.getIntrinsicHeight();
+        float percent = ((float) mWidth) / mHeight;
+        //
+        if (attrs != null) {
+            TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.ZSwitchButton);//
+            float mWidthTmp = typedArray.getDimension(R.styleable.ZSwitchButton_w, -1);
+            float mHeightTmp = typedArray.getDimension(R.styleable.ZSwitchButton_h, -1);
+            if (mWidthTmp != -1 && mHeightTmp != -1) {
+                float percentTmp = mWidthTmp / mHeightTmp;
+                if (percentTmp > percent) {
+                    mHeight = (int) mHeightTmp;
+                    mWidth = (int) (mHeightTmp * percent);
+                } else {
+                    mWidth = (int) mWidthTmp;
+                    mHeight = (int) (mWidthTmp / percent);
+                }
+            }
+        }
 
-        mSliderWidth = Math.min(mWidth, mSliderOn.getIntrinsicWidth());
+//        mSliderWidth = Math.min(mWidth, mSliderOn.getIntrinsicWidth() );
+        mSliderWidth = (int) (mWidth*0.57f);
         mSliderPositionStart = 0;
         mSliderPositionEnd = mWidth - mSliderWidth;
         mSliderOffset = mSliderPositionStart;
 
         BitmapDrawable slideOff = new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.sliding_btn_bar_off_light));
-        mBarOff = Bitmap.createScaledBitmap(slideOff.getBitmap(),
-                mWidth * 2 - mSliderWidth,
-                mHeight,
-                true);
+        mBarOff = Bitmap.createScaledBitmap(slideOff.getBitmap(), mWidth * 2 - mSliderWidth, mHeight, true);
 
         BitmapDrawable slidingOn = new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.sliding_btn_bar_on_light));
-        mBarOn = Bitmap.createScaledBitmap(slidingOn.getBitmap(),
-                mWidth * 2 - mSliderWidth,
-                mHeight,
-                true);
+        mBarOn = Bitmap.createScaledBitmap(slidingOn.getBitmap(), mWidth * 2 - mSliderWidth, mHeight, true);
         mFrame.setBounds(0, 0, mWidth, mHeight);
 
         Drawable maskDrawable = getResources().getDrawable(R.drawable.sliding_btn_mask_light);
@@ -170,6 +184,10 @@ public class ZSwitchButton extends android.support.v7.widget.AppCompatCheckBox {
         mBarOnPaint = new Paint();
         mBarOnPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
         mBarOffPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+    }
+
+    private void initAttr(AttributeSet attrs) {
+
     }
 
     /*
@@ -297,8 +315,7 @@ public class ZSwitchButton extends android.support.v7.widget.AppCompatCheckBox {
                 mAnimator = null;
             }
             AnimatorSet animatorSet = new AnimatorSet();
-            ObjectAnimator slidingAnimator = ObjectAnimator
-                .ofInt(this, "SliderOffset", isChecked ? mSliderPositionEnd : mSliderPositionStart);
+            ObjectAnimator slidingAnimator = ObjectAnimator.ofInt(this, "SliderOffset", isChecked ? mSliderPositionEnd : mSliderPositionStart);
             ObjectAnimator scaleAnimator = ObjectAnimator.ofInt(this, "SliderOnAlpha", isChecked ? FULL_ALPHA : 0);
             scaleAnimator.setDuration(ANIMATION_DURATION);
             slidingAnimator.setDuration(ANIMATION_DURATION);
@@ -306,8 +323,7 @@ public class ZSwitchButton extends android.support.v7.widget.AppCompatCheckBox {
             mAnimator = animatorSet;
             mAnimator.addListener(mAnimatorListener);
             mAnimator.start();
-        }
-        else {
+        } else {
             if (isChecked != isChecked()) {
                 setChecked(isChecked);
                 if (mOnPerformCheckedChangeListener != null) {

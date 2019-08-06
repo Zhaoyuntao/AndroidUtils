@@ -126,4 +126,8 @@
         <attr name="w_progress" format="dimension" />
         <attr name="radius_circle" format="dimension" />
     </declare-styleable>
+    <declare-styleable name="ZSwitchButton">
+        <attr name="w" format="dimension"></attr>
+        <attr name="h" format="dimension"></attr>
+    </declare-styleable>
 </resources>

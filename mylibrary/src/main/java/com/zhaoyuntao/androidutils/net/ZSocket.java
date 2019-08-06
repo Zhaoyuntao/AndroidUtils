@@ -2,6 +2,7 @@ package com.zhaoyuntao.androidutils.net;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.os.Environment;
 
 import com.zhaoyuntao.androidutils.tools.B;
 import com.zhaoyuntao.androidutils.tools.S;
@@ -15,13 +16,11 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 public class ZSocket {
 
-    public static String socketId = "DEFAULT";
+    public String socketId = "DEFAULT";
     //心跳包频率
     private static final float frame_heart = 2;
     private static ZSocket zSocket;
@@ -38,8 +37,6 @@ public class ZSocket {
 
     private Map<String, TimeOut> timeOutQueue;
 
-    private String path;
-
     private final int timeout = 3;//超时时长:秒
 
     public static final int maxPackagSize = 63 * 1024;//UDP每个包最大不能超过64kb
@@ -54,6 +51,8 @@ public class ZSocket {
     //RPC应答
     private Map<String, Answer> map_Answer = new HashMap<>();
     private ReceiverResult receiver;
+    private FilePathProcessor filePathProcessor;
+    private boolean DEBUG;
 
     private ZSocket() {
         clients = new HashMap<>();
@@ -65,12 +64,19 @@ public class ZSocket {
         initHeart();
     }
 
-    public void asServer() {
-        socketId = "SERVER";
+    public ZSocket DEBUG() {
+        this.DEBUG = true;
+        return this;
     }
 
-    public void asClient() {
+    public ZSocket asServer() {
+        socketId = "SERVER";
+        return this;
+    }
+
+    public ZSocket asClient() {
         socketId = "CLIENT";
+        return this;
     }
 
 
@@ -124,16 +130,35 @@ public class ZSocket {
     }
 
     public void ask(String request, AskResult askResult) {
+        ask(request, null, askResult);
+    }
+
+    public void ask(String title, String params, final AskResult askResult) {
         String id = Msg.getRandomId();
         Msg msg = new Msg(id);
         msg.type = Msg.ASK;
-        msg.msg = request.getBytes();
+        msg.title = title;
+        if (S.isNotEmpty(params)) {
+            msg.msg = params.getBytes();
+        }
         send(msg);
         map_AskResult.put(id, askResult);
+        TimeOut timeOut = new TimeOut() {
+            @Override
+            public void whenTimeOut() {
+                askResult.whenTimeOut();
+            }
+        };
+        timeOut.msg = msg;
+        timeOut.id = id;
+        timeOut.time = S.currentTimeMillis();
+        timeOutQueue.put(id, timeOut);
     }
 
-    public void addAnswer(Answer answer) {
-        map_Answer.put(answer.getAsk(), answer);
+    public ZSocket addAnswer(String ask, Answer answer) {
+        map_Answer.put(ask, answer);
+
+        return this;
     }
 
     public void downloadFile(String filename, final FileDownloadResult fileDownloadResult) {
@@ -206,7 +231,7 @@ public class ZSocket {
         TimeOut timeOut = new TimeOut() {
             @Override
             public void whenTimeOut() {
-                if(fileDownloadTask!=null) {
+                if (fileDownloadTask != null) {
                     fileDownloadTask.close();
                 }
                 fileDownloadTaskCache.remove(id);
@@ -215,7 +240,7 @@ public class ZSocket {
                 }
             }
         };
-        timeOut.id=id;
+        timeOut.id = id;
         timeOut.time = S.currentTimeMillis();
         timeOutQueue.put(id, timeOut);
     }
@@ -270,7 +295,9 @@ public class ZSocket {
                 for (TimeOut timeOut : timeOutQueue.values()) {
                     long time = timeOut.time;
                     long during = time_now - time;
-                    if (during > 3000) {
+                    if (during > 1000 && during < 3000) {
+                        send(timeOut.msg);
+                    } else if (during > 3000) {
                         timeOutQueue.remove(timeOut.id);
                         timeOut.whenTimeOut();
                     }
@@ -320,7 +347,7 @@ public class ZSocket {
                         Client client = getClient(ip);
                         String socketIdTmp = new String(msg.msg);
                         //如果是不同类型的socket,则加入连接
-                        if (!socketIdTmp.equals(socketId)) {
+                        if (!socketIdTmp.equals(socketId) || DEBUG) {
                             if (client == null) {
                                 client = new Client();
                                 client.ip = ip;
@@ -336,17 +363,23 @@ public class ZSocket {
                         removeClient(ip);
                         break;
                     case Msg.ASK:
-                        String stringMsg = new String(msg.msg);
-                        S.s("接到来自[" + ip + ":" + port + "]的请求 : " + stringMsg);
-                        Answer answer = map_Answer.get(stringMsg);
+                        S.s("接到来自[" + ip + ":" + port + "]的请求 : " + msg.title);
+                        Answer answer = map_Answer.get(msg.title);
+                        //获取param
+                        String param = new String(msg.msg);
                         if (answer != null) {
+                            String answerStr = answer.getAnswer(param);
+                            S.s("正在回复:" + answerStr);
                             Msg response = new Msg(msg.id);
-                            response.type = Msg.ASK;
-                            response.msg = answer.getAnswer().getBytes();
+                            response.type = Msg.ANSWER;
+                            if (S.isNotEmpty(answerStr)) {
+                                response.msg = answerStr.getBytes();
+                            }
+                            response.ip = msg.ip;
                             send(response);
                         } else {
                             if (receiver != null) {
-                                receiver.whenGotResult(stringMsg);
+                                receiver.whenGotResult(param);
                             }
                         }
 
@@ -364,7 +397,10 @@ public class ZSocket {
                         }
                         break;
                     case Msg.ASK_FILE_INFO://文件信息请求
-
+                        String path = Environment.getExternalStorageDirectory().getAbsolutePath();
+                        if (filePathProcessor != null) {
+                            path = filePathProcessor.getFilePath(msg.filename);
+                        }
                         //预加载文件读取器
                         FileRandomReader fileRandomReader = new FileRandomReader(msg.id, path, msg.filename, new FileRandomReader.CallBack() {
                             @Override
@@ -604,38 +640,46 @@ public class ZSocket {
         }
     }
 
-    public void close() {
-        stopSend();
-        stopRecv();
-        stopHeart();
-        clearTask();
-        clearClient();
-        context = null;
+    public static void close() {
+        if (zSocket != null) {
+            zSocket.stopSend();
+            zSocket.stopRecv();
+            zSocket.stopHeart();
+            zSocket.clearTask();
+            zSocket.clearClient();
+            zSocket.context = null;
+            zSocket = null;
+        }
     }
 
-    public void setPath(String path) {
-        this.path = path;
+    public ZSocket setFilePathProcessor(FilePathProcessor filePathProcessor) {
+        this.filePathProcessor = filePathProcessor;
+        return this;
     }
 
     public abstract class TimeOut {
         public long time;
         public String id;
+        public Msg msg;
 
-        public abstract void whenTimeOut() ;
+        public abstract void whenTimeOut();
     }
 
     public interface CallBack {
         void whenTimeOut();
+
     }
 
-    public interface AskResult {
+    public interface AskResult extends CallBack {
         void whenGotResult(Msg msg);
     }
 
     public interface Answer {
-        String getAsk();
+        String getAnswer(String param);
+    }
 
-        String getAnswer();
+    public interface FilePathProcessor {
+        String getFilePath(String filename);
     }
 
     public interface ReceiverResult extends CallBack {
@@ -643,6 +687,7 @@ public class ZSocket {
     }
 
     public interface FileDownloadResult extends CallBack {
+
         void whenFileNotFind(String filename);
 
         void whenDownloadCompleted(String filename);

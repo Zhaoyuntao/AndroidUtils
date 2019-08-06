@@ -64,8 +64,14 @@ public class Sender extends ZThread {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        if(msg==null){
+            return;
+        }
         //组包
         byte[] data = Msg.getPackage(msg);
+        if(data==null){
+            return;
+        }
         if (data.length > maxPackagSize + 1024) {
             S.e("send err:message is too long(max:" + (maxPackagSize + 1024) + "):" + data.length);
             return;

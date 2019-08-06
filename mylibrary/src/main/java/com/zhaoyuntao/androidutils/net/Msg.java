@@ -16,6 +16,9 @@ public class Msg {
     //当前消息包的位置
     public int index;
     public byte type;
+    public String title;
+    //title占200字节
+    public static final int titleByteArrLen = 600;
     public String filename;
     public static final byte HEARTBIT = 0;
     public static final byte LOGOUT = 1;
@@ -36,6 +39,7 @@ public class Msg {
     private static int idByteArrLen = 100;
     //文件名占200字节
     public static final int filenameByteArrLen = 200;
+
     public ZThread zThread;
 
     public Msg() {
@@ -52,21 +56,24 @@ public class Msg {
 
     //组包:类型:1字节,id:100字节,文件块长度:4,文件块下标:4,文件名:4+200,正文:不定,总长度=213+正文长度
     public static byte[] getPackage(Msg msg) {
+        if (msg == null) {
+            return null;
+        }
         byte[] data = new byte[0];
-        //类型,1字节
+        //类型,1字节---------------------------------------------------------------------------
         data = Arrays.copyOf(data, data.length + 1);
         data[0] = msg.type;
 
-        //id数组长度,4字节
+        //id数组长度,4字节---------------------------------------------------------------------------
         byte[] id = msg.id.getBytes();
         byte[] len_id = S.intToByteArr(id.length);
         data = Arrays.copyOf(data, data.length + len_id.length);
         System.arraycopy(len_id, 0, data, data.length - len_id.length, len_id.length);
 
-        //id,100字节
+        //id,100字节---------------------------------------------------------------------------
         data = Arrays.copyOf(data, data.length + idByteArrLen);
         System.arraycopy(id, 0, data, data.length - idByteArrLen, id.length);
-
+        //文件块相关---------------------------------------------------------------------------
         //文件总大小
         byte[] filesize = S.longToByteArr(msg.filesize);
         data = Arrays.copyOf(data, data.length + filesize.length);
@@ -85,7 +92,7 @@ public class Msg {
 //        data = Arrays.copyOf(data, data.length + position.length);
 //        System.arraycopy(position, 0, data, data.length - position.length, position.length);
 
-        //文件名相关
+        //文件名相关---------------------------------------------------------------------------
         byte[] filenameArr = null;
         if (S.isNotEmpty(msg.filename)) {
             filenameArr = msg.filename.getBytes();
@@ -107,7 +114,29 @@ public class Msg {
             byte[] tmp = Arrays.copyOf(filenameArr, filenameByteArrLen);
             System.arraycopy(tmp, 0, data, data.length - filenameByteArrLen, filenameByteArrLen);
         }
-        //消息正文,任意字节数
+        //title相关---------------------------------------------------------------------------
+        byte[] titleArr = null;
+        if (S.isNotEmpty(msg.title)) {
+            titleArr = msg.title.getBytes();
+            if (titleArr.length > titleByteArrLen / 2) {
+                S.e("title长度不能大于" + titleByteArrLen / 2 + "!");
+                return null;
+            }
+        }
+        //title数组长度
+        data = Arrays.copyOf(data, data.length + 4);
+        if (titleArr != null) {
+            byte[] strlen = S.intToByteArr(titleArr.length);
+            System.arraycopy(strlen, 0, data, data.length - 4, strlen.length);
+        }
+        //title内容
+        data = Arrays.copyOf(data, data.length + titleByteArrLen);
+        if (titleArr != null) {
+            byte[] tmp = Arrays.copyOf(titleArr, titleByteArrLen);
+            System.arraycopy(tmp, 0, data, data.length - titleByteArrLen, titleByteArrLen);
+        }
+
+        //消息正文,任意字节数---------------------------------------------------------------------------
         if (msg.msg != null && msg.msg.length > 0) {
             data = Arrays.copyOf(data, data.length + msg.msg.length);
             System.arraycopy(msg.msg, 0, data, data.length - msg.msg.length, msg.msg.length);
@@ -146,10 +175,6 @@ public class Msg {
             //文件块当前下标
             msg.index = S.byteArrToInt(Arrays.copyOfRange(data, 0, 4));
             data = Arrays.copyOfRange(data, 4, data.length);
-
-//            //文件块写入位置
-//            msg.position = S.byteArrToLong(Arrays.copyOfRange(data, 0, 8));
-//            data = Arrays.copyOfRange(data, 8, data.length);
         }
         //文件名
         if (data.length >= filenameByteArrLen + 4) {
@@ -162,6 +187,18 @@ public class Msg {
             msg.filename = new String(filenameByteArr, 0, len);
 //            S.s("filename:[" + msg.filename + "]");
             data = Arrays.copyOfRange(data, filenameByteArrLen, data.length);
+        }
+        //title
+        if (data.length >= titleByteArrLen + 4) {
+            //title长度
+            byte[] titleLength = Arrays.copyOfRange(data, 0, 4);
+            int len = S.byteArrToInt(titleLength);
+            //去掉记录长度的4个字节,留下title的数组内容
+            data = Arrays.copyOfRange(data, 4, data.length);
+            //title内容
+            byte[] titleByteArr = Arrays.copyOfRange(data, 0, titleByteArrLen);
+            msg.title = new String(titleByteArr, 0, len);
+            data = Arrays.copyOfRange(data, titleByteArrLen, data.length);
         }
         //正文
         msg.msg = Arrays.copyOfRange(data, 0, data.length);

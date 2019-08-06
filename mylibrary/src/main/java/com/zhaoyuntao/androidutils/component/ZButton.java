@@ -264,19 +264,8 @@ public class ZButton extends FrameLayout {
     ProgressBar progressBar;
 
     public void showProgress(boolean visibility) {
-        if (progressBar == null) {
-            progressBar = new ProgressBar(getContext());
-            ZButton.LayoutParams lp = new ZButton.LayoutParams(B.dip2px(getContext(), 50), B.dip2px(getContext(), 50));
-            lp.gravity = Gravity.CENTER;
-            progressBar.setLayoutParams(lp);
-        }
-
-        if (visibility) {
-            addView(progressBar);
-            progressBar.setVisibility(VISIBLE);
-        } else {
-            removeView(progressBar);
-            progressBar.setVisibility(INVISIBLE);
+        if (progressBar != null) {
+            progressBar.setVisibility(visibility ? VISIBLE : INVISIBLE);
         }
     }
 
@@ -490,12 +479,20 @@ public class ZButton extends FrameLayout {
             }
             typedArray.recycle();
         }
-        if(this.isProgressType){
-           this.color_back=new int[]{Color.argb(0,0,0,0)};
-           this.color_back_disable=new int[]{Color.argb(0,0,0,0)};
-           this.color_back_choose=new int[]{Color.argb(0,0,0,0)};
-           this.color_back_click=new int[]{Color.argb(0,0,0,0)};
+        if (this.isProgressType) {
+            this.color_back = new int[]{Color.argb(0, 0, 0, 0)};
+            this.color_back_disable = new int[]{Color.argb(0, 0, 0, 0)};
+            this.color_back_choose = new int[]{Color.argb(0, 0, 0, 0)};
+            this.color_back_click = new int[]{Color.argb(0, 0, 0, 0)};
         }
+
+        //进度
+        progressBar = new ProgressBar(getContext());
+        ZButton.LayoutParams lp = new ZButton.LayoutParams(B.dip2px(getContext(), 50), B.dip2px(getContext(), 50));
+        lp.gravity = Gravity.CENTER;
+        progressBar.setLayoutParams(lp);
+        addView(progressBar);
+        showProgress(false);
     }
 
     private int[] getColorsFromAttr(String colorStr) {
@@ -1053,6 +1050,7 @@ public class ZButton extends FrameLayout {
             float h_half = h / 2f;
 
             Paint paint = new Paint();
+            paint.setAntiAlias(true);
             Paint paint_back = new Paint();
 
             //draw background color
@@ -1714,5 +1712,6 @@ public class ZButton extends FrameLayout {
         super.destroyDrawingCache();
         stopAnimation();
         clearFriend();
+        showProgress(false);
     }
 }

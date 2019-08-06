@@ -114,9 +114,6 @@ public class ZVideoView extends FrameLayout implements TextureView.SurfaceTextur
         initMediaPlayer();
         initTextureView();
         addTextureView();
-    }
-
-    public void play() {
         handler.sendEmptyMessage(MSG_PROFRESS);
         if (callBack != null) {
             callBack.whenStart();

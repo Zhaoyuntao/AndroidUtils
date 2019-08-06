@@ -35,34 +35,13 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
+                android:background="#ff0000"
                 android:layout_weight="1">
-                <com.zhaoyuntao.androidutils.component.ZButton
-                    android:id="@+id/img1"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                <com.zhaoyuntao.androidutils.component.ZVideoView
+                    android:id="@+id/videoview"
                     android:layout_gravity="center"
-                    android:layout_margin="10dp"
-                    android:background="#00000000"
-                    app:color_back="#992233"
-                    app:color_back_choose="#000000"
-                    app:color_back_click="#990033"
-                    app:color_back_disable="#666666"
-                    app:color_border="#22000000"
-                    app:orientation="horizontal"
-                    app:percent_bitmap_center="1"
-                    app:radius="25dp"
-                    app:text_center="xxx"
-                    app:text_center_small="small"
-                    app:text_left="left"
-                    app:text_right="right"
-                    app:textcolor="#ffffff"
-                    app:textcolor_disable="#666666"
-                    app:textsize="40sp"
-                    app:textsize_small="20sp"
-                    app:w_border="5dp"
-                    app:w_space="20dp"
-                    app:w_space_text="10dp"
-                     />
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
             </FrameLayout>
 
         </LinearLayout>
@@ -139,6 +118,8 @@
                 android:id="@+id/switchbutton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                app:w="50dp"
+                app:h="200dp"
                 android:layout_gravity="center" />
         </LinearLayout>
     </LinearLayout>
