@@ -69,6 +69,24 @@ public class ZSocket {
         return this;
     }
 
+    public ZSocket setPort(int port) {
+        if (S.isPort(port)) {
+            this.port = port;
+        } else {
+            S.e("非法的端口号:" + port);
+        }
+        return this;
+    }
+
+    public ZSocket setPortOfFileServer(int port) {
+        if (S.isPort(port)) {
+            this.portFile = port;
+        } else {
+            S.e("非法的FileServer端口号:" + port);
+        }
+        return this;
+    }
+
     public ZSocket asServer() {
         socketId = "SERVER";
         return this;
@@ -117,21 +135,20 @@ public class ZSocket {
     }
 
     public synchronized void send(Msg msg, Msg.TimeOut timeOut) {
+        msg.timeSend=S.currentTimeMillis();
         msg.timeOut = timeOut;
         cacheMsg(msg);
         zThread_send.send(msg);
     }
 
     public synchronized void sendFile(Msg msg) {
+        msg.timeSend=S.currentTimeMillis();
         zThread_sendFile.send(msg);
     }
 
-    public void cacheMsg(Msg msg) {
-        if (msg.type == Msg.RESPONSE || msg.type == Msg.HEARTBIT || msg.type == Msg.FILE_PIECE) {
-            return;
-        }
-        msg.timeSend = S.currentTimeMillis();
+    public ZSocket cacheMsg(Msg msg) {
         cache_msg_send.put(msg.id, msg);
+        return this;
     }
 
     public void ask(String request, AskResult askResult) {
@@ -161,9 +178,11 @@ public class ZSocket {
         map_Answer.put(ask, answer);
         return this;
     }
-    public void setCacheDir(String cacheDir){
-        this.cacheDir=cacheDir;
+
+    public void setCacheDir(String cacheDir) {
+        this.cacheDir = cacheDir;
     }
+
     private String getCacheDir() {
         String cacheDir = this.cacheDir.trim();
         if (S.isEmpty(cacheDir)) {
@@ -175,7 +194,7 @@ public class ZSocket {
         while (cacheDir.endsWith("/")) {
             cacheDir = cacheDir.substring(cacheDir.length() - 1);
         }
-        return Environment.getExternalStorageDirectory().getAbsolutePath() + cacheDir;
+        return Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + cacheDir;
     }
 
     public void downloadFile(final String filename, final FileDownloadResult fileDownloadResult) {
@@ -328,6 +347,7 @@ public class ZSocket {
 
                     //判断是否超时
                     if (during > timeOut_send) {
+                        cache_msg_send.remove(msg.id);
 //                        S.s("消息[" + msg.id + "]已超时,执行超时回调");
                         if (msg.timeOut != null) {
                             msg.timeOut.whenTimeOut();

@@ -33,7 +33,8 @@ public class MainActivity extends Activity {
         S.setFlag(true);
 
         initLogger();
-
+        ZSocket.getInstance().setPort(6655);
+        ZSocket.getInstance().setPortOfFileServer(6658);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -81,53 +82,53 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 final long time_start=S.currentTimeMillis();
-                ZSocket.getInstance().DEBUG().setFilePathProcessor(new ZSocket.FilePathProcessor() {
-                    @Override
-                    public String getFilePath(String filename) {
-                        if(filename.endsWith(".mp4")){
-                            return B.path_system+"/abcsss/";
-                        }
-                        return B.path_system;
-                    }
-                }).downloadFile("dp.mp4", new ZSocket.FileDownloadResult() {
-                    @Override
-                    public void whenTimeOut() {
-                        T.t(activity(),"请求超时");
-                    }
-
-                    @Override
-                    public void whenFileNotFind(String filename) {
-                        S.e("文件未找到,无法下载:"+filename);
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                T.t(activity(),"文件不存在,无法下载");
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void whenDownloadCompleted(final String filename) {
-                        final long during=S.currentTimeMillis()-time_start;
-                        S.s("文件下载完毕:" + filename+" 耗时:"+during);
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                T.t(activity(),"文件下载完毕:" + filename+" 耗时:"+during);
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void whenDownloading(String filename, float percent) {
-                        S.s("正在下载文件:" + percent);
-                    }
-
-                    @Override
-                    public void whenStartDownloading(String filename, long filesize) {
-                        S.s("开始下载文件:"+filename+" 文件大小:"+((double)filesize/1024/1024)+"Mb ["+filesize+"]");
-                    }
-                });
+//                ZSocket.getInstance().DEBUG().setFilePathProcessor(new ZSocket.FilePathProcessor() {
+//                    @Override
+//                    public String getFilePath(String filename) {
+//                        if(filename.endsWith(".mp4")){
+//                            return B.path_system+"/abcsss/";
+//                        }
+//                        return B.path_system;
+//                    }
+//                }).downloadFile("dp.mp4", new ZSocket.FileDownloadResult() {
+//                    @Override
+//                    public void whenTimeOut() {
+//                        T.t(activity(),"请求超时");
+//                    }
+//
+//                    @Override
+//                    public void whenFileNotFind(String filename) {
+//                        S.e("文件未找到,无法下载:"+filename);
+//                        runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                T.t(activity(),"文件不存在,无法下载");
+//                            }
+//                        });
+//                    }
+//
+//                    @Override
+//                    public void whenDownloadCompleted(final String filename) {
+//                        final long during=S.currentTimeMillis()-time_start;
+//                        S.s("文件下载完毕:" + filename+" 耗时:"+during);
+//                        runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                T.t(activity(),"文件下载完毕:" + filename+" 耗时:"+during);
+//                            }
+//                        });
+//                    }
+//
+//                    @Override
+//                    public void whenDownloading(String filename, float percent) {
+//                        S.s("正在下载文件:" + percent);
+//                    }
+//
+//                    @Override
+//                    public void whenStartDownloading(String filename, long filesize) {
+//                        S.s("开始下载文件:"+filename+" 文件大小:"+((double)filesize/1024/1024)+"Mb ["+filesize+"]");
+//                    }
+//                });
 //                ZSocket.getInstance().DEBUG().addAnswer("hello", new ZSocket.Answer() {
 //                    @Override
 //                    public String getAnswer(String param) {
@@ -175,21 +176,31 @@ public class MainActivity extends Activity {
 //                        return "hi";
 //                    }
 //                });
-//                ZSocket.getInstance().ask("hello", new ZSocket.AskResult() {
-//                    @Override
-//                    public void whenGotResult(Msg msg) {
-//                        if (msg.type == Msg.ANSWER) {
-//                            final String content = new String(msg.msg);
-//                            S.s("接到消息:" + content);
-//                            runOnUiThread(new Runnable() {
-//                                @Override
-//                                public void run() {
-//                                    T.t(activity(),content);
-//                                }
-//                            });
-//                        }
-//                    }
-//                });
+                ZSocket.getInstance().ask("hello", new ZSocket.AskResult() {
+                    @Override
+                    public void whenTimeOut() {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                T.t(activity(),"请求超时");
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void whenGotResult(Msg msg) {
+                        if (msg.type == Msg.ANSWER) {
+                            final String content = new String(msg.msg);
+                            S.s("接到消息:" + content);
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    T.t(activity(),content);
+                                }
+                            });
+                        }
+                    }
+                });
             }
 
         });
