@@ -33,8 +33,9 @@ public class ZSocket {
     private ConcurrentHashMap<String, Client> clients;
     //心跳超时时长
     private final int timeOut_heart = 3000;
+
     //消息发送超时时长
-    public static long timeOut_send = 5000;
+    private long timeOut_send = 3000;
     //UDP每个包最大不能超过64kb
     public static final int maxPackagSize = 63 * 1024;
 
@@ -76,6 +77,10 @@ public class ZSocket {
             S.e("非法的端口号:" + port);
         }
         return this;
+    }
+
+    public void setTimeOut_send(long timeOut_send) {
+        this.timeOut_send = timeOut_send;
     }
 
     public ZSocket setPortOfFileServer(int port) {
