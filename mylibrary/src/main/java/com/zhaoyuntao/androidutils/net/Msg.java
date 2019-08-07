@@ -6,6 +6,7 @@ import com.zhaoyuntao.androidutils.tools.ZThread;
 import java.util.Arrays;
 
 public class Msg {
+    private long time;
     public String id;
     public String ip;
     public byte[] msg;
@@ -22,9 +23,11 @@ public class Msg {
     public String filename;
     public static final byte HEARTBIT = 0;
     public static final byte LOGOUT = 1;
+    public static final byte RESPONSE = 2;
+
+
     public static final byte ASK = 10;
     public static final byte ANSWER = 11;
-    public static final byte BITMAP = 12;
     //文件块消息
     public static final byte FILE_PIECE = 13;
     //客户端请求文件块
@@ -41,13 +44,15 @@ public class Msg {
     public static final int filenameByteArrLen = 200;
 
     public ZThread zThread;
+    public long timeSend;
 
     public Msg() {
-        this.id = getRandomId();
+        this(getRandomId());
     }
 
     public Msg(String id) {
         this.id = id;
+        this.time=S.currentTimeMillis();
     }
 
     public static String getRandomId() {
@@ -205,4 +210,13 @@ public class Msg {
         return msg;
     }
 
+    public TimeOut timeOut;
+
+    public long getTime() {
+        return time;
+    }
+
+    public interface TimeOut{
+        void whenTimeOut();
+    }
 }

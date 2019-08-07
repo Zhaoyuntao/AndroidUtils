@@ -227,7 +227,7 @@ public abstract class Node {
           } else {
 
             //Set value of first text node
-            // Text first = (Text) textNodes.remove(0);
+            // Text first = (Text) textNodes.removeMsg(0);
             Text first = (Text) textNodes.elementAt(0);
             if (!first.getData().equals(value)) {
               textNodes.removeElementAt(0);

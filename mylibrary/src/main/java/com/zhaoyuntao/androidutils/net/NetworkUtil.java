@@ -189,4 +189,8 @@ public class NetworkUtil {
             return -1;
         }
     }
+
+    public static String getIp(Context context){
+        return int2ip(getIP(context));
+    }
 }

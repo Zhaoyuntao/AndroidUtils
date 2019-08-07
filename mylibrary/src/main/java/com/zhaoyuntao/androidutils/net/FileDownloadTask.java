@@ -151,7 +151,7 @@ public class FileDownloadTask extends ZThread {
             }
         }
         if (lose.length > 0) {
-            callBack.checkLost(lose, ip, this);
+            callBack.checkLost(filename,lose, ip, this);
         } else {
             close();
             if (callBack != null) {
@@ -207,6 +207,6 @@ public class FileDownloadTask extends ZThread {
 
         void whenStartDownloading(String filename, long filesize);
 
-        void checkLost(int[] lose, String ip, FileDownloadTask fileDownloadTask);
+        void checkLost(String filename,int[] lose, String ip, FileDownloadTask fileDownloadTask);
     }
 }

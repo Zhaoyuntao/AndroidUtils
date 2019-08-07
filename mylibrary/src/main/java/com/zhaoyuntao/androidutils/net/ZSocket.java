@@ -1,10 +1,8 @@
 package com.zhaoyuntao.androidutils.net;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.os.Environment;
 
-import com.zhaoyuntao.androidutils.tools.B;
 import com.zhaoyuntao.androidutils.tools.S;
 import com.zhaoyuntao.androidutils.tools.ZThread;
 
@@ -15,14 +13,14 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ZSocket {
 
     public String socketId = "DEFAULT";
     //心跳包频率
-    private static final float frame_heart = 2;
+    private static final double frame_heart = 1;
     private static ZSocket zSocket;
     private Sender zThread_send;
     private Sender zThread_sendFile;
@@ -31,32 +29,33 @@ public class ZSocket {
     private ZThread zThread_heart;
     private int port = 16880;
     private int portFile = 16881;
-
-    private Map<String, Client> clients;
-    private Context context;
-
-    private Map<String, TimeOut> timeOutQueue;
-
-    private final int timeout = 3;//超时时长:秒
-
-    public static final int maxPackagSize = 63 * 1024;//UDP每个包最大不能超过64kb
-
+    //已连接的端点
+    private ConcurrentHashMap<String, Client> clients;
+    //心跳超时时长
+    private final int timeOut_heart = 3000;
+    //消息发送超时时长
+    public static long timeOut_send = 5000;
+    //UDP每个包最大不能超过64kb
+    public static final int maxPackagSize = 63 * 1024;
 
     //缓存文件下载任务
-    private Map<String, FileDownloadTask> fileDownloadTaskCache = new HashMap<>();
+    private Map<String, FileDownloadTask> fileDownloadTaskCache = new ConcurrentHashMap<>();
     //缓存文件读取任务
-    private Map<String, FileRandomReader> fileReaderTaskCache = new HashMap<>();
+    private Map<String, FileRandomReader> fileReaderTaskCache = new ConcurrentHashMap<>();
     //缓存RPC回调,当一次完整的RPC请求完成后,从缓存去除
-    private Map<String, AskResult> map_AskResult = new HashMap<>();
+    private Map<String, AskResult> map_AskResult = new ConcurrentHashMap<>();
     //RPC应答
-    private Map<String, Answer> map_Answer = new HashMap<>();
+    private Map<String, Answer> map_Answer = new ConcurrentHashMap<>();
     private ReceiverResult receiver;
     private FilePathProcessor filePathProcessor;
     private boolean DEBUG;
+    private String ip;
+
+    //发送的消息缓存
+    private Map<String, Msg> cache_msg_send = new ConcurrentHashMap<>();
 
     private ZSocket() {
-        clients = new HashMap<>();
-        timeOutQueue = new HashMap<>();
+        clients = new ConcurrentHashMap<>();
         recv();
         recvFile();
         initSender();
@@ -79,7 +78,6 @@ public class ZSocket {
         return this;
     }
 
-
     public static ZSocket getInstance() {
         return getInstance(null);
     }
@@ -89,26 +87,22 @@ public class ZSocket {
             synchronized (ZSocket.class) {
                 if (zSocket == null) {
                     zSocket = new ZSocket();
-                    zSocket.context = context;
+                    zSocket.ip = NetworkUtil.getIp(context);
                 }
             }
         }
         return zSocket;
     }
 
-    public void send(String msg) {
-        send(msg, "");
+    public void send(String msg, Msg.TimeOut timeOut) {
+        send(msg, "", timeOut);
     }
 
-    public void send(String msg, Client client) {
-        send(msg, client.ip);
+    public void send(String msg, String ip, Msg.TimeOut timeOut) {
+        send(msg.getBytes(), Msg.ASK, ip, timeOut);
     }
 
-    public void send(String msg, String ip) {
-        send(msg.getBytes(), Msg.ASK, ip);
-    }
-
-    public void send(byte[] msgData, byte type, String ip) {
+    public void send(byte[] msgData, byte type, String ip, Msg.TimeOut timeOut) {
         if (msgData == null) {
             return;
         }
@@ -118,15 +112,25 @@ public class ZSocket {
         msg.msg = msgData;
         msg.count = 1;
         msg.index = 0;
-        send(msg);
+        send(msg, timeOut);
     }
 
-    public synchronized void send(Msg msg) {
+    public synchronized void send(Msg msg, Msg.TimeOut timeOut) {
+        msg.timeOut = timeOut;
+        cacheMsg(msg);
         zThread_send.send(msg);
     }
 
     public synchronized void sendFile(Msg msg) {
         zThread_sendFile.send(msg);
+    }
+
+    public void cacheMsg(Msg msg) {
+        if (msg.type == Msg.RESPONSE || msg.type == Msg.HEARTBIT || msg.type == Msg.FILE_PIECE) {
+            return;
+        }
+        msg.timeSend = S.currentTimeMillis();
+        cache_msg_send.put(msg.id, msg);
     }
 
     public void ask(String request, AskResult askResult) {
@@ -141,35 +145,31 @@ public class ZSocket {
         if (S.isNotEmpty(params)) {
             msg.msg = params.getBytes();
         }
-        send(msg);
-        map_AskResult.put(id, askResult);
-        TimeOut timeOut = new TimeOut() {
+        send(msg, new Msg.TimeOut() {
             @Override
             public void whenTimeOut() {
-                askResult.whenTimeOut();
+                if (askResult != null) {
+                    askResult.whenTimeOut();
+                }
             }
-        };
-        timeOut.msg = msg;
-        timeOut.id = id;
-        timeOut.time = S.currentTimeMillis();
-        timeOutQueue.put(id, timeOut);
+        });
+        map_AskResult.put(id, askResult);
     }
 
     public ZSocket addAnswer(String ask, Answer answer) {
         map_Answer.put(ask, answer);
-
         return this;
     }
 
-    public void downloadFile(String filename, final FileDownloadResult fileDownloadResult) {
+    public void downloadFile(final String filename, final FileDownloadResult fileDownloadResult) {
         if (S.isEmpty(filename)) {
             return;
         }
-        String id = Msg.getRandomId();
+        final String id = Msg.getRandomId();
         final FileDownloadTask fileDownloadTask = new FileDownloadTask(id, filename, new FileDownloadTask.CallBack() {
             @Override
             public void whenFileNotFind(String filename) {
-                S.e("文件不存在:" + filename);
+//                S.e("文件不存在:" + filename);
                 if (fileDownloadResult != null) {
                     fileDownloadResult.whenFileNotFind(filename);
                 }
@@ -201,14 +201,15 @@ public class ZSocket {
             }
 
             @Override
-            public void checkLost(int[] lost, String ip, FileDownloadTask fileDownloadTask) {
+            public void checkLost(final String filename, int[] lost, String ip, final FileDownloadTask fileDownloadTask) {
 //                S.s("缺少文件块个数:" + lost.length + "=====================================================================>");
                 if (lost.length <= 0) {
                     return;
                 }
-                Msg msg = new Msg(fileDownloadTask.getTaskId());
+                final Msg msg = new Msg(fileDownloadTask.getTaskId());
                 msg.type = Msg.ASK_FILE_PIECE;
                 msg.ip = ip;
+                msg.filename = filename;
                 byte[] pieceIndexs = new byte[lost.length * 4];
                 for (int i = 0; i < lost.length; i++) {
                     //计算没有接收到的下标
@@ -216,47 +217,53 @@ public class ZSocket {
                     System.arraycopy(indexTmpArr, 0, pieceIndexs, i * 4, indexTmpArr.length);
                 }
                 msg.msg = pieceIndexs;
-                send(msg);
+                send(msg, new Msg.TimeOut() {
+                    @Override
+                    public void whenTimeOut() {
+                        if (fileDownloadTask != null) {
+                            fileDownloadTask.close();
+                        }
+                        fileDownloadTaskCache.remove(filename);
+                        if (fileDownloadResult != null) {
+                            fileDownloadResult.whenTimeOut();
+                        }
+                    }
+                });
             }
 
         });
         //缓存文件下载任务
-        fileDownloadTaskCache.put(id, fileDownloadTask);
-        S.s("----------------------------> 请求文件信息:" + filename);
+        fileDownloadTaskCache.put(filename, fileDownloadTask);
         //向服务器请求文件信息
         Msg msg = new Msg(id);
         msg.type = Msg.ASK_FILE_INFO;
         msg.filename = filename;
-        send(msg);
-        TimeOut timeOut = new TimeOut() {
+        S.s("正在请求文件信息:" + filename);
+        send(msg, new Msg.TimeOut() {
             @Override
             public void whenTimeOut() {
                 if (fileDownloadTask != null) {
                     fileDownloadTask.close();
                 }
-                fileDownloadTaskCache.remove(id);
+                fileDownloadTaskCache.remove(filename);
                 if (fileDownloadResult != null) {
                     fileDownloadResult.whenTimeOut();
                 }
             }
-        };
-        timeOut.id = id;
-        timeOut.time = S.currentTimeMillis();
-        timeOutQueue.put(id, timeOut);
-    }
-
-    public void sendCompressBitmap(Bitmap bitmap) {
-        bitmap = B.compress(bitmap, 63);
-        send(B.bitmapToBytes(bitmap), Msg.BITMAP, null);
+        });
     }
 
     private void initHeart() {
         stopHeart();
-        zThread_heart = new ZThread(frame_heart) {
+        zThread_heart = new ZThread(2) {
             DatagramSocket datagramSocket;
+            long time_lastHeart;
+            long duringMax;
 
             @Override
             protected void init() {
+                //计算心跳时间间隔
+                duringMax = (long) (1000 / frame_heart);
                 try {
                     datagramSocket = new DatagramSocket();
                 } catch (SocketException e2) {
@@ -269,37 +276,57 @@ public class ZSocket {
             protected void todo() {
 //                S.s("正在发送心跳:" + DETECTOR);
                 long time_now = S.currentTimeMillis();
-                try {
-                    Msg msg = new Msg();
-                    msg.type = Msg.HEARTBIT;
-                    msg.msg = socketId.getBytes();
-                    byte[] data = Msg.getPackage(msg);
-                    DatagramPacket datagramPacket = new DatagramPacket(data, data.length, InetAddress.getByName("255.255.255.255"), port);
-                    datagramSocket.send(datagramPacket);
+                long during_heart = time_now - time_lastHeart;
+                if (during_heart > duringMax) {
+                    time_lastHeart = time_now;
+                    try {
+                        Msg msg = new Msg();
+                        msg.type = Msg.HEARTBIT;
+                        msg.msg = socketId.getBytes();
+                        byte[] data = Msg.getPackage(msg);
+                        DatagramPacket datagramPacket = new DatagramPacket(data, data.length, InetAddress.getByName("255.255.255.255"), port);
+                        datagramSocket.send(datagramPacket);
 
-                    for (Client client : clients.values()) {
-                        long time = client.time_lastheart;
-                        long during = time_now - time;
-                        //大于超时时长未做出响应的client将被移除
-                        if (during > timeout * 1000) {
-                            removeClient(client.ip);
+                        for (Client client : clients.values()) {
+                            long time = client.time_lastheart;
+                            long duringHeartTmp = time_now - time;
+                            //大于超时时长未做出响应的client将被移除
+                            if (duringHeartTmp > timeOut_heart) {
+                                removeClient(client.ip);
+                            }
                         }
+                    } catch (UnknownHostException e1) {
+                        e1.printStackTrace();
+                        S.e(e1);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        S.e(e);
                     }
-                } catch (UnknownHostException e1) {
-                    e1.printStackTrace();
-                    S.e(e1);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    S.e(e);
                 }
-                for (TimeOut timeOut : timeOutQueue.values()) {
-                    long time = timeOut.time;
-                    long during = time_now - time;
-                    if (during > 1000 && during < 3000) {
-                        send(timeOut.msg);
-                    } else if (during > 3000) {
-                        timeOutQueue.remove(timeOut.id);
-                        timeOut.whenTimeOut();
+                //超时判断
+                for (Msg msg : cache_msg_send.values()) {
+                    //计算该消息从第一次创建到现在过了多久
+                    long during = time_now - msg.getTime();
+                    long during_lastSend = time_now - msg.timeSend;
+
+                    //判断是否超时
+                    if (during > timeOut_send) {
+//                        S.s("消息[" + msg.id + "]已超时,执行超时回调");
+                        if (msg.timeOut != null) {
+                            msg.timeOut.whenTimeOut();
+                        }
+                        return;
+                    } else {
+                        //如果距离上一次发送小于1秒,该消息继续等待,发送下一个消息
+                        if (during_lastSend <= 1000) {
+//                            S.s("消息[" + msg.id + "]正在等待回复");
+                        } else {
+                            //如果距离上一次发送大于1秒小于3秒,该消息重新发送
+//                            S.s("消息[" + msg.id + "]需要发送,正在发送");
+                            if (zThread_send != null) {
+                                zThread_send.send(msg);
+                            }
+                        }
                     }
                 }
             }
@@ -336,13 +363,14 @@ public class ZSocket {
 
 
     private void recv() {
-        zThread_recv = new Receiver(port, context, new Receiver.CallBack() {
+        zThread_recv = new Receiver(port, new Receiver.CallBack() {
             @Override
             public void whenGotMsg(final Msg msg) {
-                String id = msg.id;
-                timeOutQueue.remove(id);
-                String ip = msg.ip;
-                switch (msg.type) {
+                final String id = msg.id;
+
+                final String ip = msg.ip;
+                final byte type = msg.type;
+                switch (type) {
                     case Msg.HEARTBIT:
                         Client client = getClient(ip);
                         String socketIdTmp = new String(msg.msg);
@@ -369,20 +397,19 @@ public class ZSocket {
                         String param = new String(msg.msg);
                         if (answer != null) {
                             String answerStr = answer.getAnswer(param);
-                            S.s("正在回复:" + answerStr);
-                            Msg response = new Msg(msg.id);
+//                            S.s("正在回复:" + answerStr);
+                            Msg response = new Msg(id);
                             response.type = Msg.ANSWER;
                             if (S.isNotEmpty(answerStr)) {
                                 response.msg = answerStr.getBytes();
                             }
                             response.ip = msg.ip;
-                            send(response);
+                            send(response, null);
                         } else {
                             if (receiver != null) {
                                 receiver.whenGotResult(param);
                             }
                         }
-
                         break;
                     case Msg.ANSWER:
                         String stringMsg2 = new String(msg.msg);
@@ -397,6 +424,7 @@ public class ZSocket {
                         }
                         break;
                     case Msg.ASK_FILE_INFO://文件信息请求
+                        S.s("接到文件信息请求:" + msg.filename);
                         String path = Environment.getExternalStorageDirectory().getAbsolutePath();
                         if (filePathProcessor != null) {
                             path = filePathProcessor.getFilePath(msg.filename);
@@ -404,28 +432,33 @@ public class ZSocket {
                         //预加载文件读取器
                         FileRandomReader fileRandomReader = new FileRandomReader(msg.id, path, msg.filename, new FileRandomReader.CallBack() {
                             @Override
-                            public void whenTimeOut(FileRandomReader fileRandomReader) {
+                            public void whenTimeOut(String filename) {
 //                                S.s("文件读取超时,移除读取线程");
-                                fileReaderTaskCache.remove(fileRandomReader.getTaskId());
+                                fileReaderTaskCache.remove(filename);
                             }
 
                             @Override
-                            public void whenFileNotFind(String filename, FileRandomReader fileRandomReader) {
+                            public void whenFileNotFind(String filename) {
                                 S.e("FileRandomReader:文件[" + filename + "]不存在,无法获取文件信息");
-                                fileReaderTaskCache.remove(fileRandomReader.getTaskId());
+                                fileReaderTaskCache.remove(filename);
                                 //回复文件信息
-                                Msg response = new Msg(msg.id);
+                                Msg response = new Msg();
                                 response.type = Msg.FILE_INFO;
                                 response.filename = filename;
                                 response.ip = msg.ip;
-                                send(response);
-                                S.s("已回复文件信息到[" + msg.ip + "]");
+//                                S.s("文件未找到,正在回复至[" + msg.ip + "]");
+                                send(response, new Msg.TimeOut() {
+                                    @Override
+                                    public void whenTimeOut() {
+                                        S.e("TimeOut:已发送文件未找到的信息,但未收到客户端的回复");
+                                    }
+                                });
                             }
 
                             @Override
                             public void whenFileFind(String filename, FileRandomReader fileRandomReader) {
 //                                S.s("文件[" + filename + "]存在,预加载成功,读取器加入缓存");
-                                fileReaderTaskCache.put(msg.id, fileRandomReader);
+                                fileReaderTaskCache.put(filename, fileRandomReader);
                             }
 
                             @Override
@@ -434,24 +467,28 @@ public class ZSocket {
                                 //文件块大小
                                 byte[] pieceSizeArr = S.intToByteArr(piecesize);
                                 //回复文件信息
-                                Msg response = new Msg(msg.id);
+                                Msg response = new Msg();
                                 response.type = Msg.FILE_INFO;
                                 response.msg = pieceSizeArr;
                                 response.count = count;
                                 response.filename = msg.filename;
                                 response.filesize = filesize;
                                 response.ip = msg.ip;
-                                send(response);
-                                S.s("已回复文件信息到[" + msg.ip + "]");
+//                                S.s("正在回复文件信息到[" + msg.ip + "]");
+                                send(response, new Msg.TimeOut() {
+                                    @Override
+                                    public void whenTimeOut() {
+                                        S.e("TimeOut:已回复文件信息,但未收到客户端响应");
+                                    }
+                                });
                             }
                         });
                         fileRandomReader.setPieceSize(maxPackagSize);
                         fileRandomReader.start();
                         break;
                     case Msg.FILE_INFO:
-                        S.s("接到文件信息,开始下载文件...");
                         //获取文件下载任务,获取文件信息
-                        FileDownloadTask fileDownloadTask = fileDownloadTaskCache.get(msg.id);
+                        FileDownloadTask fileDownloadTask = fileDownloadTaskCache.get(msg.filename);
                         if (fileDownloadTask != null) {
                             //文件块大小
                             int pieceSize = S.byteArrToInt(msg.msg);
@@ -464,7 +501,7 @@ public class ZSocket {
                         break;
                     case Msg.ASK_FILE_PIECE:
                         //向请求者发送文件块
-                        FileRandomReader reader = fileReaderTaskCache.get(msg.id);
+                        final FileRandomReader reader = fileReaderTaskCache.get(msg.filename);
                         if (reader != null) {
                             reader.getFilePiece(new FileRandomReader.Reader() {
 
@@ -484,8 +521,8 @@ public class ZSocket {
                                 }
 
                                 @Override
-                                public void whenGotFilePiece(String filename, int count, int index, byte[] piece) {
-                                    Msg response = new Msg(msg.id);
+                                public void whenGotFilePiece(String filename, int count, final int index, byte[] piece) {
+                                    Msg response = new Msg();
                                     response.filename = msg.filename;
                                     response.count = count;
                                     response.index = index;
@@ -497,19 +534,24 @@ public class ZSocket {
 
                                 @Override
                                 public void whenTaskEnd() {
-                                    Msg response = new Msg(msg.id);
+                                    Msg response = new Msg();
                                     response.filename = msg.filename;
                                     response.type = Msg.FILE_CHECK;
                                     response.ip = msg.ip;
-                                    send(response);
+                                    send(response, new Msg.TimeOut() {
+                                        @Override
+                                        public void whenTimeOut() {
+                                            S.e("FILE_CHECK:未接收到客户端的回复");
+                                        }
+                                    });
                                 }
                             });
                         }
                         break;
                     case Msg.FILE_CHECK:
-//                        S.s("本次任务完成,检查丢包");
+//                        S.s("==> 本次任务完成,检查丢包");
                         //获取文件下载任务,获取文件信息
-                        FileDownloadTask fileDownloadTask_check = fileDownloadTaskCache.get(msg.id);
+                        FileDownloadTask fileDownloadTask_check = fileDownloadTaskCache.get(msg.filename);
                         if (fileDownloadTask_check != null) {
                             fileDownloadTask_check.check();
                         }
@@ -519,28 +561,40 @@ public class ZSocket {
                         break;
                 }
             }
+
+            @Override
+            public void whenGotResponse(String id) {
+                removeMsg(id);
+            }
+
+            @Override
+            public Sender getSender() {
+                return zThread_send;
+            }
+
+            @Override
+            public String getIp() {
+                return ZSocket.this.ip;
+            }
         });
         zThread_recv.start();
     }
 
+    public void removeMsg(String id) {
+        cache_msg_send.remove(id);
+//        S.s("消息[" + id + "]已收到回复,移除");
+    }
+
     private void recvFile() {
-        zThread_recvFile = new Receiver(portFile, context, new Receiver.CallBack() {
+        zThread_recvFile = new Receiver(portFile, new Receiver.CallBack() {
             @Override
             public void whenGotMsg(Msg msg) {
                 String ip = msg.ip;
                 switch (msg.type) {
-                    case Msg.BITMAP:
-                        S.s("接到来自[" + ip + "]的图片");
-                        AskResult askResult_bitmap = map_AskResult.get(msg.id);
-                        map_AskResult.remove(msg.id);
-                        if (askResult_bitmap != null) {
-                            askResult_bitmap.whenGotResult(msg);
-                        }
-                        break;
                     case Msg.FILE_PIECE:
-//                        S.s("接到文件块-----<");
+//                        S.s("接到文件块----- " + msg.index);
                         //获取文件下载任务,插入文件块
-                        FileDownloadTask fileDownloadTask_assemble = fileDownloadTaskCache.get(msg.id);
+                        FileDownloadTask fileDownloadTask_assemble = fileDownloadTaskCache.get(msg.filename);
                         if (fileDownloadTask_assemble != null) {
                             fileDownloadTask_assemble.addPiece(msg.msg, msg.index);
                         }
@@ -549,6 +603,21 @@ public class ZSocket {
                         S.s("接到来自[" + ip + "]" + "(type:" + msg.type + ")的未知类型消息");
                         break;
                 }
+            }
+
+            @Override
+            public void whenGotResponse(String id) {
+                removeMsg(id);
+            }
+
+            @Override
+            public Sender getSender() {
+                return zThread_sendFile;
+            }
+
+            @Override
+            public String getIp() {
+                return ZSocket.this.ip;
             }
         });
         zThread_recvFile.start();
@@ -631,6 +700,7 @@ public class ZSocket {
         fileReaderTaskCache.clear();
         map_Answer.clear();
         map_AskResult.clear();
+        cache_msg_send.clear();
     }
 
     private void stopHeart() {
@@ -647,7 +717,6 @@ public class ZSocket {
             zSocket.stopHeart();
             zSocket.clearTask();
             zSocket.clearClient();
-            zSocket.context = null;
             zSocket = null;
         }
     }
@@ -657,17 +726,8 @@ public class ZSocket {
         return this;
     }
 
-    public abstract class TimeOut {
-        public long time;
-        public String id;
-        public Msg msg;
-
-        public abstract void whenTimeOut();
-    }
-
     public interface CallBack {
         void whenTimeOut();
-
     }
 
     public interface AskResult extends CallBack {

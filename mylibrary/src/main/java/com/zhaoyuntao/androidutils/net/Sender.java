@@ -10,28 +10,35 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingDeque;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingDeque;
 
 public class Sender extends ZThread {
+
     public static final int maxPackagSize = 63 * 1024;//UDP每个包最大不能超过64kb
     DatagramSocket datagramSocket;
     private Map<String, Client> clients;
     private BlockingDeque<Msg> queue;
+    private Map<String, Msg> cache_timeout;
     private int port;
     private CallBack callBack;
 
-    public Sender(int port, Map<String, Client> clients,CallBack callBack) {
+    public Sender(int port, Map<String, Client> clients, CallBack callBack) {
         this.port = port;
         this.clients = clients;
         this.callBack = callBack;
-        queue=new LinkedBlockingDeque<>();
+        queue = new LinkedBlockingDeque<>();
+        cache_timeout = new ConcurrentHashMap<>();
     }
 
     public void send(Msg msg) {
         queue.add(msg);
+        cache_timeout.put(msg.id, msg);
+        resumeThread();
     }
 
     @Override
@@ -46,36 +53,38 @@ public class Sender extends ZThread {
 
     @Override
     protected void todo() {
-        List<Client> list = new ArrayList<>();
-        synchronized (ZSocket.class) {
-            if (clients.size() > 0) {
-                for (Client client : clients.values()) {
-                    list.add(client);
-                }
-            } else {
-                this.pauseThread();
-                return;
-            }
+
+        if (clients.size() <= 0) {
+            this.pauseThread();
+            return;
         }
 
+
         Msg msg = null;
+
         try {
             msg = queue.take();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        if(msg==null){
+        if (msg == null) {
             return;
         }
+
         //组包
         byte[] data = Msg.getPackage(msg);
-        if(data==null){
+        if (data == null) {
             return;
         }
         if (data.length > maxPackagSize + 1024) {
             S.e("send err:message is too long(max:" + (maxPackagSize + 1024) + "):" + data.length);
             return;
         }
+
+        //注册一个发送时间,用来判断下一次发送的时机
+        msg.timeSend = S.currentTimeMillis();
+//        S.s("正在发送msg:" + msg.id);
+
         try {
             if (S.isIp(msg.ip)) {
 //                        S.s("正在向[" + msg.ip + "]发送-------------------------->");
@@ -86,14 +95,14 @@ public class Sender extends ZThread {
                 }
 //                        S.s("发送成功");
             } else {
-                for (Client client : list) {
+                for (Client client : clients.values()) {
 //                            S.s("正在向[" + client.ip + "]发送:" + data.length + "============================>");
                     DatagramPacket datagramPacket = new DatagramPacket(data, data.length, InetAddress.getByName(client.ip), port);
                     datagramSocket.send(datagramPacket);
                 }
 //                        S.s("发送成功");
             }
-            if(callBack!=null){
+            if (callBack != null) {
                 callBack.whenSend();
             }
             if (msg.zThread != null) {

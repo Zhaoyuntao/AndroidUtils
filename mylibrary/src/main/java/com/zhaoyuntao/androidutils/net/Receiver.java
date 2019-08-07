@@ -15,12 +15,10 @@ import java.util.Arrays;
 public class Receiver extends ZThread {
     private DatagramSocket datagramSocket;
     private CallBack callBack;
-    private Context context;
     private int port;
 
-    public Receiver(int port, Context context, CallBack callBack) {
+    public Receiver(int port,CallBack callBack) {
         this.callBack = callBack;
-        this.context = context;
         this.port = port;
     }
 
@@ -55,16 +53,38 @@ public class Receiver extends ZThread {
             return;
         }
         final String ip = inetAddress.getHostAddress();
-        String ip_self = NetworkUtil.int2ip(NetworkUtil.getIP(context));
-        if (ip.equals(ip_self)) {
+        if(callBack!=null){
+            String ip_self = callBack.getIp();
+            if (ip.equals(ip_self)) {
 //                    S.e("自身的消息,略过");
-            return;
+                return;
+            }
         }
         //解包
         final Msg msg = Msg.releasePackage(data);
         msg.ip = ip;
-        if(callBack!=null) {
-            callBack.whenGotMsg(msg);
+        //response不需要回复
+        if (msg.type == Msg.RESPONSE) {
+            if (callBack != null) {
+                callBack.whenGotResponse(msg.id);
+            }
+        }else{
+            //除了心跳和文件块以外, 其他消息需要回复
+            if(msg.type!=Msg.HEARTBIT&&msg.type!=Msg.FILE_PIECE){
+                //回复
+                Msg response = new Msg(msg.id);
+                response.type = Msg.RESPONSE;
+                if (callBack != null) {
+                    Sender sender = callBack.getSender();
+                    if(sender!=null){
+                        sender.send(response);
+                    }
+                }
+            }
+
+            if (callBack != null) {
+                callBack.whenGotMsg(msg);
+            }
         }
     }
 
@@ -78,10 +98,16 @@ public class Receiver extends ZThread {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        context = null;
     }
 
     public interface CallBack {
         void whenGotMsg(Msg msg);
+
+        void whenGotResponse(String id);
+
+        Sender getSender();
+
+        String getIp();
+
     }
 }

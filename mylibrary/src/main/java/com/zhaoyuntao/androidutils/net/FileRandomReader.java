@@ -85,7 +85,7 @@ public class FileRandomReader extends ZThread {
 
         } else {
             S.e("FileRandomReader:请求的文件不存在:" + filename);
-            callBack.whenFileNotFind(filename, this);
+            callBack.whenFileNotFind(filename);
             close();
         }
     }
@@ -100,7 +100,7 @@ public class FileRandomReader extends ZThread {
             if (during > 5 * 1000) {
                 close();
                 //当超时时,调用回调
-                callBack.whenTimeOut(this);
+                callBack.whenTimeOut(filename);
             } else {
                 try {
                     Thread.sleep(200);
@@ -151,9 +151,9 @@ public class FileRandomReader extends ZThread {
     }
 
     public interface CallBack {
-        void whenTimeOut(FileRandomReader fileRandomReader);
+        void whenTimeOut(String filename);
 
-        void whenFileNotFind(String filename, FileRandomReader fileRandomReader);
+        void whenFileNotFind(String filename);
 
         void whenFileFind(String filename, FileRandomReader fileRandomReader);
 

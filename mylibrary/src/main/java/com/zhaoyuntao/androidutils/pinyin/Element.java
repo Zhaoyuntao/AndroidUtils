@@ -134,7 +134,7 @@ public class Element extends Node {
     if (DEBUG) checkInvariant();
   }
 
-  /** remove this attribute if it exists, otherwise silently do nothing. */
+  /** removeMsg this attribute if it exists, otherwise silently do nothing. */
   public void removeAttribute(String name) {
     if (attributes_ == null) return;
     attributes_.remove(name);
