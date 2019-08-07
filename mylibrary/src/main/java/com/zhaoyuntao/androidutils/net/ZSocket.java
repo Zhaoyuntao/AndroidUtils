@@ -50,6 +50,7 @@ public class ZSocket {
     private FilePathProcessor filePathProcessor;
     private boolean DEBUG;
     private String ip;
+    private String cacheDir = "/zsocketcache/";
 
     //发送的消息缓存
     private Map<String, Msg> cache_msg_send = new ConcurrentHashMap<>();
@@ -160,13 +161,29 @@ public class ZSocket {
         map_Answer.put(ask, answer);
         return this;
     }
+    public void setCacheDir(String cacheDir){
+        this.cacheDir=cacheDir;
+    }
+    private String getCacheDir() {
+        String cacheDir = this.cacheDir.trim();
+        if (S.isEmpty(cacheDir)) {
+            return Environment.getExternalStorageDirectory().getAbsolutePath();
+        }
+        while (cacheDir.startsWith("/")) {
+            cacheDir = cacheDir.substring(1);
+        }
+        while (cacheDir.endsWith("/")) {
+            cacheDir = cacheDir.substring(cacheDir.length() - 1);
+        }
+        return Environment.getExternalStorageDirectory().getAbsolutePath() + cacheDir;
+    }
 
     public void downloadFile(final String filename, final FileDownloadResult fileDownloadResult) {
         if (S.isEmpty(filename)) {
             return;
         }
         final String id = Msg.getRandomId();
-        final FileDownloadTask fileDownloadTask = new FileDownloadTask(id, filename, new FileDownloadTask.CallBack() {
+        final FileDownloadTask fileDownloadTask = new FileDownloadTask(id, getCacheDir(), filename, new FileDownloadTask.CallBack() {
             @Override
             public void whenFileNotFind(String filename) {
 //                S.e("文件不存在:" + filename);

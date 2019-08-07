@@ -32,9 +32,10 @@ public class FileDownloadTask extends ZThread {
     private byte[] check;
     private long time_recv;
 
-    private String fileCacheDir = Environment.getExternalStorageDirectory().getAbsolutePath() + "/zsocketcache/";
+    private String fileCacheDir ;
 
-    public FileDownloadTask(String id, String filename, CallBack callBack) {
+    public FileDownloadTask(String id, String fileCacheDir,String filename, CallBack callBack) {
+        this.fileCacheDir=fileCacheDir;
         this.id = id;
         this.filename = filename;
         this.callBack = callBack;
