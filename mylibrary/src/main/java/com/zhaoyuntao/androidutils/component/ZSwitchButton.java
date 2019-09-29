@@ -10,7 +10,6 @@ import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
@@ -22,9 +21,8 @@ import android.view.MotionEvent;
 import android.view.ViewConfiguration;
 
 import com.zhaoyuntao.androidutils.R;
-import com.zhaoyuntao.androidutils.tools.B;
 
-public class ZSwitchButton extends android.support.v7.widget.AppCompatCheckBox {
+public class ZSwitchButton extends androidx.appcompat.widget.AppCompatCheckBox {
 
     protected static final int FULL_ALPHA = 255;
 

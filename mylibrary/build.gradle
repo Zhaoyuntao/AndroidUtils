@@ -1,6 +1,6 @@
 apply plugin: 'com.android.library'
 android {
-    compileSdkVersion 26
+    compileSdkVersion 29
 
     lintOptions {
         checkReleaseBuilds false
@@ -12,7 +12,7 @@ android {
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
     }
 
@@ -51,7 +51,7 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.android.support:appcompat-v7:26.1.0'
+    implementation 'androidx.appcompat:appcompat:1.0.0'
     implementation 'com.squareup.okhttp3:okhttp:4.0.0'
     implementation 'tv.danmaku.ijk.media:ijkplayer-java:0.8.3'
     implementation 'tv.danmaku.ijk.media:ijkplayer-armv7a:0.8.3'

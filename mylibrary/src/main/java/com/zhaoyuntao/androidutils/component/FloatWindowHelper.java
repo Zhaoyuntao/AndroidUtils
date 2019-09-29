@@ -8,7 +8,7 @@ import android.graphics.PixelFormat;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
-import android.support.annotation.RequiresApi;
+import androidx.annotation.RequiresApi;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -20,7 +20,6 @@ import android.widget.FrameLayout;
 import com.zhaoyuntao.androidutils.R;
 import com.zhaoyuntao.androidutils.tools.B;
 import com.zhaoyuntao.androidutils.tools.S;
-import com.zhaoyuntao.androidutils.tools.T;
 
 /**
  * Created by feijie.xfj on 17/11/19.

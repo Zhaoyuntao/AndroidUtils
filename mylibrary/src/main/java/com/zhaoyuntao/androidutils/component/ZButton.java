@@ -15,7 +15,6 @@ import android.graphics.Shader;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.MotionEvent;
-import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
 import android.widget.FrameLayout;
@@ -1021,7 +1020,7 @@ public class ZButton extends FrameLayout {
         return y_bitmap_back_draw;
     }
 
-    class ZImageView extends android.support.v7.widget.AppCompatImageView {
+    class ZImageView extends androidx.appcompat.widget.AppCompatImageView {
 
         public ZImageView(Context context) {
             super(context);

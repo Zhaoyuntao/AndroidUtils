@@ -19,7 +19,7 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.zhaoyuntao.androidutils.permission.runtime.option.RuntimeOption;
 import com.zhaoyuntao.androidutils.permission.runtime.setting.AllRequest;
