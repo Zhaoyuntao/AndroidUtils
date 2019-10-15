@@ -2,11 +2,13 @@ package com.androidutils.www.zandroidutils;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
 import android.widget.CompoundButton;
 
+import com.zhaoyuntao.androidutils.camera.CameraView;
 import com.zhaoyuntao.androidutils.component.FloatWindowHelper;
 import com.zhaoyuntao.androidutils.component.LoggerView;
 import com.zhaoyuntao.androidutils.component.ZSwitchButton;
@@ -26,8 +28,8 @@ public class MainActivity extends Activity {
     FloatWindowHelper floatWindowHelper;
     LoggerView contentLoggerView;
 
-    ZVideoView zVideoView;
-
+    CameraView cameraView;
+    ZButton zButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         S.setFlag(true);
@@ -38,8 +40,19 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        zVideoView=findViewById(R.id.videoview);
-//        zVideoView.setVideo(Environment.getExternalStorageDirectory().getAbsolutePath()+"/zsocketcache/cateye1564989444792.mp4");
+        zButton=findViewById(R.id.zbutton1);
+        cameraView=findViewById(R.id.camera);
+        cameraView.setAngle(90);
+        cameraView.setCallBack(new CameraView.CallBack() {
+            @Override
+            public void whenGotBitmap(Bitmap bitmap, byte[] data) {
+                zButton.setDrawable_back(bitmap);
+            }
+
+            @Override
+            public void whenCameraCreated() {
+            }
+        });
 
         ZP.p(activity(), new ZP.CallBack() {
             @Override

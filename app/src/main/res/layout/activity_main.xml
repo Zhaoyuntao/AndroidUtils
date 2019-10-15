@@ -26,10 +26,11 @@
                 android:layout_weight="1"
                 android:background="@color/red">
 
-                <com.zhaoyuntao.androidutils.clockview.TabDigit
-                    android:id="@+id/tab"
-                    android:layout_width="200dp"
-                    android:layout_height="400dp" />
+                <com.zhaoyuntao.androidutils.camera.CameraView
+                    android:id="@+id/camera"
+                    app:radius="15dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
             </FrameLayout>
 
             <FrameLayout
@@ -37,11 +38,6 @@
                 android:layout_height="0dp"
                 android:background="#ff0000"
                 android:layout_weight="1">
-                <com.zhaoyuntao.androidutils.component.ZVideoView
-                    android:id="@+id/videoview"
-                    android:layout_gravity="center"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
             </FrameLayout>
 
         </LinearLayout>

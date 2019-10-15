@@ -304,6 +304,7 @@ public class CameraUtil {
         h_picture = s.height;
         S.s("picture最终选择:w:" + w_picture + " h:" + h_picture);
         parameters.setPictureSize(w_picture, h_picture);
+        parameters.setRotation(180);
         //不自动对焦
 //        parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_FIXED);
         //自动对焦

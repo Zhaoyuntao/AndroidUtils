@@ -29,7 +29,7 @@ android {
                 options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
             }
         }
-        tasks.withType(Javadoc) { //兼容中文
+        tasks.withType(Javadoc) { //fit chinese
             options.addStringOption('Xdoclint:none', '-quiet')
             options.addStringOption('encoding', 'UTF-8')
             options {
@@ -67,7 +67,7 @@ ext {
     libraryDescription = 'some useful utils for android'
     siteUrl = 'https://github.com/Zhaoyuntao/AndroidUtils'
     gitUrl = 'https://github.com/Zhaoyuntao/AndroidUtils.git'
-    libraryVersion = '1.9.6'
+    libraryVersion = '1.9.7'
     developerId = 'zhaoyuntao'
     developerName = 'zhaoyuntao'
     developerEmail = 'xixitongxue@foxmail.com'

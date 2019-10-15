@@ -5,6 +5,7 @@ import android.os.Message;
 import android.util.Log;
 
 
+import java.lang.ref.WeakReference;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -20,19 +21,6 @@ import java.util.regex.Pattern;
  *
  */
 public class S {
-    /**
-     * ip正则表达式
-     */
-    private final static String ip_regular = "((?:(?:25[0-5]|2[0-4]\\d|((1\\d{2})|([1-9]?\\d)))" + "\\" + ".){3}(?:25[0-5]|2[0-4]\\d|((1\\d{2})|([1-9]?\\d))))";
-    /**
-     * 端口号正则表达式
-     */
-    private final static String port_regular = "^([1-9][0-9]{0," + "3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]{1}|6553[0-5])$";
-    /**
-     * url网址正则表达式
-     */
-    private final static String reg_url = "(http|ftp|https):\\/\\/[\\w\\-_]+(\\.[\\w\\-_]+)+([\\w\\-\\.,@?^=%&amp;:/~\\+#]*[\\w\\-\\@?^=%&amp;/~\\+#])?";
-
 
     /**
      * 日志tag
@@ -42,13 +30,12 @@ public class S {
     protected final String tag2 = "abcdef";
     protected final String tag3 = "abcdefg";
 
-
-    public static final int I = 0;
-    public static final int E = 1;
-    public static final int D = 2;
-    public static final int V = 3;
-    public static final int DEBUGI = 10;
-    public static final int DEBUGE = 11;
+    private static final int I = 0;
+    private static final int E = 1;
+    private static final int D = 2;
+    private static final int V = 3;
+    private static final int DEBUGD = 10;
+    private static final int DEBUGE = 11;
 
     public static byte[] longToByteArr(long b) {
         byte[] tmp = new byte[8];
@@ -57,6 +44,7 @@ public class S {
         }
         return tmp;
     }
+
     public static long byteArrToLong(byte[] c) {
         long tmp = 0;
         if (c != null && c.length == 8) {
@@ -129,19 +117,27 @@ public class S {
         void whenLog(LogItem logItem);
     }
 
-    public Handler handler = new Handler() {
+    private static class SHandler extends Handler {
+        private final WeakReference<CallBack> callBackWeakReference;
+
+        public SHandler(CallBack callBack) {
+            callBackWeakReference = new WeakReference<>(callBack);
+        }
+
         @Override
         public void handleMessage(Message msg) {
 
             if (msg.obj instanceof LogItem) {
                 LogItem logItem = (LogItem) msg.obj;
-
+                CallBack callBack = callBackWeakReference.get();
                 if (callBack != null) {
                     callBack.whenLog(logItem);
                 }
             }
         }
     };
+
+    private SHandler sHandler=new SHandler(callBack);
 
     private static S getS() {
         synchronized (S.class) {
@@ -209,22 +205,47 @@ public class S {
         S s = getS();
         long now = currentTimeMillis();
 
-        String tagAddTime = tag + "[" + new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date(now)) + "]";
+        final Throwable t = new Throwable();
+        final StackTraceElement[] elements = t != null ? t.getStackTrace() : null;
+
+        String callerClassName = (elements != null && elements.length > 3) ? elements[3].getClassName() : "N/A";
+        String callerMethodName = (elements != null && elements.length > 3) ? elements[3].getMethodName() : "N/A";
+        String callerLineNumber = (elements != null && elements.length > 3) ? String.valueOf(elements[3].getLineNumber()) : "N/A";
+
+        int pos = callerClassName.lastIndexOf('.');
+        if (pos >= 0) {
+            callerClassName = callerClassName.substring(pos + 1);
+        }
+
+
+        if (o == null) {
+            o = "null";
+        } else if (o instanceof Exception) {
+            o = ((Exception) (o)).getMessage();
+        }
+
+        String usingSource = "<" + callerClassName + "." + callerMethodName + " " + callerLineNumber + "> ";
+        String tagTmp = "|" + tag + "|   ";
+
         if (s.flag) {
             switch (type) {
                 case I:
-                case DEBUGI:
-                    Log.i(tagAddTime, o.toString());
+                case DEBUGD:
+                    Log.i(tagTmp, usingSource);
+                    Log.i(tagTmp, o.toString());
                     break;
                 case E:
                 case DEBUGE:
-                    Log.e(tagAddTime, o.toString());
+                    Log.i(tagTmp, usingSource);
+                    Log.e(tagTmp, o.toString());
                     break;
                 case V:
-                    Log.v(tagAddTime, o.toString());
+                    Log.i(tagTmp, usingSource);
+                    Log.v(tagTmp, o.toString());
                     break;
                 case D:
-                    Log.d(tagAddTime, o.toString());
+                    Log.i(tagTmp, usingSource);
+                    Log.d(tagTmp, o.toString());
                     break;
             }
         }
@@ -243,10 +264,10 @@ public class S {
                     s.list.add(logItem);
                 }
             }
-            if (isNotEmpty(tag) && (logItem.type == DEBUGE || logItem.type == DEBUGI)) {
+            if (isNotEmpty(tag) && (logItem.type == DEBUGE || logItem.type == DEBUGD)) {
                 Message message = new Message();
                 message.obj = logItem;
-                handler.sendMessage(message);
+                sHandler.sendMessage(message);
             }
         }
     }
@@ -318,46 +339,58 @@ public class S {
     //对外提供------------------------------------------
     //normal log just show
 
+    public static void l() {
+        getS().s_self("----------------", D);
+    }
+
+    public static void ll() {
+        getS().s_self("--------------------------------", D);
+    }
+
+    public static void lll() {
+        getS().s_self("----------------------------------------------------------------", D);
+    }
+
     public static void s(Object o) {
-        getS().s_self(o, I);
+        getS().s_self(o, D);
     }
 
     public static void s(String tag, Object o) {
-        getS().s_self(tag, o, I);
+        getS().s_self(tag, o, D);
     }
 
     public static void ss(Object o) {
-        getS().ss_self(o, I);
+        getS().ss_self(o, D);
     }
 
     public static void sss(Object o) {
-        getS().sss_self(o, I);
+        getS().sss_self(o, D);
     }
 
     public static void ssss(Object o) {
-        getS().ssss_self(o, I);
+        getS().ssss_self(o, D);
     }
 
     public static void s_d(Object o) {
-        getS().s_self(o, DEBUGI);
+        getS().s_self(o, DEBUGD);
     }
 
     //debug log for callback using.
 
     public static void s_d(String tag, Object o) {
-        getS().s_self(tag, o, DEBUGI);
+        getS().s_self(tag, o, DEBUGD);
     }
 
     public static void ss_d(Object o) {
-        getS().ss_self(o, DEBUGI);
+        getS().ss_self(o, DEBUGD);
     }
 
     public static void sss_d(Object o) {
-        getS().sss_self(o, DEBUGI);
+        getS().sss_self(o, DEBUGD);
     }
 
     public static void ssss_d(Object o) {
-        getS().ssss_self(o, DEBUGI);
+        getS().ssss_self(o, DEBUGD);
     }
 
     //normal log just show
@@ -405,7 +438,18 @@ public class S {
     }
 
     //------------------------------------------------------其他功能-------------------------------------------------------------
-
+    /**
+     * ip正则表达式
+     */
+    private final static String ip_regular = "((?:(?:25[0-5]|2[0-4]\\d|((1\\d{2})|([1-9]?\\d)))" + "\\" + ".){3}(?:25[0-5]|2[0-4]\\d|((1\\d{2})|([1-9]?\\d))))";
+    /**
+     * 端口号正则表达式
+     */
+    private final static String port_regular = "^([1-9][0-9]{0," + "3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]{1}|6553[0-5])$";
+    /**
+     * url网址正则表达式
+     */
+    private final static String reg_url = "(http|ftp|https):\\/\\/[\\w\\-_]+(\\.[\\w\\-_]+)+([\\w\\-\\.,@?^=%&amp;:/~\\+#]*[\\w\\-\\@?^=%&amp;/~\\+#])?";
     /**
      * @param str
      * @return
