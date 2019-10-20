@@ -189,31 +189,31 @@ public class MainActivity extends Activity {
 //                        return "hi";
 //                    }
 //                });
-                ZSocket.getInstance().ask("hello", new ZSocket.AskResult() {
-                    @Override
-                    public void whenTimeOut() {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                T.t(activity(),"请求超时");
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void whenGotResult(Msg msg) {
-                        if (msg.type == Msg.ANSWER) {
-                            final String content = new String(msg.msg);
-                            S.s("接到消息:" + content);
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    T.t(activity(),content);
-                                }
-                            });
-                        }
-                    }
-                });
+//                ZSocket.getInstance().ask("hello", new ZSocket.AskResult() {
+//                    @Override
+//                    public void whenTimeOut() {
+//                        runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                T.t(activity(),"请求超时");
+//                            }
+//                        });
+//                    }
+//
+//                    @Override
+//                    public void whenGotResult(Msg msg) {
+//                        if (msg.type == Msg.ANSWER) {
+//                            final String content = new String(msg.msg);
+//                            S.s("接到消息:" + content);
+//                            runOnUiThread(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    T.t(activity(),content);
+//                                }
+//                            });
+//                        }
+//                    }
+//                });
             }
 
         });

@@ -224,7 +224,7 @@ public class S {
             o = ((Exception) (o)).getMessage();
         }
 
-        String usingSource = "<" + callerClassName + "." + callerMethodName + " " + callerLineNumber + "> ";
+        String usingSource =  callerClassName + "." + callerMethodName + " " + callerLineNumber ;
         String tagTmp = "|" + tag + "|   ";
 
         if (s.flag) {

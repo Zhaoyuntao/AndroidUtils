@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         minSdkVersion 16
-        targetSdkVersion 26
+        targetSdkVersion 29
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -51,7 +51,7 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'com.squareup.okhttp3:okhttp:4.0.0'
     implementation 'tv.danmaku.ijk.media:ijkplayer-java:0.8.3'
     implementation 'tv.danmaku.ijk.media:ijkplayer-armv7a:0.8.3'
@@ -67,7 +67,7 @@ ext {
     libraryDescription = 'some useful utils for android'
     siteUrl = 'https://github.com/Zhaoyuntao/AndroidUtils'
     gitUrl = 'https://github.com/Zhaoyuntao/AndroidUtils.git'
-    libraryVersion = '1.9.7'
+    libraryVersion = '1.9.10'
     developerId = 'zhaoyuntao'
     developerName = 'zhaoyuntao'
     developerEmail = 'xixitongxue@foxmail.com'
