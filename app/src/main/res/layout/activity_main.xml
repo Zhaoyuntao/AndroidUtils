@@ -5,128 +5,231 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
+
     android:orientation="horizontal"
     tools:context="com.androidutils.www.zandroidutils.MainActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal">
+        android:orientation="vertical"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp">
 
+        <com.zhaoyuntao.androidutils.component.ZButton
+            android:id="@+id/zbutton1"
+            android:layout_width="300dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:layout_margin="10dp"
+            android:background="#00000000"
+            app:color_back="#992233"
+            app:color_back_choose="#000000"
+            app:color_back_click="#990033"
+            app:color_back_disable="#666666"
+            app:color_border="#22000000"
+            app:orientation="horizontal"
+            app:percent_bitmap_center="1.8"
+            app:radius="25dp"
+            app:textcolor="#ffffff"
+            app:textcolor_disable="#666666"
+            app:textsize="40sp"
+            app:textsize_small="20sp"
+            app:w_border="5dp"
+            app:w_space_text="10dp"
+            app:wave="false"
+            app:wavecolor="#005500" />
+
+        <com.zhaoyuntao.androidutils.component.ZButton
+            android:layout_width="300dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:layout_margin="10dp"
+            android:background="#00000000"
+            app:color_back="#00574B"
+            app:color_back_choose="#000000"
+            app:color_back_click="#990033"
+            app:color_back_disable="#666666"
+            app:color_border="#002222"
+            app:color_border_click="#22002222"
+            app:orientation="horizontal"
+            app:percent_bitmap_center="1"
+            app:radius_leftbottom="60dp"
+            app:radius_lefttop="20dp"
+            app:radius_righttop="40dp"
+            app:text_center="hello"
+            app:textcolor="#ffffff"
+            app:textcolor_click="#00ff00"
+            android:clickable="true"
+            app:textcolor_disable="#666666"
+            app:textsize="40sp"
+            app:textsize_small="20sp"
+            app:w_border="15dp"
+            app:w_space_text="10dp"
+            app:wave="false"
+            app:wavecolor="#005500" />
 
         <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:background="@color/red">
-
-                <com.zhaoyuntao.androidutils.clockview.TabDigit
-                    android:id="@+id/tab"
-                    android:layout_width="200dp"
-                    android:layout_height="400dp" />
-            </FrameLayout>
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:background="#ff0000"
-                android:layout_weight="1">
-                <com.zhaoyuntao.androidutils.component.ZVideoView
-                    android:id="@+id/videoview"
-                    android:layout_gravity="center"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-            </FrameLayout>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="top|left"
-                    android:text="hello"
-                    android:textColor="@color/red"
-                    android:textSize="25sp" />
-                />
-
-                <Button
-                    android:id="@+id/back"
-                    android:layout_width="200dp"
-                    android:layout_height="50dp"
-                    android:layout_gravity="bottom"
-                    android:text="返回" />
-            </FrameLayout>
-
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
 
             <com.zhaoyuntao.androidutils.component.ZButton
-                android:id="@+id/zbutton1"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
+                android:id="@+id/z1"
+                android:layout_width="0dp"
+                android:layout_height="100dp"
                 android:layout_gravity="center"
                 android:layout_margin="10dp"
                 android:layout_weight="1"
                 android:background="#00000000"
-                app:color_back="#992233"
+                app:color_back="#66ccff"
                 app:color_back_choose="#000000"
-                app:color_back_click="#990033"
+                android:layout_marginRight="30dp"
                 app:color_back_disable="#666666"
-                app:color_border="#22000000"
-                app:img_center="@drawable/gotopoint"
-                app:img_center_disable="@drawable/gotopoint_disable"
                 app:orientation="horizontal"
                 app:percent_bitmap_center="1"
-                app:radius="25dp"
-                app:text_center="xxx"
-                app:text_center_small="small"
-                app:text_left="left"
-                app:text_right="right"
+                app:radius="50dp"
+                app:isautochange="true"
+                app:text_center="hello"
+                android:clickable="true"
+                app:textcolor="#ffffff"
+                app:textcolor_disable="#666666"
+                app:textcolor_choose="#ffffff"
+                app:textsize="40sp"
+                app:textsize_small="20sp"
+                app:w_space_text="10dp"
+                app:wave="false"
+                app:wavecolor="#005500" />
+
+            <com.zhaoyuntao.androidutils.component.ZButton
+                android:id="@+id/z2"
+                android:layout_width="0dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center"
+                android:layout_margin="10dp"
+                android:layout_weight="1"
+                android:background="#00000000"
+                app:color_back="#66ccff#ffffff"
+                app:color_back_click="#ffffff#66ccff"
+                app:color_back_choose="#000000"
+                app:color_border="#33000000"
+                app:w_border="1dp"
+                app:isautochange="true"
+                android:clickable="true"
+                app:color_back_disable="#666666"
+                app:orientation="horizontal"
+                app:percent_bitmap_center="1"
+                app:radius="50dp"
+                app:text_center="hello"
                 app:textcolor="#ffffff"
                 app:textcolor_disable="#666666"
                 app:textsize="40sp"
                 app:textsize_small="20sp"
-                app:w_border="5dp"
-                app:w_space="20dp"
                 app:w_space_text="10dp"
                 app:wave="false"
-
                 app:wavecolor="#005500" />
+        </LinearLayout>
 
+        <com.zhaoyuntao.androidutils.component.ZButton
+            android:layout_width="300dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:layout_margin="10dp"
+            android:background="#00000000"
+            app:color_back="#59c18d"
+            app:color_back_choose="#000000"
+            app:color_back_click="#990033"
+            app:color_back_disable="#666666"
+            app:img_center="@drawable/settings"
+            app:orientation="horizontal"
+            app:percent_bitmap_center="1.5"
+            app:radius="50dp"
+            app:text_center="Setting"
+            app:text_center_small="setting"
+            app:textcolor="#ffffff"
+            app:textcolor_disable="#666666"
+            app:textcolor_small="#ffffff"
+            app:textsize="40sp"
+            app:textsize_small="20sp"
+            app:w_space_text="10dp"
+            app:wave="true"
+            app:wavecolor="#005500" />
+
+
+        <LinearLayout
+            android:layout_width="250dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
 
             <com.zhaoyuntao.androidutils.component.ZScaleBar
                 android:id="@+id/scalebar"
-                android:layout_width="match_parent"
-                android:layout_height="50dp" />
+                android:layout_width="200dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                app:color="#555500"
+                app:roundradius="15dp"
+                app:w_progress="30dp" />
+
+            <TextView
+                android:id="@+id/showprogress"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:gravity="center" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="250dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <com.zhaoyuntao.androidutils.component.ZScaleBar
+                android:id="@+id/scalebar2"
+                android:layout_width="200dp"
+                android:layout_height="50dp"
+                app:color="#c0883b"
+                app:roundradius="5dp"
+                app:w_progress="30dp" />
+
+            <TextView
+                android:id="@+id/showprogress2"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:gravity="center" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="250dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:orientation="horizontal">
 
             <com.zhaoyuntao.androidutils.component.ZSwitchButton
                 android:id="@+id/switchbutton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:w="50dp"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:layout_marginRight="50dp"
+                android:layout_weight="1"
                 app:h="200dp"
-                android:layout_gravity="center" />
+                app:w="80dp" />
+
+            <com.zhaoyuntao.androidutils.component.ZSwitchButton
+
+                android:id="@+id/switchbutton1"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                app:h="200dp"
+                app:w="80dp" />
         </LinearLayout>
+
     </LinearLayout>
 
-    <com.zhaoyuntao.androidutils.component.ZButton
-        android:id="@+id/progress"
-        app:progress="true"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
 </FrameLayout>

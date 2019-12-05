@@ -82,7 +82,9 @@ public class ZVideoView extends FrameLayout implements TextureView.SurfaceTextur
             @Override
             public void whenScaleStart(float percent) {
                 handler.removeMessages(MSG_PROFRESS);
-                mMediaPlayer.pause();
+                if (mMediaPlayer != null) {
+                    mMediaPlayer.pause();
+                }
             }
 
             @Override
@@ -94,7 +96,9 @@ public class ZVideoView extends FrameLayout implements TextureView.SurfaceTextur
             public void whenScaleEnd(float percent) {
 //                S.s("移动到percent:" + percent);
                 seekTo(percent);
-                mMediaPlayer.start();
+                if (mMediaPlayer != null) {
+                    mMediaPlayer.start();
+                }
                 handler.sendEmptyMessage(MSG_PROFRESS);
             }
         });

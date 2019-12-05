@@ -70,7 +70,7 @@ public class S {
     public static byte[] intToByteArr(int b) {
         byte[] tmp = new byte[4];
         for (int i = 0; i < tmp.length; i++) {
-            tmp[i] = (byte) ((b >> (4 * i)) & 0xff);
+            tmp[i] = (byte) ((b >> (8 * i)) & 0xff);
         }
         return tmp;
     }
@@ -79,7 +79,7 @@ public class S {
         int tmp = 0;
         if (c != null && c.length == 4) {
             for (int i = 0; i < 4; i++) {
-                tmp |= ((c[i] & 0xff) << (4 * i));
+                tmp |= ((c[i] & 0xff) << (8 * i));
             }
         }
         return tmp;

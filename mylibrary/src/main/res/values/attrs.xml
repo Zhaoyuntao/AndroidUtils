@@ -124,7 +124,9 @@
     </declare-styleable>
     <declare-styleable name="ZScaleBar">
         <attr name="w_progress" format="dimension" />
-        <attr name="radius_circle" format="dimension" />
+        <attr name="roundradius" format="dimension" />
+        <attr name="color" format="color" />
+        <attr name="colorback" format="color" />
     </declare-styleable>
     <declare-styleable name="ZSwitchButton">
         <attr name="w" format="dimension"></attr>
