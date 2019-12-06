@@ -2,9 +2,10 @@ package com.zhaoyuntao.androidutils.tools;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.support.annotation.ColorInt;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
+
+import androidx.annotation.ColorInt;
+import androidx.annotation.Nullable;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;

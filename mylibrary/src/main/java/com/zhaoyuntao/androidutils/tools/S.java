@@ -135,9 +135,11 @@ public class S {
                 }
             }
         }
-    };
+    }
 
-    private SHandler sHandler=new SHandler(callBack);
+    ;
+
+    private SHandler sHandler = new SHandler(callBack);
 
     private static S getS() {
         synchronized (S.class) {
@@ -196,35 +198,40 @@ public class S {
     }
 
     private void log(String tag, Object o, int type) {
-        if (o == null) {
-            o = "null";
-        } else if (o instanceof Exception) {
-            ((Exception) (o)).printStackTrace();
-        }
-
         S s = getS();
-        long now = currentTimeMillis();
 
         final Throwable t = new Throwable();
-        final StackTraceElement[] elements = t != null ? t.getStackTrace() : null;
+        final StackTraceElement[] elements = t.getStackTrace();
 
-        String callerClassName = (elements != null && elements.length > 3) ? elements[3].getClassName() : "N/A";
-        String callerMethodName = (elements != null && elements.length > 3) ? elements[3].getMethodName() : "N/A";
-        String callerLineNumber = (elements != null && elements.length > 3) ? String.valueOf(elements[3].getLineNumber()) : "N/A";
+        String callerClassName = elements.length > 3 ? elements[3].getClassName() : "N/A";
+        String callerMethodName = elements.length > 3 ? elements[3].getMethodName() : "N/A";
+        String callerLineNumber = elements.length > 3 ? String.valueOf(elements[3].getLineNumber()) : "N/A";
 
         int pos = callerClassName.lastIndexOf('.');
         if (pos >= 0) {
             callerClassName = callerClassName.substring(pos + 1);
         }
 
-
         if (o == null) {
             o = "null";
         } else if (o instanceof Exception) {
             o = ((Exception) (o)).getMessage();
+            if (o == null) {
+                o = "null";
+            }
         }
 
-        String usingSource =  callerClassName + "." + callerMethodName + " " + callerLineNumber ;
+        String usingSource;
+        StackTraceElement[] traceElements = Thread.currentThread().getStackTrace();
+        StringBuilder taskName = new StringBuilder();
+        if (traceElements.length > 6) {
+            StackTraceElement traceElement = traceElements[5];
+            taskName.append("(").append(traceElement.getFileName()).append(":").append(traceElement.getLineNumber()).append(")  ");
+            taskName.append(traceElement.getMethodName());
+            usingSource = taskName.toString();
+        } else {
+            usingSource = "<" + callerClassName + "." + callerMethodName + " " + callerLineNumber + "> ";
+        }
         String tagTmp = "|" + tag + "|   ";
 
         if (s.flag) {
@@ -450,6 +457,7 @@ public class S {
      * url网址正则表达式
      */
     private final static String reg_url = "(http|ftp|https):\\/\\/[\\w\\-_]+(\\.[\\w\\-_]+)+([\\w\\-\\.,@?^=%&amp;:/~\\+#]*[\\w\\-\\@?^=%&amp;/~\\+#])?";
+
     /**
      * @param str
      * @return
