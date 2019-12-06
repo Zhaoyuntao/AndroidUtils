@@ -1,111 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     android:padding="20dp"
     tools:context="com.androidutils.www.zandroidutils.MainActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="200dp"
+        android:orientation="horizontal">
 
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
+        <com.zhaoyuntao.androidutils.camera.CameraView
+            android:id="@+id/camera"
+            android:layout_width="0dp"
             android:layout_weight="1"
-            android:background="@color/red">
-
-            <com.zhaoyuntao.androidutils.camera.CameraView
-                android:id="@+id/camera"
+            android:layout_height="match_parent"
+            app:radius="15dp" />
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_height="match_parent">
+            <com.zhaoyuntao.androidutils.component.ZButton
+                android:id="@+id/zbutton1"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:radius="15dp" />
-        </FrameLayout>
+                android:layout_height="0dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:background="#00000000"
+                app:orientation="horizontal"
+                app:percent_bitmap_center="1"
+                app:radius="25dp"
+                app:text_center="socket"
+                app:text_center_small="small"
+                app:text_left="left"
+                app:text_right="right"
+                app:textcolor="#ffffff"
+                app:textcolor_disable="#666666"
+                app:textsize="40sp"
+                app:textsize_small="20sp"
+                app:wave="false"
+                app:wavecolor="#33ff5555" />
+            <com.zhaoyuntao.androidutils.component.ZButton
+                android:id="@+id/zbutton2"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:background="#00000000"
+                app:color_back="#992233"
+                app:color_back_choose="#000000"
+                app:color_back_click="#990033"
+                app:color_back_disable="#666666"
+                app:color_border="#22000000"
+                app:img_center="@drawable/abcd"
+                app:img_center_disable="@drawable/abcd"
+                app:orientation="horizontal"
+                app:percent_bitmap_center="1"
+                app:radius="25dp"
+                app:text_center="xxx"
+                app:text_center_small="small"
+                app:text_left="left"
+                app:text_right="right"
+                app:textcolor="#ffffff"
+                app:textcolor_disable="#666666"
+                app:textsize="40sp"
+                app:textsize_small="20sp"
+                app:w_border="5dp"
+                app:w_space="20dp"
+                app:w_space_text="10dp"
+                app:wave="false"
+                app:wavecolor="#005500" />
 
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="top|left"
-                android:text="hello"
-                android:textColor="@color/red"
-                android:textSize="25sp" />
-            />
-
-            <Button
-                android:id="@+id/back"
-                android:layout_width="200dp"
-                android:layout_height="50dp"
-                android:layout_gravity="bottom"
-                android:text="返回" />
-        </FrameLayout>
+        </LinearLayout>
 
 
-        <com.zhaoyuntao.androidutils.component.ZButton
-            android:id="@+id/zbutton1"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_gravity="center"
-            android:layout_margin="10dp"
-            android:layout_weight="1"
-            android:background="#00000000"
-            app:color_back="#992233"
-            app:color_back_choose="#000000"
-            app:color_back_click="#990033"
-            app:color_back_disable="#666666"
-            app:color_border="#22000000"
-            app:img_center="@drawable/gotopoint"
-            app:img_center_disable="@drawable/gotopoint_disable"
-            app:orientation="horizontal"
-            app:percent_bitmap_center="1"
-            app:radius="25dp"
-            app:text_center="xxx"
-            app:text_center_small="small"
-            app:text_left="left"
-            app:text_right="right"
-            app:textcolor="#ffffff"
-            app:textcolor_disable="#666666"
-            app:textsize="40sp"
-            app:textsize_small="20sp"
-            app:w_border="5dp"
-            app:w_space="20dp"
-            app:w_space_text="10dp"
-            app:wave="false"
 
-            app:wavecolor="#005500" />
-
-
-        <com.zhaoyuntao.androidutils.component.ZScaleBar
-            android:id="@+id/scalebar"
-            android:layout_width="match_parent"
-            app:w_progress="20dp"
-            app:radius_circle="5dp"
-
-            android:layout_height="50dp" />
-
-        <com.zhaoyuntao.androidutils.component.ZSwitchButton
-            android:id="@+id/switchbutton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            app:h="200dp"
-            app:w="50dp" />
     </LinearLayout>
-
-    <com.zhaoyuntao.androidutils.component.ZButton
-        android:id="@+id/progress"
+    <com.zhaoyuntao.androidutils.component.ZScaleBar
+        android:id="@+id/scalebar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:progress="true" />
-</FrameLayout>
+        android:layout_height="50dp"
+        app:radius_circle="5dp"
+
+        app:w_progress="20dp" />
+
+    <com.zhaoyuntao.androidutils.component.ZSwitchButton
+        android:id="@+id/switchbutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        app:h="200dp"
+        app:w="50dp" />
+</LinearLayout>

@@ -29,7 +29,7 @@ public class MainActivity extends Activity {
     LoggerView contentLoggerView;
 
     CameraView cameraView;
-    ZButton zButton;
+    ZButton zButton,zButton2;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         S.setFlag(true);
@@ -41,12 +41,14 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         zButton=findViewById(R.id.zbutton1);
+        zButton2=findViewById(R.id.zbutton2);
         cameraView=findViewById(R.id.camera);
         cameraView.setAngle(90);
         cameraView.setCallBack(new CameraView.CallBack() {
             @Override
             public void whenGotBitmap(Bitmap bitmap, byte[] data) {
                 zButton.setDrawable_back(bitmap);
+                zButton2.setDrawable_back(bitmap);
             }
 
             @Override
@@ -66,15 +68,6 @@ public class MainActivity extends Activity {
             }
         }, Permission.CAMERA, Permission.WRITE_EXTERNAL_STORAGE, Permission.READ_EXTERNAL_STORAGE, Permission.RECORD_AUDIO);
 
-        findViewById(R.id.back).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-
-
-        final ZButton progress = findViewById(R.id.progress);
 
         ZSwitchButton switchButton = findViewById(R.id.switchbutton);
         switchButton.setOnPerformCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -82,9 +75,7 @@ public class MainActivity extends Activity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 S.s("isChecked---> by hand:" + isChecked);
                 if (isChecked) {
-                    progress.showProgress(true);
                 } else {
-                    progress.showProgress(false);
                 }
             }
         });
@@ -142,7 +133,7 @@ public class MainActivity extends Activity {
 //                        S.s("开始下载文件:"+filename+" 文件大小:"+((double)filesize/1024/1024)+"Mb ["+filesize+"]");
 //                    }
 //                });
-//                ZSocket.getInstance().DEBUG().addAnswer("hello", new ZSocket.Answer() {
+//                ZSocket.getInstance().addAnswer("hello", new ZSocket.Answer() {
 //                    @Override
 //                    public String getAnswer(String param) {
 //                        S.s("params:"+param);
@@ -176,7 +167,22 @@ public class MainActivity extends Activity {
 //                        S.s("接到消息:"+new String(msg.msg));
 //                    }
 //                });
-//                ZSocket.getInstance().send("hello");
+                ZSocket.getInstance().DEBUG().addAnswer("HELLOSERVER", new ZSocket.Answer() {
+                    @Override
+                    public String getAnswer(String param) {
+                        return "haha";
+                    }
+                }).ask("HELLOSERVER", new ZSocket.AskResult() {
+                    @Override
+                    public void whenGotResult(Msg msg) {
+                        S.s("result:"+msg.msg);
+                    }
+
+                    @Override
+                    public void whenTimeOut() {
+
+                    }
+                });
 
 //                ZSocket.getInstance().DEBUG().addAnswer(new ZSocket.Answer() {
 //                    @Override
