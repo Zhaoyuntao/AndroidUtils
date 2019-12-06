@@ -21,12 +21,12 @@ import com.zhaoyuntao.androidutils.tools.B;
 public class ZScaleBar extends View {
 
     private float percent = 0;
-    private float radius_circle;
+    //    private float radius_circle;
     private int w_view, h_view;
     private float w_line = 4;
 
     private float w_progress;
-
+    private float radius_progress;
     private float position;
 
     public void setCallBack(CallBack callBack) {
@@ -35,6 +35,9 @@ public class ZScaleBar extends View {
 
     private CallBack callBack;
     private float x_now, x_last;
+
+    int color;
+    int colorBack;
 
     public ZScaleBar(Context context) {
         super(context);
@@ -54,9 +57,10 @@ public class ZScaleBar extends View {
     private void init(AttributeSet attrs) {
         if (attrs != null) {
             TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.ZScaleBar);//
-
             w_progress = typedArray.getDimension(R.styleable.ZScaleBar_w_progress, B.dip2px(getContext(), 10));
-
+            radius_progress = typedArray.getDimension(R.styleable.ZScaleBar_roundradius, w_progress/2);
+            color=typedArray.getColor(R.styleable.ZScaleBar_color,Color.parseColor("#61ca95"));
+            colorBack=typedArray.getColor(R.styleable.ZScaleBar_colorback,Color.rgb(236, 236, 236));
             typedArray.recycle();
         }
     }
@@ -69,38 +73,31 @@ public class ZScaleBar extends View {
         if (w_view == 0 || h_view == 0) {
             return;
         }
-        if (w_progress == 0) {
-            w_progress = B.dip2px(getContext(), 10);
-        }
-        if (radius_circle == 0) {
-            radius_circle = (h_view - B.dip2px(getContext(), 5)) / 2;
-        }
-        float radius_progress = w_progress / 2;
-        int x_start = (int) (radius_circle - radius_progress);
-        float w_max = w_view - radius_circle * 2 + radius_progress * 2;
-        position = x_start + w_max * percent;
 
-        int color = Color.argb(30, 0, 0, 0);
+        int x_start = (int) (radius_progress);
+        float w_max = w_view - radius_progress * 2;
+        position = x_start + radius_progress * 2 + (w_max - radius_progress * 2) * percent;
+
         Paint p = new Paint();
         p.setAntiAlias(true);
         p.setStrokeWidth(w_line);
-        p.setColor(color);
+        p.setColor(colorBack);
         p.setStyle(Paint.Style.FILL);
         RectF rect = new RectF();
-        rect.set(x_start, (int) (h_view / 2 - radius_progress), x_start + w_max, (int) (h_view / 2 + radius_progress));
-        canvas.drawRoundRect(rect, w_progress / 2, w_progress / 2, p);
+        rect.set(x_start, (int) (h_view / 2 - w_progress / 2), x_start + w_max, (int) (h_view / 2 + w_progress / 2));
+        canvas.drawRoundRect(rect, radius_progress, radius_progress, p);
 
 
         RectF rect2 = new RectF();
-        rect2.set(x_start, (int) (h_view / 2 - radius_progress), position, (int) (h_view / 2 + radius_progress));
-        p.setColor(Color.parseColor("#61ca95"));
-        p.setStyle(Paint.Style.FILL);
-        canvas.drawRoundRect(rect2, w_progress / 2, w_progress / 2, p);
-
+        rect2.set(x_start, (int) (h_view / 2 - w_progress / 2), position, (int) (h_view / 2 + w_progress / 2));
         p.setColor(color);
+        p.setStyle(Paint.Style.FILL);
+        canvas.drawRoundRect(rect2, radius_progress, radius_progress, p);
+
+        p.setColor(colorBack);
         p.setStyle(Paint.Style.STROKE);
         p.setStrokeWidth(1);
-        canvas.drawRoundRect(rect2, w_progress / 2, w_progress / 2, p);
+        canvas.drawRoundRect(rect2, radius_progress, radius_progress, p);
 
 
 //        p.setColor(Color.WHITE);
@@ -122,7 +119,7 @@ public class ZScaleBar extends View {
         }
     }
 
-    private float getPercent() {
+    public float getPercent() {
         return percent;
     }
 
@@ -132,8 +129,10 @@ public class ZScaleBar extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        float max_position = w_view - radius_circle;
-        float min_position = radius_circle;
+//        float max_position = w_view - radius_circle;
+//        float min_position = radius_circle;
+        float max_position = w_view;
+        float min_position = 0;
         float tmp_position;
 
         switch (event.getAction()) {

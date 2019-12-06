@@ -7,8 +7,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
 import android.widget.CompoundButton;
+import android.widget.TextView;
 
-import com.zhaoyuntao.androidutils.camera.CameraView;
 import com.zhaoyuntao.androidutils.component.FloatWindowHelper;
 import com.zhaoyuntao.androidutils.component.LoggerView;
 import com.zhaoyuntao.androidutils.component.ZSwitchButton;
@@ -19,6 +19,8 @@ import com.zhaoyuntao.androidutils.net.Msg;
 import com.zhaoyuntao.androidutils.net.ZSocket;
 import com.zhaoyuntao.androidutils.permission.runtime.Permission;
 import com.zhaoyuntao.androidutils.tools.B;
+import com.zhaoyuntao.androidutils.tools.Pinyin;
+import com.zhaoyuntao.androidutils.tools.QRCodeTool;
 import com.zhaoyuntao.androidutils.tools.S;
 import com.zhaoyuntao.androidutils.tools.T;
 import com.zhaoyuntao.androidutils.tools.ZP;
@@ -28,8 +30,8 @@ public class MainActivity extends Activity {
     FloatWindowHelper floatWindowHelper;
     LoggerView contentLoggerView;
 
-    CameraView cameraView;
-    ZButton zButton,zButton2;
+    ZVideoView zVideoView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         S.setFlag(true);
@@ -40,21 +42,8 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        zButton=findViewById(R.id.zbutton1);
-        zButton2=findViewById(R.id.zbutton2);
-        cameraView=findViewById(R.id.camera);
-        cameraView.setAngle(90);
-        cameraView.setCallBack(new CameraView.CallBack() {
-            @Override
-            public void whenGotBitmap(Bitmap bitmap, byte[] data) {
-                zButton.setDrawable_back(bitmap);
-                zButton2.setDrawable_back(bitmap);
-            }
-
-            @Override
-            public void whenCameraCreated() {
-            }
-        });
+//        zVideoView=findViewById(R.id.videoview);
+//        zVideoView.setVideo(Environment.getExternalStorageDirectory().getAbsolutePath()+"/zsocketcache/cateye1564989444792.mp4");
 
         ZP.p(activity(), new ZP.CallBack() {
             @Override
@@ -74,12 +63,9 @@ public class MainActivity extends Activity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 S.s("isChecked---> by hand:" + isChecked);
-                if (isChecked) {
-                } else {
-                }
             }
         });
-        switchButton.setChecked(false);
+        switchButton.setChecked(true);
 
         final ZButton zButton = findViewById(R.id.zbutton1);
         zButton.setOnClickListener(new View.OnClickListener() {
@@ -133,33 +119,13 @@ public class MainActivity extends Activity {
 //                        S.s("开始下载文件:"+filename+" 文件大小:"+((double)filesize/1024/1024)+"Mb ["+filesize+"]");
 //                    }
 //                });
-//                ZSocket.getInstance().addAnswer("hello", new ZSocket.Answer() {
-//                    @Override
-//                    public String getAnswer(String param) {
-//                        S.s("params:"+param);
-//                        return "hi";
-//                    }
-//                }).ask("hello","你好", new ZSocket.AskResult() {
-//                    @Override
-//                    public void whenTimeOut() {
-//                        runOnUiThread(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                T.t(activity(),"请求超时");
-//                            }
-//                        });
-//                    }
-//
-//                    @Override
-//                    public void whenGotResult(final Msg msg) {
-//                        runOnUiThread(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                T.t(activity(),new String(msg.msg));
-//                            }
-//                        });
-//                    }
-//                });
+                ZSocket.getInstance().DEBUG().addAnswer("hello", new ZSocket.Answer() {
+                    @Override
+                    public String getAnswer(String param) {
+                        S.s("params:"+param);
+                        return "hi";
+                    }
+                });
 
 //                ZSocket.getInstance().setReceiver(new ZSocket.ReceiverResult() {
 //                    @Override
@@ -167,22 +133,7 @@ public class MainActivity extends Activity {
 //                        S.s("接到消息:"+new String(msg.msg));
 //                    }
 //                });
-                ZSocket.getInstance().DEBUG().addAnswer("HELLOSERVER", new ZSocket.Answer() {
-                    @Override
-                    public String getAnswer(String param) {
-                        return "haha";
-                    }
-                }).ask("HELLOSERVER", new ZSocket.AskResult() {
-                    @Override
-                    public void whenGotResult(Msg msg) {
-                        S.s("result:"+msg.msg);
-                    }
-
-                    @Override
-                    public void whenTimeOut() {
-
-                    }
-                });
+//                ZSocket.getInstance().send("hello");
 
 //                ZSocket.getInstance().DEBUG().addAnswer(new ZSocket.Answer() {
 //                    @Override
@@ -195,41 +146,85 @@ public class MainActivity extends Activity {
 //                        return "hi";
 //                    }
 //                });
-//                ZSocket.getInstance().ask("hello", new ZSocket.AskResult() {
-//                    @Override
-//                    public void whenTimeOut() {
-//                        runOnUiThread(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                T.t(activity(),"请求超时");
-//                            }
-//                        });
-//                    }
-//
-//                    @Override
-//                    public void whenGotResult(Msg msg) {
-//                        if (msg.type == Msg.ANSWER) {
-//                            final String content = new String(msg.msg);
-//                            S.s("接到消息:" + content);
-//                            runOnUiThread(new Runnable() {
-//                                @Override
-//                                public void run() {
-//                                    T.t(activity(),content);
-//                                }
-//                            });
-//                        }
-//                    }
-//                });
+                ZSocket.getInstance().DEBUG().ask("hello", new ZSocket.AskResult() {
+                    @Override
+                    public void whenTimeOut() {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                T.t(activity(),"请求超时");
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void whenGotResult(Msg msg) {
+                        if (msg.type == Msg.ANSWER) {
+                            final String content = new String(msg.msg);
+                            S.s("接到消息:" + content);
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    T.t(activity(),content);
+                                }
+                            });
+                        }
+                    }
+                });
             }
 
         });
+        ZButton z1=findViewById(R.id.z1);
+        z1.setChoosen(true);
+        ZButton z2=findViewById(R.id.z2);
+        z1.addFriend(z2);
 
-
-
-
-        ZScaleBar scaleBar = findViewById(R.id.scalebar);
+        Bitmap bitmap= QRCodeTool.getQRCodeBitmap("hello,ZButton",100,100);
+        zButton.setDrawable_center(bitmap);
+        final TextView textView=findViewById(R.id.showprogress);
+        final ZScaleBar scaleBar = findViewById(R.id.scalebar);
         scaleBar.setPercent(0.5f);
+        scaleBar.setCallBack(new ZScaleBar.CallBack() {
+            @Override
+            public void whenScaleStart(float percent) {
 
+            }
+
+            @Override
+            public void whenScale(float percent) {
+//                S.s("percent:"+percent);
+            }
+
+            @Override
+            public void whenScaleEnd(float percent) {
+
+                textView.setText(" "+(int)(percent*100)+"%");
+            }
+        });
+        textView.setText(" "+(int)(scaleBar.getPercent()*100)+"%");
+        final ZScaleBar scaleBar2 = findViewById(R.id.scalebar2);
+        final TextView textView2=findViewById(R.id.showprogress2);
+        scaleBar2.setPercent(0.23f);
+        scaleBar2.setCallBack(new ZScaleBar.CallBack() {
+            @Override
+            public void whenScaleStart(float percent) {
+
+            }
+
+            @Override
+            public void whenScale(float percent) {
+//                S.s("percent:"+percent);
+            }
+
+            @Override
+            public void whenScaleEnd(float percent) {
+
+                textView2.setText(" "+(int)(percent*100)+"%");
+            }
+        });
+
+        S.s("pinyin:"+ Pinyin.toPinyin("你好"));
+        textView2.setText(" "+(int)(scaleBar2.getPercent()*100)+"%");
     }
 
     private void initLogger() {

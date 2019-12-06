@@ -129,6 +129,10 @@ public class Sender extends ZThread {
         }
     }
 
+    public void setPort(int port) {
+        this.port=port;
+    }
+
     public interface CallBack {
         void whenSend();
     }

@@ -6,6 +6,7 @@ import com.zhaoyuntao.androidutils.tools.S;
 import com.zhaoyuntao.androidutils.tools.ZThread;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -98,6 +99,10 @@ public class Receiver extends ZThread {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void setPort(int port) {
+        this.port=port;
     }
 
     public interface CallBack {
