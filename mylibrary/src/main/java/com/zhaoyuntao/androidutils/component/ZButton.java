@@ -206,7 +206,7 @@ public class ZButton extends FrameLayout {
         flush();
     }
 
-    private void addFriend2(ZButton zButton) {
+    private void _addFriend(ZButton zButton) {
         if (zButton != null) {
             if (mapFriend == null) {
                 mapFriend = new HashMap<>();
@@ -220,17 +220,17 @@ public class ZButton extends FrameLayout {
         if (zButton != this) {
             if (mapFriend != null) {
                 for (ZButton zButton1 : mapFriend.keySet()) {
-                    zButton1.addFriend2(zButton);
-                    zButton.addFriend2(zButton1);
+                    zButton1._addFriend(zButton);
+                    zButton._addFriend(zButton1);
                 }
             }
-            this.addFriend2(zButton);
-            zButton.addFriend2(this);
+            this._addFriend(zButton);
+            zButton._addFriend(this);
         }
         return this;
     }
 
-    private void removeFriend2(ZButton zButton) {
+    private void _removeFriend(ZButton zButton) {
         if (mapFriend != null) {
             mapFriend.remove(zButton);
         }
@@ -245,13 +245,13 @@ public class ZButton extends FrameLayout {
         if (zButton != this) {
             if (mapFriend != null) {
                 for (ZButton zButton1 : mapFriend.keySet()) {
-                    zButton1.removeFriend2(zButton);
-                    zButton.removeFriend2(zButton1);
+                    zButton1._removeFriend(zButton);
+                    zButton._removeFriend(zButton1);
                 }
             }
-            removeFriend2(zButton);
+            _removeFriend(zButton);
             if (zButton != null) {
-                zButton.removeFriend2(this);
+                zButton._removeFriend(this);
             }
         }
     }
@@ -1074,8 +1074,6 @@ public class ZButton extends FrameLayout {
             path_back.lineTo(0, radiusArray[3]);
 
             canvas.clipPath(path_back);
-
-
             Paint paint_border = new Paint();
             paint_border.setAntiAlias(true);
 

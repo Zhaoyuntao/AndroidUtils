@@ -2,6 +2,8 @@ package com.zhaoyuntao.androidutils.tools;
 
 import android.os.Handler;
 import android.os.Message;
+import android.text.Editable;
+import android.text.TextUtils;
 import android.util.Log;
 
 
@@ -34,6 +36,7 @@ public class S {
     private static final int E = 1;
     private static final int D = 2;
     private static final int V = 3;
+    private static final int L = 4;
     private static final int DEBUGD = 10;
     private static final int DEBUGE = 11;
 
@@ -222,15 +225,18 @@ public class S {
         }
 
         String usingSource;
+        String usingSourceL;
         StackTraceElement[] traceElements = Thread.currentThread().getStackTrace();
         StringBuilder taskName = new StringBuilder();
         if (traceElements.length > 6) {
             StackTraceElement traceElement = traceElements[5];
             taskName.append("(").append(traceElement.getFileName()).append(":").append(traceElement.getLineNumber()).append(")  ");
+            usingSourceL = taskName.toString();
             taskName.append(traceElement.getMethodName());
             usingSource = taskName.toString();
         } else {
             usingSource = "<" + callerClassName + "." + callerMethodName + " " + callerLineNumber + "> ";
+            usingSourceL = "(" + callerClassName + ".java:" + callerLineNumber + ")";
         }
         String tagTmp = "|" + tag + "|   ";
 
@@ -253,6 +259,9 @@ public class S {
                 case D:
                     Log.i(tagTmp, usingSource);
                     Log.d(tagTmp, o.toString());
+                    break;
+                case L:
+                    Log.d(tagTmp, o.toString() + "    " + usingSourceL);
                     break;
             }
         }
@@ -462,11 +471,11 @@ public class S {
      * @param str
      * @return
      */
-    public static boolean isEmpty(String str) {
-        return str == null || str.trim().equals("") || str.equalsIgnoreCase("null");
+    public static boolean isEmpty(CharSequence str) {
+        return TextUtils.isEmpty(str);
     }
 
-    public static boolean isNotEmpty(String str) {
+    public static boolean isNotEmpty(CharSequence str) {
         return !isEmpty(str);
     }
 
