@@ -38,9 +38,8 @@ import java.util.Map;
 public class ZButton extends FrameLayout {
 
     /**
-     * false: click then be chosen, click again can not be unchosen, this will only be unchosen
-     * by your code
-     * true: click then be chosen,click again can be unchosen,
+     * false: click to choose, do again to release
+     * control by code
      */
     private boolean isAutoChange;
     private boolean isChoosen;
