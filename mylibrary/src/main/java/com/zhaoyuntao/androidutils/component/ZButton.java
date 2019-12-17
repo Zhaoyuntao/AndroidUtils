@@ -8,6 +8,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Paint;
+import android.graphics.PaintFlagsDrawFilter;
 import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.RectF;
@@ -157,6 +158,8 @@ public class ZButton extends FrameLayout {
     private Map<ZButton, ZButton> mapFriend;
     //是否显示progress
     private boolean isProgressType;
+
+    private PaintFlagsDrawFilter paintFlagsDrawFilter;
 
     public ZButton(Context context) {
         super(context);
@@ -325,6 +328,7 @@ public class ZButton extends FrameLayout {
     }
 
     private void init(final Context context, AttributeSet attrs) {
+        paintFlagsDrawFilter = new PaintFlagsDrawFilter(0, Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
         zImageView = new ZImageView(context);
         zImageView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         underCanvas();
@@ -1036,7 +1040,7 @@ public class ZButton extends FrameLayout {
 
         @Override
         protected void onDraw(Canvas canvas) {
-
+            canvas.setDrawFilter(paintFlagsDrawFilter);
             w = getWidth();
 
             h = getHeight();
@@ -1074,6 +1078,7 @@ public class ZButton extends FrameLayout {
 
 
             Paint paint_border = new Paint();
+            paint_border.setAntiAlias(true);
 
             float radius_min = (w > h ? h : w) / 2f;
             if (radius > radius_min) {
@@ -1560,6 +1565,7 @@ public class ZButton extends FrameLayout {
             //is the text of left need to be drawn?
             if (S.isNotEmpty(text_center)) {
                 Paint paint_text = new Paint();
+                paint_text.setAntiAlias(true);
                 paint_text.setAntiAlias(true);
                 paint_text.setColor(textColor_tmp);
                 paint_text.setTextSize(textSize);
