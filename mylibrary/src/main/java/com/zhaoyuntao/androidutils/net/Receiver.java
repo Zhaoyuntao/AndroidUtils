@@ -1,12 +1,9 @@
 package com.zhaoyuntao.androidutils.net;
 
-import android.content.Context;
-
 import com.zhaoyuntao.androidutils.tools.S;
-import com.zhaoyuntao.androidutils.tools.ZThread;
+import com.zhaoyuntao.androidutils.tools.thread.ZThread;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;

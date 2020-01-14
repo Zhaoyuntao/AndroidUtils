@@ -17,7 +17,7 @@
             android:theme="@style/Permission.Theme"/>
         <provider
             android:name="com.zhaoyuntao.androidutils.permission.FileProvider"
-            android:authorities="${applicationId}.file.path.share"
+            android:authorities="com.zhaoyuntao.androidutils.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

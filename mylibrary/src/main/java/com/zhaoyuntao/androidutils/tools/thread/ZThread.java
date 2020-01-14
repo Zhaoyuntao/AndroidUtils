@@ -1,7 +1,10 @@
-package com.zhaoyuntao.androidutils.tools;
+package com.zhaoyuntao.androidutils.tools.thread;
 
 
 import android.util.Log;
+
+import com.zhaoyuntao.androidutils.tools.S;
+import com.zhaoyuntao.androidutils.tools.Sleeper;
 
 import java.util.Timer;
 
@@ -38,7 +41,7 @@ public abstract class ZThread extends Thread {
             return;
         }
         isStart = true;
-        timeStart=S.currentTimeMillis();
+        timeStart= S.currentTimeMillis();
         super.start();
     }
 

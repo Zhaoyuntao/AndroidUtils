@@ -1,8 +1,7 @@
 package com.zhaoyuntao.androidutils.net;
 
-import com.zhaoyuntao.androidutils.tools.B;
 import com.zhaoyuntao.androidutils.tools.S;
-import com.zhaoyuntao.androidutils.tools.ZThread;
+import com.zhaoyuntao.androidutils.tools.thread.ZThread;
 
 import java.io.File;
 import java.io.FileInputStream;
