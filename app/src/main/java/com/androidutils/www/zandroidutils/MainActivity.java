@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
+import com.zhaoyuntao.androidutils.camera.CameraView;
 import com.zhaoyuntao.androidutils.component.FloatWindowHelper;
 import com.zhaoyuntao.androidutils.component.LoggerView;
 import com.zhaoyuntao.androidutils.component.ZSwitchButton;
@@ -223,8 +224,23 @@ public class MainActivity extends Activity {
             }
         });
 
-        S.s("pinyin:"+ Pinyin.toPinyin("你好"));
         textView2.setText(" "+(int)(scaleBar2.getPercent()*100)+"%");
+
+        final ZButton zButton2=findViewById(R.id.zb2);
+
+        CameraView cameraView=findViewById(R.id.cameraview);
+        cameraView.setAngle(90);
+        cameraView.setCallBack(new CameraView.CallBack() {
+            @Override
+            public void whenGotBitmap(Bitmap bitmap, byte[] data) {
+                zButton2.setDrawable_back(bitmap);
+            }
+
+            @Override
+            public void whenCameraCreated() {
+
+            }
+        });
     }
 
     private void initLogger() {
@@ -238,7 +254,15 @@ public class MainActivity extends Activity {
             }
         });
         floatWindowHelper.setContentView(contentLoggerView);
+
+        show();
+
     }
+
+    private void show() {
+        S.sc("111111",9);
+    }
+
 
     private Context activity() {
         return this;

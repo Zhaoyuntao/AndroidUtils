@@ -41,6 +41,7 @@
             app:wavecolor="#005500" />
 
         <com.zhaoyuntao.androidutils.component.ZButton
+            android:id="@+id/zb2"
             android:layout_width="300dp"
             android:layout_height="100dp"
             android:layout_gravity="center"
@@ -230,6 +231,11 @@
                 app:w="80dp" />
         </LinearLayout>
 
+        <com.zhaoyuntao.androidutils.camera.CameraView
+            android:id="@+id/cameraview"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="200dp"
+            android:layout_height="70dp"/>
     </LinearLayout>
 
 </FrameLayout>

@@ -200,21 +200,7 @@ public class S {
         }
     }
 
-    private void log(String tag, Object o, int type) {
-        S s = getS();
-
-        final Throwable t = new Throwable();
-        final StackTraceElement[] elements = t.getStackTrace();
-
-        String callerClassName = elements.length > 3 ? elements[3].getClassName() : "N/A";
-        String callerMethodName = elements.length > 3 ? elements[3].getMethodName() : "N/A";
-        String callerLineNumber = elements.length > 3 ? String.valueOf(elements[3].getLineNumber()) : "N/A";
-
-        int pos = callerClassName.lastIndexOf('.');
-        if (pos >= 0) {
-            callerClassName = callerClassName.substring(pos + 1);
-        }
-
+    private void log(String tag, Object o, int depth, int type) {
         if (o == null) {
             o = "null";
         } else if (o instanceof Exception) {
@@ -223,41 +209,70 @@ public class S {
                 o = "null";
             }
         }
-
-        String usingSource;
-        String usingSourceL;
-        StackTraceElement[] traceElements = Thread.currentThread().getStackTrace();
-        StringBuilder taskName = new StringBuilder();
-        if (traceElements.length > 6) {
-            StackTraceElement traceElement = traceElements[5];
-            taskName.append("(").append(traceElement.getFileName()).append(":").append(traceElement.getLineNumber()).append(")  ");
-            usingSourceL = taskName.toString();
-            taskName.append(traceElement.getMethodName());
-            usingSource = taskName.toString();
-        } else {
-            usingSource = "<" + callerClassName + "." + callerMethodName + " " + callerLineNumber + "> ";
-            usingSourceL = "(" + callerClassName + ".java:" + callerLineNumber + ")";
-        }
         String tagTmp = "|" + tag + "|   ";
+        S s = getS();
+
+        final int depthDefault = 3;
+
+        final Throwable t = new Throwable();
+        final StackTraceElement[] elements = t.getStackTrace();
+
+        int depthNow = depthDefault + depth + 1;
+        String usingSourceL = "";
+        int offsetSpaceCount = 0;
+        while (depthNow-- > depthDefault) {
+            if (elements.length <= depthNow) {
+                continue;
+            }
+
+            StackTraceElement[] traceElements = Thread.currentThread().getStackTrace();
+            StringBuilder taskName = new StringBuilder();
+            if (traceElements.length > 6) {
+                StackTraceElement traceElement = traceElements[depthNow + 2];
+                taskName.append("(").append(traceElement.getFileName()).append(":").append(traceElement.getLineNumber()).append(")  ");
+                taskName.append(traceElement.getMethodName());
+                if (depthNow == depthDefault) {
+                    usingSourceL = taskName.toString();
+                }
+            } else {
+                String callerClassName = elements[depthNow].getClassName();
+                String callerMethodName = elements[depthNow].getMethodName();
+                String callerLineNumber = String.valueOf(elements[depthNow].getLineNumber());
+
+                int pos = callerClassName.lastIndexOf('.');
+                if (pos >= 0) {
+                    callerClassName = callerClassName.substring(pos + 1);
+                }
+
+                taskName.append("<").append(callerClassName).append(".").append(callerMethodName).append(" ").append(callerLineNumber).append("> ");
+                if (depthNow == depthDefault) {
+                    usingSourceL = "(" + callerClassName + ".java:" + callerLineNumber + ")";
+                }
+            }
+            taskName.insert(0,"∟");
+            for (int i = 0; i < offsetSpaceCount; i++) {
+                taskName.insert(0, "  ");
+            }
+            offsetSpaceCount++;
+            if (type != L) {
+                Log.i(tagTmp, taskName.toString());
+            }
+        }
 
         if (s.flag) {
             switch (type) {
                 case I:
                 case DEBUGD:
-                    Log.i(tagTmp, usingSource);
                     Log.i(tagTmp, o.toString());
                     break;
                 case E:
                 case DEBUGE:
-                    Log.i(tagTmp, usingSource);
                     Log.e(tagTmp, o.toString());
                     break;
                 case V:
-                    Log.i(tagTmp, usingSource);
                     Log.v(tagTmp, o.toString());
                     break;
                 case D:
-                    Log.i(tagTmp, usingSource);
                     Log.d(tagTmp, o.toString());
                     break;
                 case L:
@@ -312,43 +327,51 @@ public class S {
     //私有log函数--------------------------------------
 
     private void s_self(Object o, int type) {
-        log(tag, o, type);
+        log(tag, o, 0, type);
     }
 
     private void s_self(String tag, Object o, int type) {
-        log(tag, o, type);
+        log(tag, o, 0, type);
     }
 
     private void ss_self(Object o, int type) {
-        log(tag1, o, type);
+        log(tag1, o, 1, type);
     }
 
     private void sss_self(Object o, int type) {
-        log(tag2, o, type);
+        log(tag2, o, 2, type);
     }
 
     private void ssss_self(Object o, int type) {
-        log(tag3, o, type);
+        log(tag3, o, 3, type);
     }
 
-    public void e_self(Object o, int type) {
-        log(tag, o, type);
+    private void e_self(Object o, int type) {
+        log(tag, o, 0, type);
     }
 
-    public void e_self(String tag, Object o, int type) {
-        log(tag, o, type);
+    private void e_self(String tag, Object o, int type) {
+        log(tag, o, 0, type);
     }
 
-    public void ee_self(Object o, int type) {
-        log(tag1, o, type);
+    private void ee_self(Object o, int type) {
+        log(tag1, o, 1, type);
     }
 
-    public void eee_self(Object o, int type) {
-        log(tag2, o, type);
+    private void eee_self(Object o, int type) {
+        log(tag2, o, 2, type);
     }
 
-    public void eeee_self(Object o, int type) {
-        log(tag3, o, type);
+    private void eeee_self(Object o, int type) {
+        log(tag3, o, 3, type);
+    }
+
+    private void s_self_custom(Object o, int depth, int type) {
+        log(tag3, o, depth, type);
+    }
+
+    private void e_self_custom(Object o, int depth, int type) {
+        log(tag3, o, depth, type);
     }
 
 
@@ -369,6 +392,10 @@ public class S {
 
     public static void s(Object o) {
         getS().s_self(o, D);
+    }
+
+    public static void sc(Object o, int depth) {
+        getS().s_self_custom(o, depth, D);
     }
 
     public static void s(String tag, Object o) {
