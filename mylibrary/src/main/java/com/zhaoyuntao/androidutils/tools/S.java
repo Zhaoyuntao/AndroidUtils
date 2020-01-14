@@ -209,17 +209,22 @@ public class S {
                 o = "null";
             }
         }
-        String tagTmp = "|" + tag + "|   ";
         S s = getS();
+
+        String tagTmp = "|" + tag + "|   ";
 
         final int depthDefault = 3;
 
         final Throwable t = new Throwable();
         final StackTraceElement[] elements = t.getStackTrace();
 
+        if (depth > 20) {
+            depth = 20;
+        }
         int depthNow = depthDefault + depth + 1;
         String usingSourceL = "";
         int offsetSpaceCount = 0;
+
         while (depthNow-- > depthDefault) {
             if (elements.length <= depthNow) {
                 continue;
@@ -249,7 +254,13 @@ public class S {
                     usingSourceL = "(" + callerClassName + ".java:" + callerLineNumber + ")";
                 }
             }
-            taskName.insert(0,"∟");
+            if (depth > 0) {
+                if (offsetSpaceCount > 0) {
+                    taskName.insert(0, "∟");
+                } else {
+                    taskName.insert(0, " ");
+                }
+            }
             for (int i = 0; i < offsetSpaceCount; i++) {
                 taskName.insert(0, "  ");
             }
@@ -258,25 +269,32 @@ public class S {
                 Log.i(tagTmp, taskName.toString());
             }
         }
+        if (offsetSpaceCount == 1) {
+            offsetSpaceCount = 0;
+        }
+        StringBuilder offset = new StringBuilder();
+        for (int i = 0; i < offsetSpaceCount; i++) {
+            offset.insert(0, "  ");
+        }
 
         if (s.flag) {
             switch (type) {
                 case I:
                 case DEBUGD:
-                    Log.i(tagTmp, o.toString());
+                    Log.i(tagTmp, offset + o.toString());
                     break;
                 case E:
                 case DEBUGE:
-                    Log.e(tagTmp, o.toString());
+                    Log.e(tagTmp, offset + o.toString());
                     break;
                 case V:
-                    Log.v(tagTmp, o.toString());
+                    Log.v(tagTmp, offset + o.toString());
                     break;
                 case D:
-                    Log.d(tagTmp, o.toString());
+                    Log.d(tagTmp, offset + o.toString());
                     break;
                 case L:
-                    Log.d(tagTmp, o.toString() + "    " + usingSourceL);
+                    Log.d(tagTmp, offset + o.toString() + "    " + usingSourceL);
                     break;
             }
         }
@@ -367,11 +385,11 @@ public class S {
     }
 
     private void s_self_custom(Object o, int depth, int type) {
-        log(tag3, o, depth, type);
+        log(tag, o, depth, type);
     }
 
     private void e_self_custom(Object o, int depth, int type) {
-        log(tag3, o, depth, type);
+        log(tag, o, depth, type);
     }
 
 
@@ -394,8 +412,12 @@ public class S {
         getS().s_self(o, D);
     }
 
-    public static void sc(Object o, int depth) {
+    public static void sd(Object o, int depth) {
         getS().s_self_custom(o, depth, D);
+    }
+
+    public static void sd(Object o) {
+        getS().s_self_custom(o, 20, D);
     }
 
     public static void s(String tag, Object o) {
@@ -440,6 +462,14 @@ public class S {
 
     public static void e(Object o) {
         getS().e_self(o, E);
+    }
+
+    public static void ed(Object o, int depth) {
+        getS().e_self_custom(o, depth, E);
+    }
+
+    public static void ed(Object o) {
+        getS().e_self_custom(o, 20, E);
     }
 
     public static void e(String tag, Object o) {

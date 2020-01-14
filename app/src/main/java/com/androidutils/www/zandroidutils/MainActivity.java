@@ -241,6 +241,14 @@ public class MainActivity extends Activity {
 
             }
         });
+
+        S.lll();
+        S.ll();
+        S.l();
+        S.e("1");
+        S.ed("1");
+        S.s("111");
+        S.sd("111");
     }
 
     private void initLogger() {
@@ -255,14 +263,7 @@ public class MainActivity extends Activity {
         });
         floatWindowHelper.setContentView(contentLoggerView);
 
-        show();
-
     }
-
-    private void show() {
-        S.sc("111111",9);
-    }
-
 
     private Context activity() {
         return this;
