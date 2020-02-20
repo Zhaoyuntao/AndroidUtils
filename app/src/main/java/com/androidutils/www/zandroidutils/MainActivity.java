@@ -215,6 +215,7 @@ public class MainActivity extends Activity {
             @Override
             public void whenScale(float percent) {
 //                S.s("percent:"+percent);
+                textView2.setText(" "+(int)(percent*100)+"%");
             }
 
             @Override
