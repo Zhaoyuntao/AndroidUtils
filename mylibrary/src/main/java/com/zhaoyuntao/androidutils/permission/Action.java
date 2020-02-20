@@ -16,7 +16,7 @@
 package com.zhaoyuntao.androidutils.permission;
 
 /**
- * Created by YanZhenjie on 2018/1/1.
+ * Created by Zhaoyuntao on 2018/1/1.
  */
 public interface Action<T> {
 

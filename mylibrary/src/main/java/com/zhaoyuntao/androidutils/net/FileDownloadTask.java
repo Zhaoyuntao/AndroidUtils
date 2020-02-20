@@ -1,9 +1,7 @@
 package com.zhaoyuntao.androidutils.net;
 
-import android.os.Environment;
-
 import com.zhaoyuntao.androidutils.tools.S;
-import com.zhaoyuntao.androidutils.tools.ZThread;
+import com.zhaoyuntao.androidutils.tools.thread.ZThread;
 
 import java.io.File;
 import java.io.FileNotFoundException;

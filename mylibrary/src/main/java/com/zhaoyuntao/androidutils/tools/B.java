@@ -18,17 +18,18 @@ import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
-import android.support.v4.content.ContextCompat;
+
+import androidx.core.content.ContextCompat;
+
 import android.text.format.DateFormat;
 import android.view.Display;
 import android.view.WindowManager;
 
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -671,4 +672,68 @@ public class B {
         Bitmap bitmap = BitmapFactory.decodeStream(isBm, null, null);//把ByteArrayInputStream数据生成图片
         return bitmap;
     }
+
+    public static boolean compressToFile(Bitmap bitmap, File file, Bitmap.CompressFormat format, int quality) {
+        if (bitmap == null || bitmap.isRecycled()) {
+            S.e("bad bitmap: " + bitmap + new Exception());
+            return false;
+        }
+
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(file);
+            bitmap.compress(format, quality, fos);
+            return true;
+        } catch (Exception e) {
+            S.s("could not write file" + e);
+            return false;
+        } finally {
+            if (fos != null) {
+                try {
+                    fos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    /**
+     * @param snapshot
+     * @param context
+     * @return
+     */
+    public static Uri bitmapToUri(Bitmap snapshot, Context context,String authority) {
+        File imagePath = new File(context.getFilesDir(), "images");
+        if (!imagePath.exists()) {
+            imagePath.mkdir();
+        }
+        String fileName = "gqr" + S.now() + ".jpg";
+        File imageFile = new File(imagePath, fileName);
+        if (!imageFile.exists()) {
+            try {
+                imageFile.createNewFile();
+            } catch (IOException e) {
+            }
+        }
+
+        Bitmap bitmap;
+        if (snapshot.isMutable()) {
+            bitmap = snapshot;
+        } else {
+            bitmap = snapshot.copy(Bitmap.Config.RGB_565, true);
+        }
+        boolean success = compressToFile(bitmap, imageFile, Bitmap.CompressFormat.JPEG, 100);
+        Uri imageUri;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            imageUri = F.getUriForFile(context, authority, imageFile);
+        } else {
+            imageUri = Uri.fromFile(imageFile);
+        }
+
+        bitmap.recycle();
+        snapshot.recycle();
+        return imageUri;
+    }
+
 }

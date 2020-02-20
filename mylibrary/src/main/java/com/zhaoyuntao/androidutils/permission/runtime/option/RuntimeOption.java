@@ -15,7 +15,7 @@
  */
 package com.zhaoyuntao.androidutils.permission.runtime.option;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.zhaoyuntao.androidutils.permission.runtime.PermissionRequest;
 import com.zhaoyuntao.androidutils.permission.runtime.setting.SettingRequest;

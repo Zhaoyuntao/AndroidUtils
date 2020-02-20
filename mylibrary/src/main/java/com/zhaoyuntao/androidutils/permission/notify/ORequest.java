@@ -21,7 +21,7 @@ import com.zhaoyuntao.androidutils.permission.bridge.RequestManager;
 import com.zhaoyuntao.androidutils.permission.source.Source;
 
 /**
- * Created by YanZhenjie on 2018/5/29.
+ * Created by Zhaoyuntao on 2018/5/29.
  */
 class ORequest extends BaseRequest implements RequestExecutor, BridgeRequest.Callback {
 

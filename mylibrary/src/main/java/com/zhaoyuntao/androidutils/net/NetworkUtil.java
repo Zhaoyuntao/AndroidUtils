@@ -1,7 +1,6 @@
 package com.zhaoyuntao.androidutils.net;
 
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
@@ -11,11 +10,6 @@ import android.text.TextUtils;
 import java.lang.reflect.Method;
 
 
-/**
- * 网络信息
- *
- * @author yjzhao
- */
 public class NetworkUtil {
 
     public static final String NET_UNKNOWN = "none";

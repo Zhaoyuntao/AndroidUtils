@@ -32,7 +32,7 @@ import com.zhaoyuntao.androidutils.permission.source.Source;
 import com.zhaoyuntao.androidutils.permission.runtime.Runtime;
 
 /**
- * Created by YanZhenjie on 2018/4/28.
+ * Created by Zhaoyuntao on 2018/4/28.
  */
 public class Boot implements Option {
 

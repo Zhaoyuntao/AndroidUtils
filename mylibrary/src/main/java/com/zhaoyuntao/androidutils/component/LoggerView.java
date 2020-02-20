@@ -6,8 +6,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.Editable;
@@ -17,12 +15,10 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ScrollView;
-import android.widget.Toast;
 
 import com.zhaoyuntao.androidutils.tools.B;
 import com.zhaoyuntao.androidutils.tools.T;
@@ -173,7 +169,7 @@ public class LoggerView extends ScrollView {
         mCanDirectAppend = autoScroll;
     }
 
-    private class Logger extends android.support.v7.widget.AppCompatEditText {
+    private class Logger extends androidx.appcompat.widget.AppCompatEditText {
 
         private OnTouchListener mOnTouchListener = new OnTouchListener() {
 

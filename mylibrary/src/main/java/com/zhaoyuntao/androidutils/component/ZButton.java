@@ -8,14 +8,16 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Paint;
+import android.graphics.PaintFlagsDrawFilter;
 import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.Region;
 import android.graphics.Shader;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.MotionEvent;
-import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
 import android.widget.FrameLayout;
@@ -38,9 +40,8 @@ import java.util.Map;
 public class ZButton extends FrameLayout {
 
     /**
-     * false: click then be chosen, click again can not be unchosen, this will only be unchosen
-     * by your code
-     * true: click then be chosen,click again can be unchosen,
+     * false: click to choose, do again to release
+     * control by code
      */
     private boolean isAutoChange;
     private boolean isChoosen;
@@ -159,6 +160,8 @@ public class ZButton extends FrameLayout {
     //是否显示progress
     private boolean isProgressType;
 
+    private PaintFlagsDrawFilter paintFlagsDrawFilter;
+
     public ZButton(Context context) {
         super(context);
         init(context, null);
@@ -205,7 +208,7 @@ public class ZButton extends FrameLayout {
         flush();
     }
 
-    private void addFriend2(ZButton zButton) {
+    private void _addFriend(ZButton zButton) {
         if (zButton != null) {
             if (mapFriend == null) {
                 mapFriend = new HashMap<>();
@@ -219,17 +222,17 @@ public class ZButton extends FrameLayout {
         if (zButton != this) {
             if (mapFriend != null) {
                 for (ZButton zButton1 : mapFriend.keySet()) {
-                    zButton1.addFriend2(zButton);
-                    zButton.addFriend2(zButton1);
+                    zButton1._addFriend(zButton);
+                    zButton._addFriend(zButton1);
                 }
             }
-            this.addFriend2(zButton);
-            zButton.addFriend2(this);
+            this._addFriend(zButton);
+            zButton._addFriend(this);
         }
         return this;
     }
 
-    private void removeFriend2(ZButton zButton) {
+    private void _removeFriend(ZButton zButton) {
         if (mapFriend != null) {
             mapFriend.remove(zButton);
         }
@@ -244,13 +247,13 @@ public class ZButton extends FrameLayout {
         if (zButton != this) {
             if (mapFriend != null) {
                 for (ZButton zButton1 : mapFriend.keySet()) {
-                    zButton1.removeFriend2(zButton);
-                    zButton.removeFriend2(zButton1);
+                    zButton1._removeFriend(zButton);
+                    zButton._removeFriend(zButton1);
                 }
             }
-            removeFriend2(zButton);
+            _removeFriend(zButton);
             if (zButton != null) {
-                zButton.removeFriend2(this);
+                zButton._removeFriend(this);
             }
         }
     }
@@ -326,6 +329,7 @@ public class ZButton extends FrameLayout {
     }
 
     private void init(final Context context, AttributeSet attrs) {
+        paintFlagsDrawFilter = new PaintFlagsDrawFilter(0, Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
         zImageView = new ZImageView(context);
         zImageView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         underCanvas();
@@ -1021,7 +1025,7 @@ public class ZButton extends FrameLayout {
         return y_bitmap_back_draw;
     }
 
-    class ZImageView extends android.support.v7.widget.AppCompatImageView {
+    class ZImageView extends androidx.appcompat.widget.AppCompatImageView {
 
         public ZImageView(Context context) {
             super(context);
@@ -1037,7 +1041,7 @@ public class ZButton extends FrameLayout {
 
         @Override
         protected void onDraw(Canvas canvas) {
-
+            canvas.setDrawFilter(paintFlagsDrawFilter);
             w = getWidth();
 
             h = getHeight();
@@ -1070,11 +1074,20 @@ public class ZButton extends FrameLayout {
             path_back.lineTo(radiusArray[3], h_rect);//6
             path_back.arcTo(new RectF(0, h_rect - w_rect_radius_leftbottom, w_rect_radius_leftbottom, h_rect), 90, 90);
             path_back.lineTo(0, radiusArray[3]);
-
-            canvas.clipPath(path_back);
-
-
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                Path mPathXOR = new Path();
+                mPathXOR.moveTo(0, 0);
+                mPathXOR.lineTo(getWidth(), 0);
+                mPathXOR.lineTo(getWidth(), getHeight());
+                mPathXOR.lineTo(0, getHeight());
+                mPathXOR.close();
+                mPathXOR.op(path_back, Path.Op.INTERSECT);
+                canvas.clipPath(mPathXOR);
+            } else {
+                canvas.clipPath(path_back, Region.Op.INTERSECT);
+            }
             Paint paint_border = new Paint();
+            paint_border.setAntiAlias(true);
 
             float radius_min = (w > h ? h : w) / 2f;
             if (radius > radius_min) {
@@ -1247,7 +1260,18 @@ public class ZButton extends FrameLayout {
                 paint_wave.setAntiAlias(true);
                 paint_wave.setStyle(Paint.Style.FILL);
                 canvas.save();
-                canvas.clipPath(path_back);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    Path mPathXOR = new Path();
+                    mPathXOR.moveTo(0, 0);
+                    mPathXOR.lineTo(getWidth(), 0);
+                    mPathXOR.lineTo(getWidth(), getHeight());
+                    mPathXOR.lineTo(0, getHeight());
+                    mPathXOR.close();
+                    mPathXOR.op(path_back, Path.Op.INTERSECT);
+                    canvas.clipPath(mPathXOR);
+                } else {
+                    canvas.clipPath(path_back, Region.Op.INTERSECT);
+                }
                 canvas.drawPath(path_wave, paint_wave);
                 canvas.restore();
             }
@@ -1561,6 +1585,7 @@ public class ZButton extends FrameLayout {
             //is the text of left need to be drawn?
             if (S.isNotEmpty(text_center)) {
                 Paint paint_text = new Paint();
+                paint_text.setAntiAlias(true);
                 paint_text.setAntiAlias(true);
                 paint_text.setColor(textColor_tmp);
                 paint_text.setTextSize(textSize);

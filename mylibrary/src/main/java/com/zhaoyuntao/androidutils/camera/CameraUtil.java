@@ -15,7 +15,7 @@ import android.renderscript.Element;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicYuvToRGB;
 import android.renderscript.Type;
-import android.support.annotation.RequiresApi;
+import androidx.annotation.RequiresApi;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 
@@ -194,24 +194,24 @@ public class CameraUtil {
         this.cameraId = cameraId;
         Configuration configuration = context.getResources().getConfiguration();
         int orientation = configuration.orientation;
-        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            //横屏
-            S.s("横屏:");
-        } else {
-            //竖屏
-            S.s("竖屏");
-        }
-        S.s("申请相机权限");
+//        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+//            //横屏
+//            S.s("横屏:");
+//        } else {
+//            //竖屏
+//            S.s("竖屏");
+//        }
+//        S.s("申请相机权限");
         ZP.p(context, new ZP.CallBack() {
             @Override
             public void whenGranted() {
-                S.s("ZPermission: Camera权限已打开");
+//                S.s("ZPermission: Camera权限已打开");
                 camera = getCamera(cameraId);
                 if (context instanceof Activity) {
                     Activity activity = (Activity) context;
                     setCameraDisplayOrientation(activity, cameraId, camera);
                 }
-                S.s("打开成功");
+//                S.s("打开成功");
                 if (callBack != null && camera != null) {
                     callBack.whenCreatedCamera();
                 }
@@ -219,7 +219,7 @@ public class CameraUtil {
 
             @Override
             public void whenDenied() {
-                S.e("ZPermission: Camera权限未打开");
+//                S.e("ZPermission: Camera权限未打开");
             }
         }, Permission.CAMERA, Permission.WRITE_EXTERNAL_STORAGE, Permission.READ_EXTERNAL_STORAGE, Permission.RECORD_AUDIO);
 
@@ -232,19 +232,15 @@ public class CameraUtil {
         int degrees = 0;
         switch (rotation) {
             case Surface.ROTATION_0:
-                S.s("angle:" + 0);
                 degrees = 0;
                 break;
             case Surface.ROTATION_90:
-                S.s("angle:" + 90);
                 degrees = 90;
                 break;
             case Surface.ROTATION_180:
-                S.s("angle:" + 180);
                 degrees = 180;
                 break;
             case Surface.ROTATION_270:
-                S.s("angle:" + 270);
                 degrees = 270;
                 break;
         }
@@ -263,14 +259,14 @@ public class CameraUtil {
         Camera camera = null;
         int numberOfCameras = Camera.getNumberOfCameras();
         if (numberOfCameras > 0 && cameraId < numberOfCameras) {
-            S.s("摄像头可用数量:" + numberOfCameras);
+//            S.s("摄像头可用数量:" + numberOfCameras);
             try {
-                S.s("正在打开相机:" + cameraId);
+//                S.s("正在打开相机:" + cameraId);
                 camera = Camera.open(cameraId);
 
-                S.s("打开相机:" + cameraId + ",开始设置相机");
+//                S.s("打开相机:" + cameraId + ",开始设置相机");
                 setupCamera(camera);
-                S.s("设置成功");
+//                S.s("设置成功");
             } catch (Exception e) {
                 S.e("getCamera err: " + e);
                 S.e(e);
@@ -296,14 +292,15 @@ public class CameraUtil {
         Size s = getSize(parameters.getSupportedPreviewSizes(), w_preview, h_preview);
         w_preview = s.width;
         h_preview = s.height;
-        S.s("preview最终选择:w:" + w_preview + " h:" + h_preview);
+//        S.s("preview最终选择:w:" + w_preview + " h:" + h_preview);
         parameters.setPreviewSize(w_preview, h_preview);
 
         s = getSize(parameters.getSupportedPictureSizes(), w_picture, h_picture);
         w_picture = s.width;
         h_picture = s.height;
-        S.s("picture最终选择:w:" + w_picture + " h:" + h_picture);
+//        S.s("picture最终选择:w:" + w_picture + " h:" + h_picture);
         parameters.setPictureSize(w_picture, h_picture);
+        parameters.setRotation(180);
         //不自动对焦
 //        parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_FIXED);
         //自动对焦
@@ -331,7 +328,7 @@ public class CameraUtil {
                 Camera.Parameters parameters = camera.getParameters();
                 if (parameters != null) {
                     Size size = parameters.getPreviewSize();
-                    S.s("size.w:" + size.width + " h:" + size.height);
+//                    S.s("size.w:" + size.width + " h:" + size.height);
                     if (size.width != 0 && size.height != 0) {
                         w_bitmap = size.width;
                         h_bitmap = size.height;
@@ -369,18 +366,8 @@ public class CameraUtil {
             S.s("camera.setPreviewDisplay err:");
             S.s(e);
         }
-        if (activity instanceof Activity) {
-            S.s("**********************************************setCameraDisplayOrientation");
-            Activity activity1 = (Activity) activity;
-//            setCameraDisplayOrientation(activity1,cameraId,camera);
-        } else {
-            S.e("***********-----------------*******************setCameraDisplayOrientation");
-
-        }
         camera.setPreviewCallback(previewCallback);
         camera.startPreview();
-
-
     }
 
     public class NV21ToBitmap {
@@ -480,15 +467,12 @@ public class CameraUtil {
     public Size getSize(List<Size> list, int w, int h) {
         Collections.sort(list, ascendSizeComparator);
 
-        S.s("----------------------------------------------------------");
         for (int x = 0; x < list.size(); x++) {
             Size s = list.get(x);
-            S.s("支持:w:" + s.width + " h:" + s.height);
             if ((s.width >= w) && (s.height >= h)) {
                 return s;
             }
         }
-        S.s("----------------------------------------------------------");
         //如果没找到，就选最小的size 0
         return list.get(list.size());
     }

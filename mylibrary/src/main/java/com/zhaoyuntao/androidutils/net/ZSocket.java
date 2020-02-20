@@ -4,7 +4,7 @@ import android.content.Context;
 import android.os.Environment;
 
 import com.zhaoyuntao.androidutils.tools.S;
-import com.zhaoyuntao.androidutils.tools.ZThread;
+import com.zhaoyuntao.androidutils.tools.thread.ZThread;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -73,6 +73,13 @@ public class ZSocket {
     public ZSocket setPort(int port) {
         if (S.isPort(port)) {
             this.port = port;
+            if (zThread_send != null) {
+                zThread_send.setPort(port);
+            }
+            if (zThread_recv != null) {
+                zThread_recv.close();
+                recv();
+            }
         } else {
             S.e("非法的端口号:" + port);
         }
@@ -86,6 +93,13 @@ public class ZSocket {
     public ZSocket setPortOfFileServer(int port) {
         if (S.isPort(port)) {
             this.portFile = port;
+            if (zThread_sendFile != null) {
+                zThread_sendFile.setPort(portFile);
+            }
+            if (zThread_recvFile != null) {
+                zThread_recvFile.close();
+                recvFile();
+            }
         } else {
             S.e("非法的FileServer端口号:" + port);
         }
@@ -140,14 +154,14 @@ public class ZSocket {
     }
 
     public synchronized void send(Msg msg, Msg.TimeOut timeOut) {
-        msg.timeSend=S.currentTimeMillis();
+        msg.timeSend = S.currentTimeMillis();
         msg.timeOut = timeOut;
         cacheMsg(msg);
         zThread_send.send(msg);
     }
 
     public synchronized void sendFile(Msg msg) {
-        msg.timeSend=S.currentTimeMillis();
+        msg.timeSend = S.currentTimeMillis();
         zThread_sendFile.send(msg);
     }
 
@@ -315,7 +329,6 @@ public class ZSocket {
 
             @Override
             protected void todo() {
-//                S.s("正在发送心跳:" + DETECTOR);
                 long time_now = S.currentTimeMillis();
                 long during_heart = time_now - time_lastHeart;
                 if (during_heart > duringMax) {
@@ -409,7 +422,6 @@ public class ZSocket {
             @Override
             public void whenGotMsg(final Msg msg) {
                 final String id = msg.id;
-
                 final String ip = msg.ip;
                 final byte type = msg.type;
                 switch (type) {

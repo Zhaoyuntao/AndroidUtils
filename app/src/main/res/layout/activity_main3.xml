@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.androidutils.www.zandroidutils.Main3Activity">
+
+    <com.zhaoyuntao.androidutils.component.ZButton
+        android:id="@+id/zbutton"
+        android:layout_width="0dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center"
+        android:layout_margin="10dp"
+        android:layout_weight="1"
+        android:background="#00000000"
+        app:color_back="#66ccff"
+        app:color_back_choose="#000000"
+        android:layout_marginRight="30dp"
+        app:color_back_disable="#666666"
+        app:orientation="horizontal"
+        app:percent_bitmap_center="1"
+        app:radius="50dp"
+        app:isautochange="true"
+        app:text_center="hello"
+        android:clickable="true"
+        app:textcolor="#ffffff"
+        app:textcolor_disable="#666666"
+        app:textcolor_choose="#ffffff"
+        app:textsize="40sp"
+        app:textsize_small="20sp"
+        app:w_space_text="10dp"
+        app:wave="false"
+        app:wavecolor="#005500" />
+</LinearLayout>

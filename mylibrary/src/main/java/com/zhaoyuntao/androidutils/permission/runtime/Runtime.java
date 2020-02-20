@@ -19,7 +19,7 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.zhaoyuntao.androidutils.permission.runtime.option.RuntimeOption;
 import com.zhaoyuntao.androidutils.permission.runtime.setting.AllRequest;
@@ -32,7 +32,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Created by YanZhenjie on 2018/5/2.
+ * Created by Zhaoyuntao on 2018/5/2.
  */
 public class Runtime implements RuntimeOption {
 

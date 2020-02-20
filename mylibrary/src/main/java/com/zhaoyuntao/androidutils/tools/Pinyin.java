@@ -1,11 +1,14 @@
 package com.zhaoyuntao.androidutils.tools;
 
 
-import com.zhaoyuntao.androidutils.pinyin.PinyinHelper;
-import com.zhaoyuntao.androidutils.pinyin.format.HanyuPinyinCaseType;
-import com.zhaoyuntao.androidutils.pinyin.format.HanyuPinyinOutputFormat;
-import com.zhaoyuntao.androidutils.pinyin.format.HanyuPinyinToneType;
-import com.zhaoyuntao.androidutils.pinyin.format.exception.BadHanyuPinyinOutputFormatCombination;
+
+import net.sourceforge.pinyin4j.PinyinHelper;
+import net.sourceforge.pinyin4j.format.HanyuPinyinCaseType;
+import net.sourceforge.pinyin4j.format.HanyuPinyinOutputFormat;
+import net.sourceforge.pinyin4j.format.HanyuPinyinToneType;
+import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombination;
+
+import java.util.Arrays;
 
 /**
  * Created by zhaoyuntao on 2018-11-14.
@@ -27,7 +30,10 @@ public class Pinyin {
         for (int i = 0; i < newChar.length; i++) {
             if (newChar[i] > 128) {
                 try {
-                    pinyinStr += PinyinHelper.toHanyuPinyinStringArray(newChar[i], defaultFormat)[0];
+                    String[] arr = PinyinHelper.toHanyuPinyinStringArray(newChar[i], defaultFormat);
+                    if (arr != null && arr.length > 0) {
+                        pinyinStr += arr[0];
+                    }
                 } catch (BadHanyuPinyinOutputFormatCombination e) {
                     e.printStackTrace();
                 }
