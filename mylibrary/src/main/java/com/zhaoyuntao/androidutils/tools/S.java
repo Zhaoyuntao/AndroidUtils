@@ -7,8 +7,6 @@ import android.text.TextUtils;
 import android.util.Log;
 
 
-import com.zhaoyuntao.androidutils.BuildConfig;
-
 import java.lang.ref.WeakReference;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -26,7 +24,7 @@ import java.util.regex.Pattern;
  */
 public class S {
 
-    public static final boolean DEBUG = BuildConfig.DEBUG;
+    public static final boolean DEBUG = true;
     /**
      * 日志tag
      */
