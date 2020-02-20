@@ -13,12 +13,12 @@ import java.util.Timer;
  */
 
 public abstract class ZThread extends Thread {
-    private float frame;
-    private float frame_real;
-    private boolean flag = true;
-    private boolean isStart;
-    private boolean pause;
-    private long timeStart;
+    private volatile float frame;
+    private volatile float frame_real;
+    private volatile boolean flag = true;
+    private volatile boolean isStart;
+    private volatile boolean pause;
+    private volatile long timeStart;
 
     private Sleeper sleeper = new Sleeper();
 
@@ -41,7 +41,7 @@ public abstract class ZThread extends Thread {
             return;
         }
         isStart = true;
-        timeStart= S.currentTimeMillis();
+        timeStart = S.currentTimeMillis();
         super.start();
     }
 
