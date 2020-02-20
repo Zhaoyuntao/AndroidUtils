@@ -27,9 +27,6 @@ import android.text.format.DateFormat;
 import android.view.Display;
 import android.view.WindowManager;
 
-
-import com.zhaoyuntao.androidutils.permission.FileProvider;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -706,7 +703,7 @@ public class B {
      * @param context
      * @return
      */
-    public static Uri bitmapToUri(Bitmap snapshot, Context context) {
+    public static Uri bitmapToUri(Bitmap snapshot, Context context,String authority) {
         File imagePath = new File(context.getFilesDir(), "images");
         if (!imagePath.exists()) {
             imagePath.mkdir();
@@ -729,7 +726,7 @@ public class B {
         boolean success = compressToFile(bitmap, imageFile, Bitmap.CompressFormat.JPEG, 100);
         Uri imageUri;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            imageUri = FileProvider.getUriForFile(context, "com.zhaoyuntao.androidutils.fileprovider", imageFile);
+            imageUri = F.getUriForFile(context, authority, imageFile);
         } else {
             imageUri = Uri.fromFile(imageFile);
         }
@@ -738,4 +735,5 @@ public class B {
         snapshot.recycle();
         return imageUri;
     }
+
 }

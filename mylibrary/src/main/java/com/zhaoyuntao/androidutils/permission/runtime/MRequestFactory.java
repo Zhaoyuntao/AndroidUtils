@@ -18,7 +18,7 @@ package com.zhaoyuntao.androidutils.permission.runtime;
 import com.zhaoyuntao.androidutils.permission.source.Source;
 
 /**
- * Created by YanZhenjie on 2018/4/28.
+ * Created by Zhaoyuntao on 2018/4/28.
  */
 public class MRequestFactory implements Runtime.PermissionRequestFactory {
 

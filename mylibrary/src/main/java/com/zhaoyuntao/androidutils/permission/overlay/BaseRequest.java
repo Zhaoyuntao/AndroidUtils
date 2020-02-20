@@ -27,7 +27,7 @@ import com.zhaoyuntao.androidutils.permission.RequestExecutor;
 import com.zhaoyuntao.androidutils.permission.source.Source;
 
 /**
- * Created by YanZhenjie on 2018/6/1.
+ * Created by Zhaoyuntao on 2018/6/1.
  */
 abstract class BaseRequest implements OverlayRequest {
 

@@ -7,8 +7,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.text.TextUtils;
 
-import com.zhaoyuntao.androidutils.permission.FileProvider;
-
 import java.io.File;
 
 
@@ -92,8 +90,8 @@ public class ShareUtils {
      * @param context
      * @param snapshot
      */
-    public static void shareImg(Context context, Bitmap snapshot) {
-        Uri uri = B.bitmapToUri(snapshot, context);
+    public static void shareImg(Context context, Bitmap snapshot, String authority) {
+        Uri uri = B.bitmapToUri(snapshot, context, authority);
         shareImg(context, uri);
     }
 
@@ -140,8 +138,8 @@ public class ShareUtils {
     }
 
 
-    public static void shareVideo(Context context, File file) {
-        shareImg(context, null, null, null, ShareUtils.FileToUri(context, file), MIME_VIDEO);
+    public static void shareVideo(Context context, File file, String authority) {
+        shareImg(context, null, null, null, ShareUtils.FileToUri(context, file, authority), MIME_VIDEO);
     }
 
     public static void shareVideo(Context context, Uri uri) {
@@ -183,9 +181,9 @@ public class ShareUtils {
         context.startActivity(Intent.createChooser(intent, title));
     }
 
-    public static void shareFile(Context mContext, File file) {
+    public static void shareFile(Context mContext, File file, String authority) {
 
-        shareFile(mContext, null, null, null, FileToUri(mContext, file), MINE_ALL);
+        shareFile(mContext, null, null, null, FileToUri(mContext, file, authority), MINE_ALL);
     }
 
     public static void shareFile(Context context, Uri uri) {
@@ -224,10 +222,10 @@ public class ShareUtils {
         context.startActivity(Intent.createChooser(intent, title));
     }
 
-    public static Uri FileToUri(Context context, File file) {
+    public static Uri FileToUri(Context context, File file, String authority) {
         Uri uri;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            uri = FileProvider.getUriForFile(context, context.getPackageName() + ".fileprovider", file);
+            uri = F.getUriForFile(context, authority, file);
         } else {
             uri = Uri.fromFile(file);
         }

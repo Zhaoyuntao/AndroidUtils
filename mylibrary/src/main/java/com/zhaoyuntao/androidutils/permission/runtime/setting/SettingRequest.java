@@ -16,7 +16,7 @@
 package com.zhaoyuntao.androidutils.permission.runtime.setting;
 
 /**
- * Created by YanZhenjie on 2018/4/30.
+ * Created by Zhaoyuntao on 2018/4/30.
  */
 public interface SettingRequest {
 

@@ -30,6 +30,7 @@ import com.zhaoyuntao.androidutils.permission.source.ContextSource;
 import com.zhaoyuntao.androidutils.permission.source.FragmentSource;
 import com.zhaoyuntao.androidutils.permission.source.Source;
 import com.zhaoyuntao.androidutils.permission.source.SupportFragmentSource;
+import com.zhaoyuntao.androidutils.tools.F;
 
 import java.io.File;
 import java.util.List;
@@ -322,7 +323,7 @@ public class ZPermission {
      */
     public static Uri getFileUri(Context context, File file) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            return FileProvider.getUriForFile(context, context.getPackageName() + ".file.path.share", file);
+            return F.getUriForFile(context, context.getPackageName() + ".file.path.share", file);
         }
         return Uri.fromFile(file);
     }
@@ -361,7 +362,7 @@ public class ZPermission {
      */
     public static Uri getFileUri(Activity activity, File file) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            return FileProvider.getUriForFile(activity, activity.getPackageName() + ".file.path.share", file);
+            return F.getUriForFile(activity, activity.getPackageName() + ".file.path.share", file);
         }
         return Uri.fromFile(file);
     }

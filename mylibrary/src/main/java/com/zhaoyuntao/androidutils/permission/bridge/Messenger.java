@@ -21,7 +21,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 class Messenger extends BroadcastReceiver {
 
-    private static final String ACTION = "com.yanzhenjie.permission.bridge";
+    private static final String ACTION = "com.zhaoyuntao.permission.bridge";
 
     public static void send(Context context) {
         Intent broadcast = new Intent(ACTION);

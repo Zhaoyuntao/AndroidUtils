@@ -25,7 +25,7 @@ import android.provider.Settings;
 import com.zhaoyuntao.androidutils.permission.source.Source;
 
 /**
- * Created by YanZhenjie on 2018/5/30.
+ * Created by Zhaoyuntao on 2018/5/30.
  */
 public class MSettingPage {
 

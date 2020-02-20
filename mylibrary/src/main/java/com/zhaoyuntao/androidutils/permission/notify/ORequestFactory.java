@@ -18,7 +18,7 @@ package com.zhaoyuntao.androidutils.permission.notify;
 import com.zhaoyuntao.androidutils.permission.source.Source;
 
 /**
- * Created by YanZhenjie on 2018/5/29.
+ * Created by Zhaoyuntao on 2018/5/29.
  */
 public class ORequestFactory implements Notify.PermissionRequestFactory {
 

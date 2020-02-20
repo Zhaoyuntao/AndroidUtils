@@ -12,7 +12,9 @@ import android.graphics.PaintFlagsDrawFilter;
 import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.Region;
 import android.graphics.Shader;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -1072,8 +1074,18 @@ public class ZButton extends FrameLayout {
             path_back.lineTo(radiusArray[3], h_rect);//6
             path_back.arcTo(new RectF(0, h_rect - w_rect_radius_leftbottom, w_rect_radius_leftbottom, h_rect), 90, 90);
             path_back.lineTo(0, radiusArray[3]);
-
-            canvas.clipPath(path_back);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                Path mPathXOR = new Path();
+                mPathXOR.moveTo(0, 0);
+                mPathXOR.lineTo(getWidth(), 0);
+                mPathXOR.lineTo(getWidth(), getHeight());
+                mPathXOR.lineTo(0, getHeight());
+                mPathXOR.close();
+                mPathXOR.op(path_back, Path.Op.INTERSECT);
+                canvas.clipPath(mPathXOR);
+            } else {
+                canvas.clipPath(path_back, Region.Op.INTERSECT);
+            }
             Paint paint_border = new Paint();
             paint_border.setAntiAlias(true);
 
@@ -1248,7 +1260,18 @@ public class ZButton extends FrameLayout {
                 paint_wave.setAntiAlias(true);
                 paint_wave.setStyle(Paint.Style.FILL);
                 canvas.save();
-                canvas.clipPath(path_back);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    Path mPathXOR = new Path();
+                    mPathXOR.moveTo(0, 0);
+                    mPathXOR.lineTo(getWidth(), 0);
+                    mPathXOR.lineTo(getWidth(), getHeight());
+                    mPathXOR.lineTo(0, getHeight());
+                    mPathXOR.close();
+                    mPathXOR.op(path_back, Path.Op.INTERSECT);
+                    canvas.clipPath(mPathXOR);
+                } else {
+                    canvas.clipPath(path_back, Region.Op.INTERSECT);
+                }
                 canvas.drawPath(path_wave, paint_wave);
                 canvas.restore();
             }

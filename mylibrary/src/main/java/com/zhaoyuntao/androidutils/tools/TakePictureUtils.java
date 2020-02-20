@@ -11,7 +11,6 @@ import android.provider.MediaStore;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.zhaoyuntao.androidutils.permission.FileProvider;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -21,7 +20,7 @@ import java.io.InputStream;
 public class TakePictureUtils {
     public static void takePhoto(final AppCompatActivity activity, String authority, final PhotoGetter photoGetter) {
         String imgName = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "pic_" + S.currentTimeMillis() + ".jpg";
-        final Uri uriImg = FileProvider.getUriForFile(activity, authority, new File(imgName));
+        final Uri uriImg = F.getUriForFile(activity, authority, new File(imgName));
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, uriImg);
         AvoidActivityResultFragment.getFragment(activity).startActivityForResult(intent, 1002, new AvoidActivityResultFragment.CallBack() {
@@ -40,7 +39,7 @@ public class TakePictureUtils {
     }
 
     public static Bitmap getCompressBitmap(Context context, String filepath, String authorityOfProvider) {
-        Uri uri = FileProvider.getUriForFile(context, authorityOfProvider, new File(filepath));
+        Uri uri = F.getUriForFile(context, authorityOfProvider, new File(filepath));
         return getCompressBitmap(context, uri);
     }
 

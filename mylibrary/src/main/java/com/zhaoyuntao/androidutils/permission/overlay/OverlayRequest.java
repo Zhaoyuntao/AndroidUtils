@@ -19,7 +19,7 @@ import com.zhaoyuntao.androidutils.permission.Action;
 import com.zhaoyuntao.androidutils.permission.Rationale;
 
 /**
- * Created by YanZhenjie on 2018/5/29.
+ * Created by Zhaoyuntao on 2018/5/29.
  */
 public interface OverlayRequest {
 
