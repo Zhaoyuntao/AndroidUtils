@@ -15,11 +15,9 @@
  */
 package com.zhaoyuntao.androidutils.permission.setting.write;
 
+
 import com.zhaoyuntao.androidutils.permission.source.Source;
 
-/**
- * Created by Zhenjie Yan on 3/1/19.
- */
 public class LWriteRequest extends BaseRequest {
 
     public LWriteRequest(Source source) {

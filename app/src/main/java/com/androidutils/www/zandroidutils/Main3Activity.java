@@ -4,10 +4,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
-import com.zhaoyuntao.androidutils.permission.ZPermission;
 import com.zhaoyuntao.androidutils.permission.runtime.Permission;
-import com.zhaoyuntao.androidutils.tools.S;
+import com.zhaoyuntao.androidutils.permission.PermissionSettings;
 import com.zhaoyuntao.androidutils.tools.ZP;
+
+import java.util.List;
 
 public class Main3Activity extends AppCompatActivity {
 
@@ -15,28 +16,21 @@ public class Main3Activity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main3);
-        ZP.p(Main3Activity.this, Permission.READ_PHONE_STATE, new ZP.CallBack() {
+        ZP.p(Main3Activity.this, new ZP.RequestResult() {
             @Override
-            public void whenGranted() {
-//                ZP.p(Main3Activity.this,
-//                        Permission.ACCESS_FINE_LOCATION,
-//                        new ZP.CallBack() {
-//                            @Override
-//                            public void whenGranted() {
-//                                S.s("2");
-//                            }
-//
-//                            @Override
-//                            public void whenDenied() {
-//
-//                            }
-//                        });
+            public void onGranted(List<String> permissions) {
+
             }
 
             @Override
-            public void whenDenied() {
+            public void onDenied(List<String> permissions) {
 
             }
-        });
+
+            @Override
+            public void onDeniedNotAsk(PermissionSettings permissionSettings) {
+
+            }
+        },Permission.CAMERA);
     }
 }

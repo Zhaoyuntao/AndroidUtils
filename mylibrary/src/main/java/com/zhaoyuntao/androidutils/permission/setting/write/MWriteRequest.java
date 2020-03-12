@@ -15,14 +15,12 @@
  */
 package com.zhaoyuntao.androidutils.permission.setting.write;
 
-import com.zhaoyuntao.androidutils.permission.RequestExecutor;
-import com.zhaoyuntao.androidutils.permission.bridge.BridgeRequest;
-import com.zhaoyuntao.androidutils.permission.bridge.RequestManager;
-import com.zhaoyuntao.androidutils.permission.source.Source;
+import  com.zhaoyuntao.androidutils.permission.RequestExecutor;
+import  com.zhaoyuntao.androidutils.permission.bridge.BridgeRequest;
+import  com.zhaoyuntao.androidutils.permission.bridge.RequestManager;
+import  com.zhaoyuntao.androidutils.permission.source.Source;
 
-/**
- * Created by Zhenjie Yan on 3/1/19.
- */
+
 public class MWriteRequest extends BaseRequest implements RequestExecutor, BridgeRequest.Callback {
 
     private Source mSource;

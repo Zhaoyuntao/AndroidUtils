@@ -18,16 +18,30 @@ package com.zhaoyuntao.androidutils.permission.bridge;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import androidx.annotation.NonNull;
 import android.view.KeyEvent;
+import android.view.Window;
+import android.view.WindowManager;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+
+import com.zhaoyuntao.androidutils.R;
 import com.zhaoyuntao.androidutils.permission.overlay.setting.LSettingPage;
 import com.zhaoyuntao.androidutils.permission.overlay.setting.MSettingPage;
 import com.zhaoyuntao.androidutils.permission.source.ActivitySource;
 import com.zhaoyuntao.androidutils.permission.source.Source;
+import com.zhaoyuntao.androidutils.tools.S;
 
+/**
+ * <p>
+ * Request permission.
+ * </p>
+ */
 public final class BridgeActivity extends Activity {
 
     private static final String KEY_TYPE = "KEY_TYPE";
@@ -36,7 +50,8 @@ public final class BridgeActivity extends Activity {
     /**
      * Request for permissions.
      */
-    static void requestAppDetails(Source source) {
+    static void requestAppDetails(BridgeRequest bridgeRequest) {
+        Source source = bridgeRequest.getSource();
         Intent intent = new Intent(source.getContext(), BridgeActivity.class);
         intent.putExtra(KEY_TYPE, BridgeRequest.TYPE_APP_DETAILS);
         source.startActivity(intent);
@@ -45,7 +60,9 @@ public final class BridgeActivity extends Activity {
     /**
      * Request for permissions.
      */
-    static void requestPermission(Source source, String[] permissions) {
+    static void requestPermission(BridgeRequest bridgeRequest) {
+        Source source = bridgeRequest.getSource();
+        String[] permissions = bridgeRequest.getPermissions().toArray(new String[0]);
         Intent intent = new Intent(source.getContext(), BridgeActivity.class);
         intent.putExtra(KEY_TYPE, BridgeRequest.TYPE_PERMISSION);
         intent.putExtra(KEY_PERMISSIONS, permissions);
@@ -55,7 +72,8 @@ public final class BridgeActivity extends Activity {
     /**
      * Request for package install.
      */
-    static void requestInstall(Source source) {
+    static void requestInstall(BridgeRequest bridgeRequest) {
+        Source source = bridgeRequest.getSource();
         Intent intent = new Intent(source.getContext(), BridgeActivity.class);
         intent.putExtra(KEY_TYPE, BridgeRequest.TYPE_INSTALL);
         source.startActivity(intent);
@@ -64,7 +82,8 @@ public final class BridgeActivity extends Activity {
     /**
      * Request for overlay.
      */
-    static void requestOverlay(Source source) {
+    static void requestOverlay(BridgeRequest bridgeRequest) {
+        Source source = bridgeRequest.getSource();
         Intent intent = new Intent(source.getContext(), BridgeActivity.class);
         intent.putExtra(KEY_TYPE, BridgeRequest.TYPE_OVERLAY);
         source.startActivity(intent);
@@ -73,7 +92,8 @@ public final class BridgeActivity extends Activity {
     /**
      * Request for alert window.
      */
-    static void requestAlertWindow(Source source) {
+    static void requestAlertWindow(BridgeRequest bridgeRequest) {
+        Source source = bridgeRequest.getSource();
         Intent intent = new Intent(source.getContext(), BridgeActivity.class);
         intent.putExtra(KEY_TYPE, BridgeRequest.TYPE_ALERT_WINDOW);
         source.startActivity(intent);
@@ -82,7 +102,8 @@ public final class BridgeActivity extends Activity {
     /**
      * Request for notify.
      */
-    static void requestNotify(Source source) {
+    static void requestNotify(BridgeRequest bridgeRequest) {
+        Source source = bridgeRequest.getSource();
         Intent intent = new Intent(source.getContext(), BridgeActivity.class);
         intent.putExtra(KEY_TYPE, BridgeRequest.TYPE_NOTIFY);
         source.startActivity(intent);
@@ -91,7 +112,8 @@ public final class BridgeActivity extends Activity {
     /**
      * Request for notification listener.
      */
-    static void requestNotificationListener(Source source) {
+    static void requestNotificationListener(BridgeRequest bridgeRequest) {
+        Source source = bridgeRequest.getSource();
         Intent intent = new Intent(source.getContext(), BridgeActivity.class);
         intent.putExtra(KEY_TYPE, BridgeRequest.TYPE_NOTIFY_LISTENER);
         source.startActivity(intent);
@@ -100,7 +122,8 @@ public final class BridgeActivity extends Activity {
     /**
      * Request for write system setting.
      */
-    static void requestWriteSetting(Source source) {
+    static void requestWriteSetting(BridgeRequest bridgeRequest) {
+        Source source = bridgeRequest.getSource();
         Intent intent = new Intent(source.getContext(), BridgeActivity.class);
         intent.putExtra(KEY_TYPE, BridgeRequest.TYPE_WRITE_SETTING);
         source.startActivity(intent);
@@ -108,7 +131,18 @@ public final class BridgeActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        S.s("onCreate...");
         super.onCreate(savedInstanceState);
+        if (Build.VERSION.SDK_INT >= 29) {
+            Window window = getWindow();
+            if (window != null) {
+                window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            }
+        }
+//        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+//        setContentView(R.layout.translucent_layout);
+
         if (savedInstanceState != null) return;
 
         Intent intent = getIntent();
@@ -122,7 +156,11 @@ public final class BridgeActivity extends Activity {
             }
             case BridgeRequest.TYPE_PERMISSION: {
                 String[] permissions = intent.getStringArrayExtra(KEY_PERMISSIONS);
-                requestPermissions(permissions, BridgeRequest.TYPE_PERMISSION);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    requestPermissions(permissions, BridgeRequest.TYPE_PERMISSION);
+                } else {
+                    ActivityCompat.requestPermissions(this, permissions, BridgeRequest.TYPE_PERMISSION);
+                }
                 break;
             }
             case BridgeRequest.TYPE_INSTALL: {
@@ -144,11 +182,13 @@ public final class BridgeActivity extends Activity {
             case BridgeRequest.TYPE_NOTIFY: {
                 Intent settingIntent = new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
                 settingIntent.putExtra(Settings.EXTRA_APP_PACKAGE, getPackageName());
+                settingIntent.setData(Uri.fromParts("package", getPackageName(), null));
                 startActivityForResult(settingIntent, BridgeRequest.TYPE_NOTIFY);
                 break;
             }
             case BridgeRequest.TYPE_NOTIFY_LISTENER: {
                 Intent settingIntent = new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS);
+                settingIntent.setData(Uri.fromParts("package", getPackageName(), null));
                 startActivityForResult(settingIntent, BridgeRequest.TYPE_NOTIFY_LISTENER);
                 break;
             }
@@ -162,19 +202,19 @@ public final class BridgeActivity extends Activity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-        @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         Messenger.send(this);
         finish();
     }
 
     @Override
     public void startActivityForResult(Intent intent, int requestCode) {
-        super.startActivityForResult(intent, requestCode);
+        super.startActivityForResult(intent,requestCode);
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         Messenger.send(this);
         finish();
     }

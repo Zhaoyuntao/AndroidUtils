@@ -34,6 +34,7 @@ import java.lang.reflect.Method;
 public abstract class Source {
 
     private static final int MODE_ASK = 4;
+    private static final int MODE_COMPAT = 5;
 
     private static final String CHECK_OP_NO_THROW = "checkOpNoThrow";
     private static final String OP_REQUEST_INSTALL_PACKAGES = "OP_REQUEST_INSTALL_PACKAGES";
@@ -56,7 +57,7 @@ public abstract class Source {
 
     public abstract boolean isShowRationalePermission(String permission);
 
-    private int getTargetSdkVersion() {
+    public int getTargetSdkVersion() {
         if (mTargetSdkVersion < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
             mTargetSdkVersion = getContext().getApplicationInfo().targetSdkVersion;
         }
@@ -80,14 +81,14 @@ public abstract class Source {
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private AppOpsManager getAppOpsManager() {
         if (mAppOpsManager == null) {
-            mAppOpsManager = (AppOpsManager)getContext().getSystemService(Context.APP_OPS_SERVICE);
+            mAppOpsManager = (AppOpsManager) getContext().getSystemService(Context.APP_OPS_SERVICE);
         }
         return mAppOpsManager;
     }
 
     private NotificationManager getNotificationManager() {
         if (mNotificationManager == null) {
-            mNotificationManager = (NotificationManager)getContext().getSystemService(Context.NOTIFICATION_SERVICE);
+            mNotificationManager = (NotificationManager) getContext().getSystemService(Context.NOTIFICATION_SERVICE);
         }
         return mNotificationManager;
     }
@@ -128,7 +129,6 @@ public abstract class Source {
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     public final boolean canListenerNotification() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             return reflectionOps(OP_ACCESS_NOTIFICATIONS);
@@ -158,9 +158,9 @@ public abstract class Source {
             Class<AppOpsManager> appOpsClass = AppOpsManager.class;
             Method method = appOpsClass.getMethod(CHECK_OP_NO_THROW, Integer.TYPE, Integer.TYPE, String.class);
             Field opField = appOpsClass.getDeclaredField(opFieldName);
-            int opValue = (int)opField.get(Integer.class);
-            int result = (int)method.invoke(getAppOpsManager(), opValue, uid, getPackageName());
-            return result == AppOpsManager.MODE_ALLOWED || result == MODE_ASK;
+            int opValue = (int) opField.get(Integer.class);
+            int result = (int) method.invoke(getAppOpsManager(), opValue, uid, getPackageName());
+            return result == AppOpsManager.MODE_ALLOWED || result == MODE_ASK || result == MODE_COMPAT;
         } catch (Throwable e) {
             return true;
         }

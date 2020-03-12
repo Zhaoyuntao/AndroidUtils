@@ -21,8 +21,9 @@ import android.view.SurfaceHolder;
 
 import com.zhaoyuntao.androidutils.permission.runtime.Permission;
 import com.zhaoyuntao.androidutils.tools.B;
-import com.zhaoyuntao.androidutils.tools.S;
+import com.zhaoyuntao.androidutils.permission.PermissionSettings;
 import com.zhaoyuntao.androidutils.tools.ZP;
+import com.zhaoyuntao.androidutils.tools.S;
 
 import java.io.File;
 import java.io.IOException;
@@ -202,9 +203,9 @@ public class CameraUtil {
 //            S.s("竖屏");
 //        }
 //        S.s("申请相机权限");
-        ZP.p(context, new ZP.CallBack() {
+        ZP.p(context, new ZP.RequestResult() {
             @Override
-            public void whenGranted() {
+            public void onGranted(List<String> permissions) {
 //                S.s("ZPermission: Camera权限已打开");
                 camera = getCamera(cameraId);
                 if (context instanceof Activity) {
@@ -218,11 +219,15 @@ public class CameraUtil {
             }
 
             @Override
-            public void whenDenied() {
-//                S.e("ZPermission: Camera权限未打开");
-            }
-        }, Permission.CAMERA, Permission.WRITE_EXTERNAL_STORAGE, Permission.READ_EXTERNAL_STORAGE, Permission.RECORD_AUDIO);
+            public void onDenied(List<String> permissions) {
 
+            }
+
+            @Override
+            public void onDeniedNotAsk(PermissionSettings permissionSettings) {
+
+            }
+        },Permission.CAMERA, Permission.WRITE_EXTERNAL_STORAGE, Permission.READ_EXTERNAL_STORAGE, Permission.RECORD_AUDIO);
     }
 
     public static void setCameraDisplayOrientation(Activity activity, int cameraId, android.hardware.Camera camera) {
