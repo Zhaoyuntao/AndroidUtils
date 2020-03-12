@@ -38,11 +38,11 @@ import java.util.List;
 public class CameraUtil {
     private Camera camera;
 
-    public static int w_preview = 640;
-    public static int h_preview = 480;
+    public static int w_preview = 1920;
+    public static int h_preview = 1080;
 
-    public static int w_picture = 640;
-    public static int h_picture = 480;
+    public static int w_picture = 1920;
+    public static int h_picture = 1080;
 
     public static int w_bitmap;
     public static int h_bitmap;
@@ -109,18 +109,16 @@ public class CameraUtil {
                 if (!videoFolder.exists()) {
                     videoFolder.mkdirs();
                 }
-                S.s("视频目录:[ " + videoFolder.getAbsolutePath() + " ]exists:" + videoFolder.exists());
+                
                 // 设置surfaceView不管理的缓冲区
 //            hold.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
             } else {
-                S.s("sdcard 不存在！");
+                
                 return;
             }
             // 获取当前时间,作为视频文件的文件名
             // 声明视频文件对象
             File videoFile = new File(videoFolder.getAbsoluteFile(), name);
-            S.s("path:" + path + " name:" + name);
-            S.s("11");
             // 创建此视频文件
             try {
                 videoFile.createNewFile();
@@ -147,14 +145,14 @@ public class CameraUtil {
                 mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT); // 音频编码
             }
             mRecorder.setMaxDuration(1800000); // 设置最大录制时间
-            S.s("22");
+            
             mRecorder.setOutputFile(videoFile.getAbsolutePath()); // 设置录制文件源
             try {
                 mRecorder.prepare(); // 准备录像
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            S.s("33");
+            
             try {
                 mRecorder.start(); // 开始录像
             } catch (Exception e) {
@@ -163,7 +161,7 @@ public class CameraUtil {
             }
             isRecording = true; // 改变录制状态为正在录制
             camera.setPreviewCallback(previewCallback);
-            S.s("已经开始录像");
+            
         } else {
             S.e("正在录制中,无法再次录制");
         }
@@ -197,22 +195,22 @@ public class CameraUtil {
         int orientation = configuration.orientation;
 //        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
 //            //横屏
-//            S.s("横屏:");
+//            
 //        } else {
 //            //竖屏
-//            S.s("竖屏");
+//            
 //        }
-//        S.s("申请相机权限");
+//        
         ZP.p(context, new ZP.RequestResult() {
             @Override
             public void onGranted(List<String> permissions) {
-//                S.s("ZPermission: Camera权限已打开");
+//                
                 camera = getCamera(cameraId);
                 if (context instanceof Activity) {
                     Activity activity = (Activity) context;
                     setCameraDisplayOrientation(activity, cameraId, camera);
                 }
-//                S.s("打开成功");
+//                
                 if (callBack != null && camera != null) {
                     callBack.whenCreatedCamera();
                 }
@@ -264,14 +262,14 @@ public class CameraUtil {
         Camera camera = null;
         int numberOfCameras = Camera.getNumberOfCameras();
         if (numberOfCameras > 0 && cameraId < numberOfCameras) {
-//            S.s("摄像头可用数量:" + numberOfCameras);
+//            
             try {
-//                S.s("正在打开相机:" + cameraId);
+//                
                 camera = Camera.open(cameraId);
 
-//                S.s("打开相机:" + cameraId + ",开始设置相机");
+//                
                 setupCamera(camera);
-//                S.s("设置成功");
+//                
             } catch (Exception e) {
                 S.e("getCamera err: " + e);
                 S.e(e);
@@ -294,16 +292,16 @@ public class CameraUtil {
             parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
         }
         //根据屏幕尺寸获取最佳 大小
-        Size s = getSize(parameters.getSupportedPreviewSizes(), w_preview, h_preview);
+        Size s = getSize(parameters.getSupportedPreviewSizes());
         w_preview = s.width;
         h_preview = s.height;
-//        S.s("preview最终选择:w:" + w_preview + " h:" + h_preview);
+//        
         parameters.setPreviewSize(w_preview, h_preview);
 
-        s = getSize(parameters.getSupportedPictureSizes(), w_picture, h_picture);
+        s = getSize(parameters.getSupportedPictureSizes());
         w_picture = s.width;
         h_picture = s.height;
-//        S.s("picture最终选择:w:" + w_picture + " h:" + h_picture);
+//        
         parameters.setPictureSize(w_picture, h_picture);
         parameters.setRotation(180);
         //不自动对焦
@@ -333,7 +331,7 @@ public class CameraUtil {
                 Camera.Parameters parameters = camera.getParameters();
                 if (parameters != null) {
                     Size size = parameters.getPreviewSize();
-//                    S.s("size.w:" + size.width + " h:" + size.height);
+//                    
                     if (size.width != 0 && size.height != 0) {
                         w_bitmap = size.width;
                         h_bitmap = size.height;
@@ -368,8 +366,8 @@ public class CameraUtil {
             camera.setPreviewDisplay(holder);
         } catch (IOException e) {
             e.printStackTrace();
-            S.s("camera.setPreviewDisplay err:");
-            S.s(e);
+            
+            
         }
         camera.setPreviewCallback(previewCallback);
         camera.startPreview();
@@ -445,7 +443,7 @@ public class CameraUtil {
             camera.stopPreview();
             camera.release();
             camera = null;
-            S.s("相机已释放");
+            
         }
     }
 
@@ -460,7 +458,7 @@ public class CameraUtil {
             e.printStackTrace();
         }
         isRecording = false;
-        S.s("停止录像");
+        
     }
 
     /**
@@ -469,17 +467,9 @@ public class CameraUtil {
      * @param list list
      * @return size
      */
-    public Size getSize(List<Size> list, int w, int h) {
+    public Size getSize(List<Size> list) {
         Collections.sort(list, ascendSizeComparator);
-
-        for (int x = 0; x < list.size(); x++) {
-            Size s = list.get(x);
-            if ((s.width >= w) && (s.height >= h)) {
-                return s;
-            }
-        }
-        //如果没找到，就选最小的size 0
-        return list.get(list.size());
+        return list.get(list.size()-1);
     }
 
     public Size getPropPictureSize(List<Size> list, float th, int minWidth) {
@@ -488,7 +478,7 @@ public class CameraUtil {
         int i = 0;
         for (Size s : list) {
             if ((s.width >= minWidth) && equalRate(s, th)) {
-                S.s("PictureSize : w = " + s.width + "h = " + s.height);
+                
                 break;
             }
             i++;

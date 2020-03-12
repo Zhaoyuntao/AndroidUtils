@@ -23,6 +23,8 @@ import com.zhaoyuntao.androidutils.tools.QRCodeTool;
 import com.zhaoyuntao.androidutils.tools.S;
 import com.zhaoyuntao.androidutils.tools.T;
 
+import java.util.Arrays;
+
 public class MainActivity extends Activity {
 
     FloatWindowHelper floatWindowHelper;
@@ -33,7 +35,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         S.setFlag(true);
-
+        S.s(Arrays.toString(B.getScreenWH(this)));
         initLogger();
         ZSocket.getInstance().setPort(6655);
         ZSocket.getInstance().setPortOfFileServer(6658);
