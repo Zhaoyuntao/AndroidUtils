@@ -1,98 +1,71 @@
-/*
- * Copyright 2019 Zhenjie Yan
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.zhaoyuntao.androidutils.permission.bridge;
 
-import java.util.concurrent.BlockingQueue;
+import android.content.Context;
+
 
 final class RequestExecutor extends Thread implements Messenger.Callback {
 
-    private final BlockingQueue<BridgeRequest> mQueue;
     private BridgeRequest mRequest;
     private Messenger mMessenger;
 
-    public RequestExecutor(BlockingQueue<BridgeRequest> queue) {
-        this.mQueue = queue;
+    public RequestExecutor(BridgeRequest request) {
+        this.mRequest = request;
     }
 
     @Override
     public void run() {
-        while (true) {
-            synchronized (this) {
-                try {
-                    mRequest = mQueue.take();
-                } catch (InterruptedException e) {
-                    continue;
-                }
+        Context context = mRequest.getSource().getContext();
+        mMessenger = new Messenger(context, this);
+        mMessenger.register();
 
-                mMessenger = new Messenger(mRequest.getSource().getContext(), this);
-                mMessenger.register();
-                executeCurrent();
-
-                try {
-                    wait();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+        executeCurrent(mRequest);
     }
 
-    private void executeCurrent() {
+    private void executeCurrent(BridgeRequest mRequest) {
         switch (mRequest.getType()) {
             case BridgeRequest.TYPE_APP_DETAILS: {
-                BridgeActivity.requestAppDetails(mRequest.getSource());
+                BridgeActivity.requestAppDetails(mRequest);
                 break;
             }
             case BridgeRequest.TYPE_PERMISSION: {
-                BridgeActivity.requestPermission(mRequest.getSource(), mRequest.getPermissions());
+                BridgeActivity.requestPermission(mRequest);
                 break;
             }
             case BridgeRequest.TYPE_INSTALL: {
-                BridgeActivity.requestInstall(mRequest.getSource());
+                BridgeActivity.requestInstall(mRequest);
                 break;
             }
             case BridgeRequest.TYPE_OVERLAY: {
-                BridgeActivity.requestOverlay(mRequest.getSource());
+                BridgeActivity.requestOverlay(mRequest);
                 break;
             }
             case BridgeRequest.TYPE_ALERT_WINDOW: {
-                BridgeActivity.requestAlertWindow(mRequest.getSource());
+                BridgeActivity.requestAlertWindow(mRequest);
                 break;
             }
             case BridgeRequest.TYPE_NOTIFY: {
-                BridgeActivity.requestNotify(mRequest.getSource());
+                BridgeActivity.requestNotify(mRequest);
                 break;
             }
             case BridgeRequest.TYPE_NOTIFY_LISTENER: {
-                BridgeActivity.requestNotificationListener(mRequest.getSource());
+                BridgeActivity.requestNotificationListener(mRequest);
                 break;
             }
-            case BridgeRequest.TYPE_WRITE_SETTING:{
-                BridgeActivity.requestWriteSetting(mRequest.getSource());
+            case BridgeRequest.TYPE_WRITE_SETTING: {
+                BridgeActivity.requestWriteSetting(mRequest);
                 break;
             }
         }
     }
+
 
     @Override
     public void onCallback() {
         synchronized (this) {
             mMessenger.unRegister();
             mRequest.getCallback().onCallback();
-            notify();
+            mMessenger = null;
+            mRequest = null;
         }
     }
 }

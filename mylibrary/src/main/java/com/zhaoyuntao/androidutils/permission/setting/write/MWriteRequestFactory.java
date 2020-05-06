@@ -15,12 +15,10 @@
  */
 package com.zhaoyuntao.androidutils.permission.setting.write;
 
-import com.zhaoyuntao.androidutils.permission.setting.Setting;
-import com.zhaoyuntao.androidutils.permission.source.Source;
+import  com.zhaoyuntao.androidutils.permission.setting.Setting;
+import  com.zhaoyuntao.androidutils.permission.source.Source;
 
-/**
- * Created by Zhenjie Yan on 3/1/19.
- */
+
 public class MWriteRequestFactory implements Setting.SettingRequestFactory {
 
     @Override

@@ -3,15 +3,20 @@ package com.zhaoyuntao.androidutils.camera;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
+
 import androidx.annotation.Nullable;
+
 import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.ViewGroup;
 
 import com.zhaoyuntao.androidutils.component.ZButton;
-import com.zhaoyuntao.androidutils.tools.S;
+import com.zhaoyuntao.androidutils.permission.runtime.Permission;
+import com.zhaoyuntao.androidutils.permission.PermissionSettings;
+import com.zhaoyuntao.androidutils.tools.ZP;
+
+import java.util.List;
 
 
 public class CameraView extends ZButton {
@@ -29,6 +34,8 @@ public class CameraView extends ZButton {
     private boolean overTurn;
 
     private float angle;
+
+    private boolean alreadyInit;
 
     /**
      * 暂停预览画面
@@ -91,12 +98,35 @@ public class CameraView extends ZButton {
     }
 
     private void init() {
-        //人脸框线条的宽度
-        setStyle_bitmap_back(ZButton.style_bitmap_back_clip);
-        setColor_back(Color.BLACK);
-        setColor_back_click(Color.BLACK);
-        holder = surfaceView.getHolder();
-        initCamera();
+        synchronized (CameraView.class) {
+            if (alreadyInit) {
+                return;
+            }
+            //人脸框线条的宽度
+            setStyle_bitmap_back(ZButton.style_bitmap_back_clip);
+            holder = surfaceView.getHolder();
+            ZP.p(getContext(), new ZP.RequestResult() {
+                @Override
+                public void onGranted(List<String> permissions) {
+                    alreadyInit = true;
+                    initCamera();
+                }
+
+                @Override
+                public void onDenied(List<String> permissions) {
+                    if (callBack != null) {
+                        callBack.whenNoPermission();
+                    }
+                }
+
+                @Override
+                public void onDeniedNotAsk(PermissionSettings permissionSettings) {
+                    if (callBack != null) {
+                        callBack.whenNoPermission();
+                    }
+                }
+            }, Permission.CAMERA, Permission.WRITE_EXTERNAL_STORAGE, Permission.READ_EXTERNAL_STORAGE, Permission.RECORD_AUDIO);
+        }
     }
 
     private void initCamera() {
@@ -171,10 +201,9 @@ public class CameraView extends ZButton {
     }
 
     @Override
-    public void destroyDrawingCache() {
-        S.s("destroyDrawingCache,正在释放相机");
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
         releaseCamera();
-        super.destroyDrawingCache();
     }
 
     public void setCameraId(int cameraId) {
@@ -190,7 +219,7 @@ public class CameraView extends ZButton {
 
     public void setAngle(float angle) {
         this.angle = angle;
-        if(this.camera!=null){
+        if (this.camera != null) {
             camera.setBitmapAngle(angle);
         }
     }
@@ -199,5 +228,7 @@ public class CameraView extends ZButton {
         void whenGotBitmap(Bitmap bitmap, byte[] data);
 
         void whenCameraCreated();
+
+        void whenNoPermission();
     }
 }

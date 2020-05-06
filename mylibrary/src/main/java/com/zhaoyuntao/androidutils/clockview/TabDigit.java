@@ -85,12 +85,12 @@ public class TabDigit extends View {
 
         TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.TabDigit, 0, 0);
 
-        mPadding = ta.getDimensionPixelSize(R.styleable.TabDigit_padding, B.dip2px(getContext(), 15));
-        textSize = ta.getDimensionPixelSize(R.styleable.TabDigit_textSize, B.sp2px(getContext(), 60));
-        mCornerSize = ta.getDimensionPixelSize(R.styleable.TabDigit_cornerSize, B.dip2px(getContext(), 5));
-        textColor = ta.getColor(R.styleable.TabDigit_textColor, Color.WHITE);
-        backgroundColor = ta.getColor(R.styleable.TabDigit_backgroundColor, Color.BLACK);
-        mReverseRotation = ta.getBoolean(R.styleable.TabDigit_reverseRotation, true);
+        mPadding = ta.getDimensionPixelSize(R.styleable.TabDigit_digit_padding, B.dip2px(getContext(), 15));
+        textSize = ta.getDimensionPixelSize(R.styleable.TabDigit_digit_textSize, B.sp2px(getContext(), 60));
+        mCornerSize = ta.getDimensionPixelSize(R.styleable.TabDigit_digit_cornerSize, B.dip2px(getContext(), 5));
+        textColor = ta.getColor(R.styleable.TabDigit_digit_textColor, Color.WHITE);
+        backgroundColor = ta.getColor(R.styleable.TabDigit_digit_backgroundColor, Color.BLACK);
+        mReverseRotation = ta.getBoolean(R.styleable.TabDigit_digit_reverseRotation, true);
 
         ta.recycle();
         initPaints();

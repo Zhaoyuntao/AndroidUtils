@@ -22,9 +22,7 @@ import com.zhaoyuntao.androidutils.permission.Rationale;
 import com.zhaoyuntao.androidutils.permission.RequestExecutor;
 import com.zhaoyuntao.androidutils.permission.source.Source;
 
-/**
- * Created by Zhenjie Yan on 2018/6/1.
- */
+
 abstract class BaseRequest implements WriteRequest {
 
     private Source mSource;

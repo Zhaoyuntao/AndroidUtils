@@ -115,12 +115,12 @@
         <attr name="wavecolor_disable" format="color">#66ccff</attr>
     </declare-styleable>
     <declare-styleable name="TabDigit">
-        <attr name="textSize" format="dimension" />
-        <attr name="padding" format="dimension" />
-        <attr name="cornerSize" format="dimension" />
-        <attr name="textColor" format="color" />
-        <attr name="backgroundColor" format="color" />
-        <attr name="reverseRotation" format="boolean" />
+        <attr name="digit_textSize" format="dimension" />
+        <attr name="digit_padding" format="dimension" />
+        <attr name="digit_cornerSize" format="dimension" />
+        <attr name="digit_textColor" format="color" />
+        <attr name="digit_backgroundColor" format="color" />
+        <attr name="digit_reverseRotation" format="boolean" />
     </declare-styleable>
     <declare-styleable name="ZScaleBar">
         <attr name="w_progress" format="dimension" />

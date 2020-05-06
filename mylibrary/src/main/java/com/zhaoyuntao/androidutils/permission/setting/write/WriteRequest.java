@@ -18,9 +18,7 @@ package com.zhaoyuntao.androidutils.permission.setting.write;
 import com.zhaoyuntao.androidutils.permission.Action;
 import com.zhaoyuntao.androidutils.permission.Rationale;
 
-/**
- * Created by Zhenjie Yan on 3/1/19.
- */
+
 public interface WriteRequest {
 
     /**

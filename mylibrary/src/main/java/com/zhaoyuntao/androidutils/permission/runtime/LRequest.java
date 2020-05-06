@@ -15,115 +15,44 @@
  */
 package com.zhaoyuntao.androidutils.permission.runtime;
 
-import android.os.AsyncTask;
-import android.util.Log;
+import androidx.annotation.NonNull;
 
-import com.zhaoyuntao.androidutils.permission.Action;
-import com.zhaoyuntao.androidutils.permission.Rationale;
-import com.zhaoyuntao.androidutils.permission.checker.PermissionChecker;
-import com.zhaoyuntao.androidutils.permission.checker.StrictChecker;
 import com.zhaoyuntao.androidutils.permission.source.Source;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-
-import static java.util.Arrays.asList;
 
 /**
  * Created by Zhaoyuntao on 2018/1/25.
  */
-class LRequest implements PermissionRequest {
+class LRequest extends BaseRequest {
 
-    private static final PermissionChecker STRICT_CHECKER = new StrictChecker();
-
-    private Source mSource;
-
-    private String[] mPermissions;
-    private Action<List<String>> mGranted;
-    private Action<List<String>> mDenied;
+    private List<String> mPermissions;
 
     LRequest(Source source) {
-        this.mSource = source;
+        super(source);
     }
 
     @Override
-    public PermissionRequest permission(String... permissions) {
-        this.mPermissions = permissions;
+    public PermissionRequest permission(@NonNull String... permissions) {
+        mPermissions = new ArrayList<>();
+        mPermissions.addAll(Arrays.asList(permissions));
         return this;
     }
 
     @Override
-    public PermissionRequest rationale(Rationale<List<String>> rationale) {
-        return this;
-    }
-
-    @Override
-    public PermissionRequest onGranted(Action<List<String>> granted) {
-        this.mGranted = granted;
-        return this;
-    }
-
-    @Override
-    public PermissionRequest onDenied(Action<List<String>> denied) {
-        this.mDenied = denied;
+    public PermissionRequest permission(@NonNull String[]... groups) {
+        mPermissions = new ArrayList<>();
+        for (String[] group : groups) {
+            mPermissions.addAll(Arrays.asList(group));
+        }
         return this;
     }
 
     @Override
     public void start() {
-        new AsyncTask<Void, Void, List<String>>() {
-            @Override
-            protected List<String> doInBackground(Void... voids) {
-                return getDeniedPermissions(STRICT_CHECKER, mSource, mPermissions);
-            }
-
-            @Override
-            protected void onPostExecute(List<String> deniedList) {
-                if (deniedList.isEmpty()) {
-                    callbackSucceed();
-                } else {
-                    callbackFailed(deniedList);
-                }
-            }
-        }.execute();
-    }
-
-    /**
-     * Callback acceptance status.
-     */
-    private void callbackSucceed() {
-        if (mGranted != null) {
-            List<String> permissionList = asList(mPermissions);
-            try {
-                mGranted.onAction(permissionList);
-            } catch (Exception e) {
-                Log.e("ZPermission", "Please check the onGranted() method body for bugs.", e);
-                if (mDenied != null) {
-                    mDenied.onAction(permissionList);
-                }
-            }
-        }
-    }
-
-    /**
-     * Callback rejected state.
-     */
-    private void callbackFailed(List<String> deniedList) {
-        if (mDenied != null) {
-            mDenied.onAction(deniedList);
-        }
-    }
-
-    /**
-     * Get denied permissions.
-     */
-    private static List<String> getDeniedPermissions(PermissionChecker checker, Source source, String... permissions) {
-        List<String> deniedList = new ArrayList<>(1);
-        for (String permission : permissions) {
-            if (!checker.hasPermission(source.getContext(), permission)) {
-                deniedList.add(permission);
-            }
-        }
-        return deniedList;
+        mPermissions = filterPermissions(mPermissions);
+        callbackSucceed(mPermissions);
     }
 }

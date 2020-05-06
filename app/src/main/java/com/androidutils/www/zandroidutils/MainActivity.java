@@ -18,13 +18,12 @@ import com.zhaoyuntao.androidutils.component.ZButton;
 import com.zhaoyuntao.androidutils.component.ZVideoView;
 import com.zhaoyuntao.androidutils.net.Msg;
 import com.zhaoyuntao.androidutils.net.ZSocket;
-import com.zhaoyuntao.androidutils.permission.runtime.Permission;
 import com.zhaoyuntao.androidutils.tools.B;
-import com.zhaoyuntao.androidutils.tools.Pinyin;
 import com.zhaoyuntao.androidutils.tools.QRCodeTool;
 import com.zhaoyuntao.androidutils.tools.S;
 import com.zhaoyuntao.androidutils.tools.T;
-import com.zhaoyuntao.androidutils.tools.ZP;
+
+import java.util.Arrays;
 
 public class MainActivity extends Activity {
 
@@ -36,7 +35,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         S.setFlag(true);
-
+        S.s(Arrays.toString(B.getScreenWH(this)));
         initLogger();
         ZSocket.getInstance().setPort(6655);
         ZSocket.getInstance().setPortOfFileServer(6658);
@@ -46,17 +45,33 @@ public class MainActivity extends Activity {
 //        zVideoView=findViewById(R.id.videoview);
 //        zVideoView.setVideo(Environment.getExternalStorageDirectory().getAbsolutePath()+"/zsocketcache/cateye1564989444792.mp4");
 
-        ZP.p(activity(), new ZP.CallBack() {
-            @Override
-            public void whenGranted() {
-
-            }
-
-            @Override
-            public void whenDenied() {
-
-            }
-        }, Permission.CAMERA, Permission.WRITE_EXTERNAL_STORAGE, Permission.READ_EXTERNAL_STORAGE, Permission.RECORD_AUDIO);
+//        ZP.p(activity(), new ZP.CallBack() {
+//            @Override
+//            public void whenGranted() {
+//
+//            }
+//
+//            @Override
+//            public void whenDenied() {
+//
+//            }
+//        }, Permission.CAMERA, Permission.WRITE_EXTERNAL_STORAGE, Permission.READ_EXTERNAL_STORAGE, Permission.RECORD_AUDIO);
+//        ZP.requestPermission(getApplicationContext(), new ZP.RequestResult() {
+//            @Override
+//            public void onGranted(List<String> permissions) {
+//
+//            }
+//
+//            @Override
+//            public void onDenied(List<String> permissions) {
+//
+//            }
+//
+//            @Override
+//            public void onDeniedNotAsk(PermissionSettings permissionSettings) {
+//
+//            }
+//        },Permission.CAMERA);
 
 
         ZSwitchButton switchButton = findViewById(R.id.switchbutton);
@@ -215,6 +230,7 @@ public class MainActivity extends Activity {
             @Override
             public void whenScale(float percent) {
 //                S.s("percent:"+percent);
+                textView2.setText(" "+(int)(percent*100)+"%");
             }
 
             @Override
@@ -240,15 +256,20 @@ public class MainActivity extends Activity {
             public void whenCameraCreated() {
 
             }
+
+            @Override
+            public void whenNoPermission() {
+                T.t(MainActivity.this,"no camera permission");
+            }
         });
 
-        S.lll();
-        S.ll();
-        S.l();
-        S.e("1");
-        S.ed("1");
-        S.s("111");
-        S.sd("111");
+//        S.lll();
+//        S.ll();
+//        S.l();
+//        S.e("1");
+//        S.ed("1");
+//        S.s("111");
+//        S.sd("111");
     }
 
     private void initLogger() {

@@ -20,9 +20,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 /**
  * <p>Context Wrapper.</p>
- * Created by Zhenjie Yan on 2017/5/1.
  */
 public class ActivitySource extends Source {
 
@@ -50,7 +51,6 @@ public class ActivitySource extends Source {
     @Override
     public boolean isShowRationalePermission(String permission) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return false;
-
         return mActivity.shouldShowRequestPermissionRationale(permission);
     }
 }

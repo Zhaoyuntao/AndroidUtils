@@ -17,6 +17,8 @@ package com.zhaoyuntao.androidutils.permission.bridge;
 
 import com.zhaoyuntao.androidutils.permission.source.Source;
 
+import java.util.List;
+
 public final class BridgeRequest {
 
     public static final int TYPE_APP_DETAILS = 1;
@@ -32,7 +34,7 @@ public final class BridgeRequest {
 
     private int mType;
     private Callback mCallback;
-    private String[] mPermissions;
+    private List<String> mPermissions;
 
     public BridgeRequest(Source source) {
         this.mSource = source;
@@ -58,11 +60,11 @@ public final class BridgeRequest {
         mCallback = callback;
     }
 
-    public String[] getPermissions() {
+    public List<String> getPermissions() {
         return mPermissions;
     }
 
-    public void setPermissions(String[] permissions) {
+    public void setPermissions(List<String> permissions) {
         mPermissions = permissions;
     }
 
