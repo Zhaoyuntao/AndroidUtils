@@ -1,15 +1,20 @@
 package com.zhaoyuntao.androidutils.tools;
 
 import android.content.Context;
+import android.os.Build;
+import android.os.PowerManager;
 
 import androidx.annotation.NonNull;
 
 import com.zhaoyuntao.androidutils.permission.Action;
 import com.zhaoyuntao.androidutils.permission.PermissionSettings;
+import com.zhaoyuntao.androidutils.permission.Rationale;
+import com.zhaoyuntao.androidutils.permission.RequestExecutor;
 import com.zhaoyuntao.androidutils.permission.ZPermission;
 import com.zhaoyuntao.androidutils.permission.runtime.Permission;
 import com.zhaoyuntao.androidutils.permission.runtime.PermissionDef;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
@@ -95,8 +100,46 @@ public class ZP {
 
     }
 
+    /**
+     * request the apk install permission if app don't has it
+     *
+     * @param context
+     * @param requestResult
+     */
+    public static void requestInstallPermission(final Context context, final File file, @NonNull final InstallRequestResult requestResult) {
+        if (context == null) {
+            requestResult.onDenied();
+            return;
+        }
+
+        ZPermission.with(context).install().file(file).rationale(new Rationale<File>() {
+            @Override
+            public void showRationale(Context context, File data, RequestExecutor executor) {
+                requestResult.showRationale(context, data, executor);
+            }
+        }).onGranted(new Action<File>() {
+            @Override
+            public void onAction(File data) {
+                requestResult.onGranted();
+            }
+        }).onDenied(new Action<File>() {
+            @Override
+            public void onAction(File data) {
+                requestResult.onDenied();
+            }
+        }).start();
+    }
+
     public static void p(final Context context, @NonNull final RequestResult requestResult, final @NonNull @PermissionDef String... permissions) {
         p(context, null, requestResult, permissions);
+    }
+
+    public interface InstallRequestResult {
+        void onGranted();
+
+        void onDenied();
+
+        void showRationale(Context context, File data, RequestExecutor executor);
     }
 
     /**
@@ -305,6 +348,30 @@ public class ZP {
         requestPermissionWithNotice(context, requestResultWithNotice, Permission.CAMERA, Permission.RECORD_AUDIO, Permission.WRITE_EXTERNAL_STORAGE, Permission.READ_EXTERNAL_STORAGE);
     }
 
+    public static void requestBatteryWhitePermission(Context context, @NonNull BatteryRequestResult requestResult) {
+        if (context == null) {
+            return;
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+            if (pm == null) {
+                return;
+            }
+            boolean isInWhiteList = pm.isIgnoringBatteryOptimizations(context.getPackageName());
+
+            if (isInWhiteList) {
+                requestResult.isInWhiteList();
+            } else {
+                requestResult.isNotInWhiteList();
+            }
+        }
+    }
+
+    public interface BatteryRequestResult {
+        void isInWhiteList();
+
+        void isNotInWhiteList();
+    }
 
     public interface RequestResult {
         void onGranted(List<String> permissions);

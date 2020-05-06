@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.provider.Settings;
 
+import androidx.annotation.StringRes;
+
 /**
  * created by zhaoyuntao
  * on 2019-11-08
@@ -12,6 +14,11 @@ import android.provider.Settings;
  * Go to application permission setting page
  */
 public abstract class PermissionSettings {
+
+    @StringRes
+    private int descriptionNormal;
+    @StringRes
+    private int descriptionAlwaysDeny;
     private String[] permission;
 
     private boolean isAlwaysDeny;
@@ -66,6 +73,19 @@ public abstract class PermissionSettings {
         if (clickEvent != null) {
             clickEvent.whenClickPositive(isAlwaysDeny);
         }
+    }
+
+    public void setDialogDescription(@StringRes int descriptionNormalResId, @StringRes int descriptionAlwaysDenyResId) {
+        this.descriptionNormal = descriptionNormalResId;
+        this.descriptionAlwaysDeny = descriptionAlwaysDenyResId;
+    }
+
+    public int getDescriptionNormal() {
+        return descriptionNormal;
+    }
+
+    public int getDescriptionAlwaysDeny() {
+        return descriptionAlwaysDeny;
     }
 
     public interface ClickEvent {
