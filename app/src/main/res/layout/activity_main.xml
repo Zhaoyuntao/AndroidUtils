@@ -141,8 +141,9 @@
         </LinearLayout>
 
         <com.zhaoyuntao.androidutils.component.ZButton
+            android:id="@+id/center"
             android:layout_width="300dp"
-            android:layout_height="100dp"
+            android:layout_height="50dp"
             android:layout_gravity="center"
             android:layout_margin="10dp"
             android:background="#00000000"
@@ -154,7 +155,57 @@
             app:orientation="horizontal"
             app:percent_bitmap_center="1.5"
             app:radius="50dp"
-            app:text_center="Setting"
+            app:text_center="play sound"
+            app:text_center_small="setting"
+            app:textcolor="#ffffff"
+            app:textcolor_disable="#666666"
+            app:textcolor_small="#ffffff"
+            app:textsize="40sp"
+            app:textsize_small="20sp"
+            app:w_space_text="10dp"
+            app:wave="true"
+            app:wavecolor="#005500" />
+        <com.zhaoyuntao.androidutils.component.ZButton
+            android:id="@+id/center2"
+            android:layout_width="300dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_margin="10dp"
+            android:background="#00000000"
+            app:color_back="#59c18d"
+            app:color_back_choose="#000000"
+            app:color_back_click="#990033"
+            app:color_back_disable="#666666"
+            app:img_center="@drawable/settings"
+            app:orientation="horizontal"
+            app:percent_bitmap_center="1.5"
+            app:radius="50dp"
+            app:text_center="play music"
+            app:text_center_small="setting"
+            app:textcolor="#ffffff"
+            app:textcolor_disable="#666666"
+            app:textcolor_small="#ffffff"
+            app:textsize="40sp"
+            app:textsize_small="20sp"
+            app:w_space_text="10dp"
+            app:wave="true"
+            app:wavecolor="#005500" />
+        <com.zhaoyuntao.androidutils.component.ZButton
+            android:id="@+id/center3"
+            android:layout_width="300dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_margin="10dp"
+            android:background="#00000000"
+            app:color_back="#59c18d"
+            app:color_back_choose="#000000"
+            app:color_back_click="#990033"
+            app:color_back_disable="#666666"
+            app:img_center="@drawable/settings"
+            app:orientation="horizontal"
+            app:percent_bitmap_center="1.5"
+            app:radius="50dp"
+            app:text_center="pause/resume music"
             app:text_center_small="setting"
             app:textcolor="#ffffff"
             app:textcolor_disable="#666666"
@@ -239,11 +290,11 @@
                 app:w="80dp" />
         </LinearLayout>
 
-        <com.zhaoyuntao.androidutils.camera.CameraView
-            android:id="@+id/cameraview"
-            android:layout_width="200dp"
-            android:layout_height="70dp"
-            android:layout_gravity="center_horizontal" />
+<!--        <com.zhaoyuntao.androidutils.camera.CameraView-->
+<!--            android:id="@+id/cameraview"-->
+<!--            android:layout_width="200dp"-->
+<!--            android:layout_height="70dp"-->
+<!--            android:layout_gravity="center_horizontal" />-->
 
         <FrameLayout
             android:layout_width="match_parent"

@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.TextView;
@@ -21,6 +20,7 @@ import com.zhaoyuntao.androidutils.net.ZSocket;
 import com.zhaoyuntao.androidutils.tools.B;
 import com.zhaoyuntao.androidutils.tools.QRCodeTool;
 import com.zhaoyuntao.androidutils.tools.S;
+import com.zhaoyuntao.androidutils.tools.ZMusicPlayer;
 import com.zhaoyuntao.androidutils.tools.T;
 
 import java.util.Arrays;
@@ -194,6 +194,36 @@ public class MainActivity extends Activity {
         z1.setChoosen(true);
         ZButton z2=findViewById(R.id.z2);
         z1.addFriend(z2);
+        ZButton center=findViewById(R.id.center);
+        center.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ZMusicPlayer.playSound(activity(),R.raw.a);
+            }
+        });
+        ZButton center2=findViewById(R.id.center2);
+        center2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(ZMusicPlayer.isPlayingMusic()){
+                    ZMusicPlayer.releaseMusic();
+                }else{
+//                    ZMusicPlayer.playMusicResId(activity(),R.raw.music);
+                    ZMusicPlayer.playMusicAssets(activity(),"music.ogg",false);
+                }
+            }
+        });
+        ZButton center3=findViewById(R.id.center3);
+        center3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(ZMusicPlayer.isPlayingMusic()){
+                    ZMusicPlayer.pauseMusic();
+                }else{
+                    ZMusicPlayer.resumeMusic();
+                }
+            }
+        });
 
         Bitmap bitmap= QRCodeTool.getQRCodeBitmap("hello,ZButton",100,100);
         zButton.setDrawable_center(bitmap);
@@ -244,24 +274,24 @@ public class MainActivity extends Activity {
 
         final ZButton zButton2=findViewById(R.id.zb2);
 
-        CameraView cameraView=findViewById(R.id.cameraview);
-        cameraView.setAngle(90);
-        cameraView.setCallBack(new CameraView.CallBack() {
-            @Override
-            public void whenGotBitmap(Bitmap bitmap, byte[] data) {
-                zButton2.setDrawable_back(bitmap);
-            }
-
-            @Override
-            public void whenCameraCreated() {
-
-            }
-
-            @Override
-            public void whenNoPermission() {
-                T.t(MainActivity.this,"no camera permission");
-            }
-        });
+//        CameraView cameraView=findViewById(R.id.cameraview);
+//        cameraView.setAngle(90);
+//        cameraView.setCallBack(new CameraView.CallBack() {
+//            @Override
+//            public void whenGotBitmap(Bitmap bitmap, byte[] data) {
+//                zButton2.setDrawable_back(bitmap);
+//            }
+//
+//            @Override
+//            public void whenCameraCreated() {
+//
+//            }
+//
+//            @Override
+//            public void whenNoPermission() {
+//                T.t(MainActivity.this,"no camera permission");
+//            }
+//        });
 
 //        S.lll();
 //        S.ll();
