@@ -87,7 +87,7 @@ public class MainActivity extends Activity {
         zButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final long time_start=S.currentTimeMillis();
+                final long time_start = S.currentTimeMillis();
 //                ZSocket.getInstance().DEBUG().setFilePathProcessor(new ZSocket.FilePathProcessor() {
 //                    @Override
 //                    public String getFilePath(String filename) {
@@ -138,7 +138,7 @@ public class MainActivity extends Activity {
                 ZSocket.getInstance().DEBUG().addAnswer("hello", new ZSocket.Answer() {
                     @Override
                     public String getAnswer(String param) {
-                        S.s("params:"+param);
+                        S.s("params:" + param);
                         return "hi";
                     }
                 });
@@ -168,7 +168,7 @@ public class MainActivity extends Activity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                T.t(activity(),"请求超时");
+                                T.t(activity(), "请求超时");
                             }
                         });
                     }
@@ -181,7 +181,7 @@ public class MainActivity extends Activity {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    T.t(activity(),content);
+                                    T.t(activity(), content);
                                 }
                             });
                         }
@@ -190,44 +190,44 @@ public class MainActivity extends Activity {
             }
 
         });
-        ZButton z1=findViewById(R.id.z1);
+        ZButton z1 = findViewById(R.id.z1);
         z1.setChoosen(true);
-        ZButton z2=findViewById(R.id.z2);
+        ZButton z2 = findViewById(R.id.z2);
         z1.addFriend(z2);
-        ZButton center=findViewById(R.id.center);
+        ZButton center = findViewById(R.id.center);
         center.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ZMusicPlayer.playSound(activity(),R.raw.a);
+                ZMusicPlayer.playSound(activity(), R.raw.a);
             }
         });
-        ZButton center2=findViewById(R.id.center2);
+        ZButton center2 = findViewById(R.id.center2);
         center2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(ZMusicPlayer.isPlayingMusic()){
+                if (ZMusicPlayer.isPlayingMusic()) {
                     ZMusicPlayer.releaseMusic();
-                }else{
+                } else {
 //                    ZMusicPlayer.playMusicResId(activity(),R.raw.music);
-                    ZMusicPlayer.playMusicAssets(activity(),"music.ogg",false);
+                    ZMusicPlayer.playMusicAssets(activity(), "music.ogg", false);
                 }
             }
         });
-        ZButton center3=findViewById(R.id.center3);
+        ZButton center3 = findViewById(R.id.center3);
         center3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(ZMusicPlayer.isPlayingMusic()){
+                if (ZMusicPlayer.isPlayingMusic()) {
                     ZMusicPlayer.pauseMusic();
-                }else{
+                } else {
                     ZMusicPlayer.resumeMusic();
                 }
             }
         });
 
-        Bitmap bitmap= QRCodeTool.getQRCodeBitmap("hello,ZButton",100,100);
+        Bitmap bitmap = QRCodeTool.getQRCodeBitmap("hello,ZButton", 100, 100);
         zButton.setDrawable_center(bitmap);
-        final TextView textView=findViewById(R.id.showprogress);
+        final TextView textView = findViewById(R.id.showprogress);
         final ZScaleBar scaleBar = findViewById(R.id.scalebar);
         scaleBar.setPercent(0.5f);
         scaleBar.setCallBack(new ZScaleBar.CallBack() {
@@ -244,12 +244,12 @@ public class MainActivity extends Activity {
             @Override
             public void whenScaleEnd(float percent) {
 
-                textView.setText(" "+(int)(percent*100)+"%");
+                textView.setText(" " + (int) (percent * 100) + "%");
             }
         });
-        textView.setText(" "+(int)(scaleBar.getPercent()*100)+"%");
+        textView.setText(" " + (int) (scaleBar.getPercent() * 100) + "%");
         final ZScaleBar scaleBar2 = findViewById(R.id.scalebar2);
-        final TextView textView2=findViewById(R.id.showprogress2);
+        final TextView textView2 = findViewById(R.id.showprogress2);
         scaleBar2.setPercent(0.23f);
         scaleBar2.setCallBack(new ZScaleBar.CallBack() {
             @Override
@@ -260,19 +260,19 @@ public class MainActivity extends Activity {
             @Override
             public void whenScale(float percent) {
 //                S.s("percent:"+percent);
-                textView2.setText(" "+(int)(percent*100)+"%");
+                textView2.setText(" " + (int) (percent * 100) + "%");
             }
 
             @Override
             public void whenScaleEnd(float percent) {
 
-                textView2.setText(" "+(int)(percent*100)+"%");
+                textView2.setText(" " + (int) (percent * 100) + "%");
             }
         });
 
-        textView2.setText(" "+(int)(scaleBar2.getPercent()*100)+"%");
+        textView2.setText(" " + (int) (scaleBar2.getPercent() * 100) + "%");
 
-        final ZButton zButton2=findViewById(R.id.zb2);
+        final ZButton zButton2 = findViewById(R.id.zb2);
 
 //        CameraView cameraView=findViewById(R.id.cameraview);
 //        cameraView.setAngle(90);
@@ -303,7 +303,7 @@ public class MainActivity extends Activity {
         TP.runOnPool(new Runnable() {
             @Override
             public void run() {
-                String a=null;
+                String a = null;
                 S.s(a.length());
             }
         });
