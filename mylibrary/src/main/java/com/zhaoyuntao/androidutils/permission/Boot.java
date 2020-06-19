@@ -30,7 +30,6 @@ import com.zhaoyuntao.androidutils.permission.runtime.option.RuntimeOption;
 import com.zhaoyuntao.androidutils.permission.setting.Setting;
 import com.zhaoyuntao.androidutils.permission.source.Source;
 import com.zhaoyuntao.androidutils.permission.runtime.Runtime;
-import com.zhaoyuntao.androidutils.tools.S;
 
 /**
  * Created by Zhaoyuntao on 2018/4/28.

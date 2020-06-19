@@ -26,7 +26,6 @@ import com.zhaoyuntao.androidutils.permission.runtime.option.RuntimeOption;
 import com.zhaoyuntao.androidutils.permission.runtime.setting.AllRequest;
 import com.zhaoyuntao.androidutils.permission.runtime.setting.SettingRequest;
 import com.zhaoyuntao.androidutils.permission.source.Source;
-import com.zhaoyuntao.androidutils.tools.S;
 
 import java.util.ArrayList;
 import java.util.Arrays;
