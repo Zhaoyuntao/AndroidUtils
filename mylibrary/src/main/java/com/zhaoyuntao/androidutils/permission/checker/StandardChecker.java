@@ -21,8 +21,6 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.text.TextUtils;
 
-import com.zhaoyuntao.androidutils.tools.S;
-
 import java.util.Arrays;
 import java.util.List;
 

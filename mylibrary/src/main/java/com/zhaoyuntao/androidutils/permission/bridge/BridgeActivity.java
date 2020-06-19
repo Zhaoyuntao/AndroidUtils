@@ -35,7 +35,6 @@ import com.zhaoyuntao.androidutils.permission.overlay.setting.LSettingPage;
 import com.zhaoyuntao.androidutils.permission.overlay.setting.MSettingPage;
 import com.zhaoyuntao.androidutils.permission.source.ActivitySource;
 import com.zhaoyuntao.androidutils.permission.source.Source;
-import com.zhaoyuntao.androidutils.tools.S;
 
 /**
  * <p>
@@ -131,7 +130,6 @@ public final class BridgeActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        S.s("onCreate...");
         super.onCreate(savedInstanceState);
         if (Build.VERSION.SDK_INT >= 29) {
             Window window = getWindow();

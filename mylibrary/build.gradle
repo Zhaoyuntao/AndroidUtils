@@ -8,7 +8,7 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 16
+        minSdkVersion 17
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
@@ -61,15 +61,15 @@ dependencies {
     implementation 'com.belerweb:pinyin4j:2.5.0'
 }
 ext {
-    bintrayRepo = 'utils'
-    bintrayName = 'mylibrary'
-    publishedGroupId = 'com.zhaoyuntao.mylibrary'
-    libraryName = 'mylibrary'
-    artifact = 'mylibrary'
+    bintrayRepo = 'androidlib'
+    bintrayName = 'zlib'
+    publishedGroupId = 'com.zsource'
+    libraryName = 'lib'
+    artifact = 'lib'
     libraryDescription = 'some useful utils for android'
     siteUrl = 'https://github.com/Zhaoyuntao/AndroidUtils'
     gitUrl = 'https://github.com/Zhaoyuntao/AndroidUtils.git'
-    libraryVersion = '2.0.7'
+    libraryVersion = '0.0.1'
     developerId = 'zhaoyuntao'
     developerName = 'zhaoyuntao'
     developerEmail = 'xixitongxue@foxmail.com'

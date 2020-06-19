@@ -36,12 +36,12 @@ public class TP {
         }
     }
 
-    public static void runOnUiSafely(ZRunnable r) {
+    public static void runOnUi(SafeRunnable r) {
         init();
         sUiHandler.post(r);
     }
 
-    public static void runOnUiDelayedSafely(ZRunnable r, long delay) {
+    public static void runOnUiDelayed(SafeRunnable r, long delay) {
         init();
         sUiHandler.postDelayed(r, delay);
     }
@@ -51,7 +51,7 @@ public class TP {
         sUiHandler.removeCallbacks(r);
     }
 
-    public static void runOnUiWithPriority(Runnable r) {
+    public static void runOnUiAtFrontOfQueue(Runnable r) {
         init();
         sUiHandler.postAtFrontOfQueue(r);
     }
@@ -84,9 +84,11 @@ public class TP {
         runOnPoolDelayed(runnable, null, delay);
     }
 
-    public static void removeFromPool(Runnable runnable) {
-        ((ThreadPoolExecutor) ThreadManager.getIO().getExecutor()).remove(runnable);
-        ((ScheduledThreadPoolExecutor) ThreadManager.getScheduleIo().getExecutor()).remove(runnable);
+    public static void removeFromPool(@NotNull Runnable runnable) {
+        ScheduledFuture scheduledFuture = SCHEDULED_FUTURE_MAP.remove(runnable);
+        if (scheduledFuture != null) {
+            scheduledFuture.cancel(false);
+        }
     }
 
     public static void runThread(Runnable runnable) {

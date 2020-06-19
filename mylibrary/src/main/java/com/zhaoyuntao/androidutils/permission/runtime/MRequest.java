@@ -25,7 +25,6 @@ import com.zhaoyuntao.androidutils.permission.checker.PermissionChecker;
 import com.zhaoyuntao.androidutils.permission.checker.StandardChecker;
 import com.zhaoyuntao.androidutils.permission.source.Source;
 import com.zhaoyuntao.androidutils.permission.task.TaskExecutor;
-import com.zhaoyuntao.androidutils.tools.S;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -70,7 +69,6 @@ class MRequest extends BaseRequest implements RequestExecutor, BridgeRequest.Cal
     public void start() {
 
         mPermissions = filterPermissions(mPermissions);
-        S.s("1:"+mPermissions.size()+" arr:"+mPermissions.toString());
         mDeniedPermissions = getDeniedPermissions(STANDARD_CHECKER, mSource, mPermissions);
         if (mDeniedPermissions.size() > 0) {
             List<String> rationaleList = getRationalePermissions(mSource, mDeniedPermissions);
@@ -100,7 +98,6 @@ class MRequest extends BaseRequest implements RequestExecutor, BridgeRequest.Cal
 
     @Override
     public void onCallback() {
-        S.s("result");
         new TaskExecutor<List<String>>(mSource.getContext()) {
             @Override
             protected List<String> doInBackground(Void... voids) {
