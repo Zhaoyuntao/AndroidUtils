@@ -8,20 +8,20 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
-import com.zhaoyuntao.androidutils.camera.CameraView;
 import com.zhaoyuntao.androidutils.component.FloatWindowHelper;
 import com.zhaoyuntao.androidutils.component.LoggerView;
-import com.zhaoyuntao.androidutils.component.ZSwitchButton;
-import com.zhaoyuntao.androidutils.component.ZScaleBar;
 import com.zhaoyuntao.androidutils.component.ZButton;
+import com.zhaoyuntao.androidutils.component.ZScaleBar;
+import com.zhaoyuntao.androidutils.component.ZSwitchButton;
 import com.zhaoyuntao.androidutils.component.ZVideoView;
 import com.zhaoyuntao.androidutils.net.Msg;
 import com.zhaoyuntao.androidutils.net.ZSocket;
 import com.zhaoyuntao.androidutils.tools.B;
 import com.zhaoyuntao.androidutils.tools.QRCodeTool;
 import com.zhaoyuntao.androidutils.tools.S;
-import com.zhaoyuntao.androidutils.tools.ZMusicPlayer;
 import com.zhaoyuntao.androidutils.tools.T;
+import com.zhaoyuntao.androidutils.tools.ZMusicPlayer;
+import com.zhaoyuntao.androidutils.tools.thread.TP;
 
 import java.util.Arrays;
 
@@ -300,6 +300,13 @@ public class MainActivity extends Activity {
 //        S.ed("1");
 //        S.s("111");
 //        S.sd("111");
+        TP.runOnPool(new Runnable() {
+            @Override
+            public void run() {
+                String a=null;
+                S.s(a.length());
+            }
+        });
     }
 
     private void initLogger() {

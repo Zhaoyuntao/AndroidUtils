@@ -210,8 +210,6 @@ public class S {
                 o = "null";
             }
         }
-        S s = getS();
-
         String tagTmp = "|" + tag + "|   ";
 
         final int depthDefault = 3;
@@ -267,7 +265,7 @@ public class S {
             }
             offsetSpaceCount++;
             if (type != L) {
-                Log.i(tagTmp, taskName.toString());
+                Log.d(tagTmp, taskName.toString());
             }
         }
         if (offsetSpaceCount == 1) {
@@ -277,27 +275,16 @@ public class S {
         for (int i = 0; i < offsetSpaceCount; i++) {
             offset.insert(0, "  ");
         }
-
-        if (s.flag) {
-            switch (type) {
-                case I:
-                case DEBUGD:
-                    Log.i(tagTmp, offset + o.toString());
-                    break;
-                case E:
-                case DEBUGE:
-                    Log.e(tagTmp, offset + o.toString());
-                    break;
-                case V:
-                    Log.v(tagTmp, offset + o.toString());
-                    break;
-                case D:
-                    Log.d(tagTmp, offset + o.toString());
-                    break;
-                case L:
-                    Log.d(tagTmp, offset + o.toString() + "    " + usingSourceL);
-                    break;
-            }
+        switch (type) {
+            case E:
+                Log.e(tagTmp, offset + o.toString());
+                break;
+            case D:
+                Log.i(tagTmp, offset + o.toString());
+                break;
+            case L:
+                Log.i(tagTmp, o.toString() + "    " + usingSourceL + "");
+                break;
         }
 
         LogItem logItem = new LogItem(String.valueOf(o), type);

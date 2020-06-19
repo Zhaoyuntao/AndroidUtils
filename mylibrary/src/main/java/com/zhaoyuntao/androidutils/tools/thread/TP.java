@@ -7,6 +7,11 @@ import android.text.TextUtils;
 import com.zhaoyuntao.androidutils.BuildConfig;
 import com.zhaoyuntao.androidutils.tools.S;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -52,18 +57,31 @@ public class TP {
     }
 
     //--------------------------------------------------------------------------------------------------
+
     public static void runOnPool(Runnable runnable) {
-        if (S.DEBUG)
-            ThreadManager.getIO().execute(new ShowExceptionRunnable(runnable));
-        else
-            ThreadManager.getIO().execute(runnable);
+        ThreadManager.getIO().execute(runnable);
     }
 
-    public static void runOnPoolDelayed(Runnable runnable, final int delay) {
-        if (S.DEBUG)
-            ((ScheduledThreadPoolExecutor) ThreadManager.getScheduleIo().getExecutor()).schedule(new ShowExceptionRunnable(runnable), delay, TimeUnit.MILLISECONDS);
-        else
-            ((ScheduledThreadPoolExecutor) ThreadManager.getScheduleIo().getExecutor()).schedule(runnable, delay, TimeUnit.MILLISECONDS);
+    private static final Map<Runnable, ScheduledFuture> SCHEDULED_FUTURE_MAP = new ConcurrentHashMap<>();
+
+    /**
+     * Runnable with delay.
+     *
+     * @param runnable
+     * @param delay
+     */
+    public static void runOnPoolDelayed(@NotNull final Runnable runnable, String name, final int delay) {
+        SCHEDULED_FUTURE_MAP.put(runnable, ((ScheduledThreadPoolExecutor) ThreadManager.getScheduleIo().getExecutor()).schedule(new BlueRunnable(runnable, null) {
+            @Override
+            public void run() {
+                super.run();
+                SCHEDULED_FUTURE_MAP.remove(runnable);
+            }
+        }, delay, TimeUnit.MILLISECONDS));
+    }
+
+    public static void runOnPoolDelayed(@NotNull final Runnable runnable, final int delay) {
+        runOnPoolDelayed(runnable, null, delay);
     }
 
     public static void removeFromPool(Runnable runnable) {
@@ -72,13 +90,13 @@ public class TP {
     }
 
     public static void runThread(Runnable runnable) {
-        runThread(runnable, "");
+        runThread(runnable, null);
     }
 
     public static void runThread(Runnable runnable, String threadName) {
 
         if (TextUtils.isEmpty(threadName)) {
-            threadName = "tN" + System.currentTimeMillis();
+            threadName = "TP_THREAD_" + System.currentTimeMillis();
         }
         if (BuildConfig.DEBUG) {
             try {
