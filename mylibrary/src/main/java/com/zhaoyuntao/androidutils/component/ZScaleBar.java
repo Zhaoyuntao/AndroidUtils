@@ -57,10 +57,10 @@ public class ZScaleBar extends View {
     private void init(AttributeSet attrs) {
         if (attrs != null) {
             TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.ZScaleBar);//
-            w_progress = typedArray.getDimension(R.styleable.ZScaleBar_w_progress, B.dip2px(getContext(), 10));
-            radius_progress = typedArray.getDimension(R.styleable.ZScaleBar_roundradius, w_progress/2);
-            color=typedArray.getColor(R.styleable.ZScaleBar_color,Color.parseColor("#61ca95"));
-            colorBack=typedArray.getColor(R.styleable.ZScaleBar_colorback,Color.rgb(236, 236, 236));
+            w_progress = typedArray.getDimension(R.styleable.ZScaleBar_ZScaleBar_w_progress, B.dip2px(getContext(), 10));
+            radius_progress = typedArray.getDimension(R.styleable.ZScaleBar_ZScaleBar_roundradius, w_progress/2);
+            color=typedArray.getColor(R.styleable.ZScaleBar_ZScaleBar_color,Color.parseColor("#61ca95"));
+            colorBack=typedArray.getColor(R.styleable.ZScaleBar_ZScaleBar_colorback,Color.rgb(236, 236, 236));
             typedArray.recycle();
         }
     }

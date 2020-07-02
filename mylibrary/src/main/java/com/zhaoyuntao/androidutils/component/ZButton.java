@@ -342,94 +342,94 @@ public class ZButton extends FrameLayout {
 
             TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.ZButton);//
 
-            this.isProgressType = typedArray.getBoolean(R.styleable.ZButton_progress, false);
+            this.isProgressType = typedArray.getBoolean(R.styleable.ZButton_ZButton_progress, false);
 
-            this.wave = typedArray.getBoolean(R.styleable.ZButton_wave, false);
-            this.waveColor = typedArray.getColor(R.styleable.ZButton_wavecolor, Color.WHITE);
-            this.waveColor_choose = typedArray.getColor(R.styleable.ZButton_wavecolor_choose, waveColor);
-            this.waveColor_click = typedArray.getColor(R.styleable.ZButton_wavecolor_click, waveColor);
-            this.waveColor_disable = typedArray.getColor(R.styleable.ZButton_wavecolor_disable, waveColor);
+            this.wave = typedArray.getBoolean(R.styleable.ZButton_ZButton_wave, false);
+            this.waveColor = typedArray.getColor(R.styleable.ZButton_ZButton_wavecolor, Color.WHITE);
+            this.waveColor_choose = typedArray.getColor(R.styleable.ZButton_ZButton_wavecolor_choose, waveColor);
+            this.waveColor_click = typedArray.getColor(R.styleable.ZButton_ZButton_wavecolor_click, waveColor);
+            this.waveColor_disable = typedArray.getColor(R.styleable.ZButton_ZButton_wavecolor_disable, waveColor);
 
-            this.isAutoChange = typedArray.getBoolean(R.styleable.ZButton_isautochange, false);
+            this.isAutoChange = typedArray.getBoolean(R.styleable.ZButton_ZButton_isautochange, false);
 
-            this.text_center = typedArray.getString(R.styleable.ZButton_text_center);//
-            this.textSize = typedArray.getDimension(R.styleable.ZButton_textsize, textSize_default);//
-            this.textColor = typedArray.getColor(R.styleable.ZButton_textcolor, textColor);//
-            this.textColor_choose = typedArray.getColor(R.styleable.ZButton_textcolor_choose, textColor);//
-            this.textColor_disable = typedArray.getColor(R.styleable.ZButton_textcolor_disable, textColor);//
-            this.textColor_click = typedArray.getColor(R.styleable.ZButton_textcolor_click, textColor_choose);//
+            this.text_center = typedArray.getString(R.styleable.ZButton_ZButton_text_center);//
+            this.textSize = typedArray.getDimension(R.styleable.ZButton_ZButton_textsize, textSize_default);//
+            this.textColor = typedArray.getColor(R.styleable.ZButton_ZButton_textcolor, textColor);//
+            this.textColor_choose = typedArray.getColor(R.styleable.ZButton_ZButton_textcolor_choose, textColor);//
+            this.textColor_disable = typedArray.getColor(R.styleable.ZButton_ZButton_textcolor_disable, textColor);//
+            this.textColor_click = typedArray.getColor(R.styleable.ZButton_ZButton_textcolor_click, textColor_choose);//
 
-            this.text_center_small = typedArray.getString(R.styleable.ZButton_text_center_small);//
-            this.textSize_small = typedArray.getDimension(R.styleable.ZButton_textsize_small, textSize_default);
-            this.textColor_small = typedArray.getColor(R.styleable.ZButton_textcolor_small, color_default);//
-            this.textColor_small_choose = typedArray.getColor(R.styleable.ZButton_textcolor_small_choose, color_default);//
-            this.textColor_small_click = typedArray.getColor(R.styleable.ZButton_textcolor_small_click, color_default);//
-            this.textColor_small_disable = typedArray.getColor(R.styleable.ZButton_textcolor_small_disable, color_default);//
+            this.text_center_small = typedArray.getString(R.styleable.ZButton_ZButton_text_center_small);//
+            this.textSize_small = typedArray.getDimension(R.styleable.ZButton_ZButton_textsize_small, textSize_default);
+            this.textColor_small = typedArray.getColor(R.styleable.ZButton_ZButton_textcolor_small, color_default);//
+            this.textColor_small_choose = typedArray.getColor(R.styleable.ZButton_ZButton_textcolor_small_choose, color_default);//
+            this.textColor_small_click = typedArray.getColor(R.styleable.ZButton_ZButton_textcolor_small_click, color_default);//
+            this.textColor_small_disable = typedArray.getColor(R.styleable.ZButton_ZButton_textcolor_small_disable, color_default);//
 
-            this.text_left = typedArray.getString(R.styleable.ZButton_text_left);//
-            this.textSize_left = typedArray.getDimension(R.styleable.ZButton_textsize_left, textSize_default);
-            this.textColor_left = typedArray.getColor(R.styleable.ZButton_textcolor_left, color_default);//
-            this.textColor_left_choose = typedArray.getColor(R.styleable.ZButton_textcolor_left_choose, color_default);//
-            this.textColor_left_click = typedArray.getColor(R.styleable.ZButton_textcolor_left_click, color_default);//
-            this.textColor_left_disable = typedArray.getColor(R.styleable.ZButton_textcolor_left_disable, color_default);//
+            this.text_left = typedArray.getString(R.styleable.ZButton_ZButton_text_left);//
+            this.textSize_left = typedArray.getDimension(R.styleable.ZButton_ZButton_textsize_left, textSize_default);
+            this.textColor_left = typedArray.getColor(R.styleable.ZButton_ZButton_textcolor_left, color_default);//
+            this.textColor_left_choose = typedArray.getColor(R.styleable.ZButton_ZButton_textcolor_left_choose, color_default);//
+            this.textColor_left_click = typedArray.getColor(R.styleable.ZButton_ZButton_textcolor_left_click, color_default);//
+            this.textColor_left_disable = typedArray.getColor(R.styleable.ZButton_ZButton_textcolor_left_disable, color_default);//
 
-            this.text_right = typedArray.getString(R.styleable.ZButton_text_right);//
-            this.textSize_right = typedArray.getDimension(R.styleable.ZButton_textsize_right, textSize_default);
-            this.textColor_right = typedArray.getColor(R.styleable.ZButton_textcolor_right, color_default);//
-            this.textColor_right_choose = typedArray.getColor(R.styleable.ZButton_textcolor_right_choose, color_default);//
-            this.textColor_right_click = typedArray.getColor(R.styleable.ZButton_textcolor_right_click, color_default);//
-            this.textColor_right_disable = typedArray.getColor(R.styleable.ZButton_textcolor_right_click, color_default);//
+            this.text_right = typedArray.getString(R.styleable.ZButton_ZButton_text_right);//
+            this.textSize_right = typedArray.getDimension(R.styleable.ZButton_ZButton_textsize_right, textSize_default);
+            this.textColor_right = typedArray.getColor(R.styleable.ZButton_ZButton_textcolor_right, color_default);//
+            this.textColor_right_choose = typedArray.getColor(R.styleable.ZButton_ZButton_textcolor_right_choose, color_default);//
+            this.textColor_right_click = typedArray.getColor(R.styleable.ZButton_ZButton_textcolor_right_click, color_default);//
+            this.textColor_right_disable = typedArray.getColor(R.styleable.ZButton_ZButton_textcolor_right_click, color_default);//
 
             //渐变
-            this.color_back = getColorsFromAttr(typedArray.getString(R.styleable.ZButton_color_back));
+            this.color_back = getColorsFromAttr(typedArray.getString(R.styleable.ZButton_ZButton_color_back));
             if (color_back == null || color_back.length == 0) {
                 color_back = new int[]{Color.WHITE};
             }
-            this.color_back_choose = getColorsFromAttr(typedArray.getString(R.styleable.ZButton_color_back_choose));
+            this.color_back_choose = getColorsFromAttr(typedArray.getString(R.styleable.ZButton_ZButton_color_back_choose));
             if (color_back_choose == null || color_back_choose.length == 0) {
                 color_back_choose = new int[]{Color.LTGRAY};
             }
-            this.color_back_disable = getColorsFromAttr(typedArray.getString(R.styleable.ZButton_color_back_disable));
+            this.color_back_disable = getColorsFromAttr(typedArray.getString(R.styleable.ZButton_ZButton_color_back_disable));
             if (color_back_disable == null || color_back_disable.length == 0) {
                 color_back_disable = new int[]{Color.LTGRAY};
             }
-            this.color_back_click = getColorsFromAttr(typedArray.getString(R.styleable.ZButton_color_back_click));
+            this.color_back_click = getColorsFromAttr(typedArray.getString(R.styleable.ZButton_ZButton_color_back_click));
             if (color_back_click == null || color_back_click.length == 0) {
                 color_back_click = new int[]{Color.LTGRAY};
             }
 
-            this.orientation_shader = typedArray.getString(R.styleable.ZButton_orientation_shader);
+            this.orientation_shader = typedArray.getString(R.styleable.ZButton_ZButton_orientation_shader);
             if (S.isEmpty(orientation_shader)) {
                 orientation_shader = vertical;
             }
 
-            this.color_back_bitmap_center = typedArray.getColor(R.styleable.ZButton_color_border_bitmap_center, color_back[0]);//
+            this.color_back_bitmap_center = typedArray.getColor(R.styleable.ZButton_ZButton_color_border_bitmap_center, color_back[0]);//
 
-            this.color_border = typedArray.getColor(R.styleable.ZButton_color_border, color_border);//
-            this.color_border_choose = typedArray.getColor(R.styleable.ZButton_color_border_choose, color_border);//
-            this.color_border_click = typedArray.getColor(R.styleable.ZButton_color_border_click, color_border_choose);//
+            this.color_border = typedArray.getColor(R.styleable.ZButton_ZButton_color_border, color_border);//
+            this.color_border_choose = typedArray.getColor(R.styleable.ZButton_ZButton_color_border_choose, color_border);//
+            this.color_border_click = typedArray.getColor(R.styleable.ZButton_ZButton_color_border_click, color_border_choose);//
 
-            this.drawable_center = B.drawableToBitmap(typedArray.getDrawable(R.styleable.ZButton_img_center));
-            this.drawable_left = B.drawableToBitmap(typedArray.getDrawable(R.styleable.ZButton_img_left));
-            this.drawable_right = B.drawableToBitmap(typedArray.getDrawable(R.styleable.ZButton_img_right));
-            this.drawable_center_choose = B.drawableToBitmap(typedArray.getDrawable(R.styleable.ZButton_img_center_choose));
+            this.drawable_center = B.drawableToBitmap(typedArray.getDrawable(R.styleable.ZButton_ZButton_img_center));
+            this.drawable_left = B.drawableToBitmap(typedArray.getDrawable(R.styleable.ZButton_ZButton_img_left));
+            this.drawable_right = B.drawableToBitmap(typedArray.getDrawable(R.styleable.ZButton_ZButton_img_right));
+            this.drawable_center_choose = B.drawableToBitmap(typedArray.getDrawable(R.styleable.ZButton_ZButton_img_center_choose));
             if (drawable_center_choose == null) {
                 drawable_center_choose = drawable_center;
             }
-            this.drawable_center_disable = B.drawableToBitmap(typedArray.getDrawable(R.styleable.ZButton_img_center_disable));
+            this.drawable_center_disable = B.drawableToBitmap(typedArray.getDrawable(R.styleable.ZButton_ZButton_img_center_disable));
             if (drawable_center_disable == null) {
                 drawable_center_disable = drawable_center;
             }
-            this.drawable_center_click = B.drawableToBitmap(typedArray.getDrawable(R.styleable.ZButton_img_center_click));
+            this.drawable_center_click = B.drawableToBitmap(typedArray.getDrawable(R.styleable.ZButton_ZButton_img_center_click));
             if (drawable_center_click == null) {
                 drawable_center_click = drawable_center_choose;
             }
-            this.drawable_back = B.drawableToBitmap(typedArray.getDrawable(R.styleable.ZButton_img_back));
-            this.drawable_back_choose = B.drawableToBitmap(typedArray.getDrawable(R.styleable.ZButton_img_back_choose));
+            this.drawable_back = B.drawableToBitmap(typedArray.getDrawable(R.styleable.ZButton_ZButton_img_back));
+            this.drawable_back_choose = B.drawableToBitmap(typedArray.getDrawable(R.styleable.ZButton_ZButton_img_back_choose));
 
-            this.drawable_back_disable = B.drawableToBitmap(typedArray.getDrawable(R.styleable.ZButton_img_back_disable));
+            this.drawable_back_disable = B.drawableToBitmap(typedArray.getDrawable(R.styleable.ZButton_ZButton_img_back_disable));
 
-            this.drawable_back_click = B.drawableToBitmap(typedArray.getDrawable(R.styleable.ZButton_img_back_click));
+            this.drawable_back_click = B.drawableToBitmap(typedArray.getDrawable(R.styleable.ZButton_ZButton_img_back_click));
             if (drawable_back_choose == null) {
                 drawable_back_choose = drawable_back;
             }
@@ -439,45 +439,45 @@ public class ZButton extends FrameLayout {
             if (drawable_back_click == null) {
                 drawable_back_click = drawable_back_choose;
             }
-            this.percent_back = typedArray.getFloat(R.styleable.ZButton_percent_back, 1f);
+            this.percent_back = typedArray.getFloat(R.styleable.ZButton_ZButton_percent_back, 1f);
             if (percent_back < 0) {
                 percent_back = 0;
             } else if (percent_back > 1) {
                 percent_back = 1;
             }
 
-            this.percent_bitmap_center = typedArray.getFloat(R.styleable.ZButton_percent_bitmap_center, 1f);
-            this.percent_bitmap_left = typedArray.getFloat(R.styleable.ZButton_percent_bitmap_left, 1f);
-            this.percent_bitmap_right = typedArray.getFloat(R.styleable.ZButton_percent_bitmap_right, 1f);
-            this.w_space = typedArray.getDimension(R.styleable.ZButton_w_space, 0);
-            this.w_space_text = typedArray.getDimension(R.styleable.ZButton_w_space_text, 0);
-            this.w_border = typedArray.getDimension(R.styleable.ZButton_w_border, 0);
-            this.drawTextBorder = typedArray.getBoolean(R.styleable.ZButton_drawtextborder, false);
-            this.color_text_border = typedArray.getColor(R.styleable.ZButton_color_text_border, Color.BLACK);//
-            this.drawBitmapBorder_center = typedArray.getBoolean(R.styleable.ZButton_drawimgborder_center, false);
-            this.color_circle_border = typedArray.getColor(R.styleable.ZButton_color_circle_border, Color.WHITE);//
-            this.drawCircleImg = typedArray.getBoolean(R.styleable.ZButton_drawcircleimg, false);
+            this.percent_bitmap_center = typedArray.getFloat(R.styleable.ZButton_ZButton_percent_bitmap_center, 1f);
+            this.percent_bitmap_left = typedArray.getFloat(R.styleable.ZButton_ZButton_percent_bitmap_left, 1f);
+            this.percent_bitmap_right = typedArray.getFloat(R.styleable.ZButton_ZButton_percent_bitmap_right, 1f);
+            this.w_space = typedArray.getDimension(R.styleable.ZButton_ZButton_w_space, 0);
+            this.w_space_text = typedArray.getDimension(R.styleable.ZButton_ZButton_w_space_text, 0);
+            this.w_border = typedArray.getDimension(R.styleable.ZButton_ZButton_w_border, 0);
+            this.drawTextBorder = typedArray.getBoolean(R.styleable.ZButton_ZButton_drawtextborder, false);
+            this.color_text_border = typedArray.getColor(R.styleable.ZButton_ZButton_color_text_border, Color.BLACK);//
+            this.drawBitmapBorder_center = typedArray.getBoolean(R.styleable.ZButton_ZButton_drawimgborder_center, false);
+            this.color_circle_border = typedArray.getColor(R.styleable.ZButton_ZButton_color_circle_border, Color.WHITE);//
+            this.drawCircleImg = typedArray.getBoolean(R.styleable.ZButton_ZButton_drawcircleimg, false);
 
-            this.radius = typedArray.getDimension(R.styleable.ZButton_radius, 0);
+            this.radius = typedArray.getDimension(R.styleable.ZButton_ZButton_radius, 0);
             if (radius < 0) {
                 radius = 0;
             }
-            this.radiusArray[0] = typedArray.getDimension(R.styleable.ZButton_radius_lefttop, radius);
-            this.radiusArray[1] = typedArray.getDimension(R.styleable.ZButton_radius_righttop, radius);
-            this.radiusArray[2] = typedArray.getDimension(R.styleable.ZButton_radius_rightbottom, radius);
-            this.radiusArray[3] = typedArray.getDimension(R.styleable.ZButton_radius_leftbottom, radius);
+            this.radiusArray[0] = typedArray.getDimension(R.styleable.ZButton_ZButton_radius_lefttop, radius);
+            this.radiusArray[1] = typedArray.getDimension(R.styleable.ZButton_ZButton_radius_righttop, radius);
+            this.radiusArray[2] = typedArray.getDimension(R.styleable.ZButton_ZButton_radius_rightbottom, radius);
+            this.radiusArray[3] = typedArray.getDimension(R.styleable.ZButton_ZButton_radius_leftbottom, radius);
 
-            this.style_bitmap_back = typedArray.getString(R.styleable.ZButton_style_img_back);
+            this.style_bitmap_back = typedArray.getString(R.styleable.ZButton_ZButton_style_img_back);
 
             if (this.style_bitmap_back == null || this.style_bitmap_back.equals("")) {
                 this.style_bitmap_back = style_bitmap_back_clip;
             }
 
-            this.gravity = typedArray.getString(R.styleable.ZButton_gravity_img_center);
+            this.gravity = typedArray.getString(R.styleable.ZButton_ZButton_gravity_img_center);
             if (gravity == null) {
                 gravity = gravity_both;
             }
-            this.orientation = typedArray.getString(R.styleable.ZButton_orientation);
+            this.orientation = typedArray.getString(R.styleable.ZButton_ZButton_orientation);
             if (orientation == null) {
                 orientation = vertical;
             }
@@ -1704,15 +1704,18 @@ public class ZButton extends FrameLayout {
                 //right top
                 path_border.lineTo(w_rect_border - radiusOfBorder[1] - half_border, half_border);//2
                 //right top
-                path_border.arcTo(new RectF(w_rect_border - w_rect_radius_righttop_border - half_border, half_border, w_rect_border - half_border, w_rect_radius_righttop_border + half_border), 270, 90);
+                path_border.arcTo(new RectF(w_rect_border - w_rect_radius_righttop_border - half_border, half_border, w_rect_border - half_border, w_rect_radius_righttop_border + half_border), 270,
+                        90);
                 //right bottom
                 path_border.lineTo(w_rect_border - half_border, h_rect_border - radiusOfBorder[2] - half_border);//4
                 //right bottom
-                path_border.arcTo(new RectF(w_rect_border - w_rect_radius_rightbottom_border - half_border, h_rect_border - w_rect_radius_rightbottom_border - half_border, w_rect_border - half_border, h_rect_border - half_border), 0, 90);
+                path_border.arcTo(new RectF(w_rect_border - w_rect_radius_rightbottom_border - half_border, h_rect_border - w_rect_radius_rightbottom_border - half_border,
+                        w_rect_border - half_border, h_rect_border - half_border), 0, 90);
                 //left bottom
                 path_border.lineTo(radiusOfBorder[3] + half_border, h_rect_border - half_border);//6
                 //left bottom
-                path_border.arcTo(new RectF(half_border, h_rect_border - w_rect_radius_leftbottom_border - half_border, w_rect_radius_leftbottom_border + half_border, h_rect_border - half_border), 90, 90);
+                path_border.arcTo(new RectF(half_border, h_rect_border - w_rect_radius_leftbottom_border - half_border, w_rect_radius_leftbottom_border + half_border, h_rect_border - half_border),
+                        90, 90);
                 //left top
                 path_border.lineTo(half_border, radiusOfBorder[0] + half_border);
 

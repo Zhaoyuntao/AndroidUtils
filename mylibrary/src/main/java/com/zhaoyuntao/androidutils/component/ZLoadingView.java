@@ -57,17 +57,15 @@ public class ZLoadingView extends View {
      * 初始化自定义属性
      */
     private void initAttrs(Context context, AttributeSet attrs) {
-        TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.ZLoadingView);
-
-        mSize = (int) ta.getDimension(R.styleable.ZLoadingView_loading_size, B.dip2px(context, 50));
-        setSize(mSize);
-
-        mColor = ta.getColor(R.styleable.ZLoadingView_loading_color, Color.parseColor("#333333"));
-        setColor(mColor);
-
-        mDuration = ta.getInt(R.styleable.ZLoadingView_loading_duration, 1500);
-
-        ta.recycle();
+        if(attrs!=null){
+            TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.ZLoadingView);
+            mSize = (int) ta.getDimension(R.styleable.ZLoadingView_ZLoadingView_loading_size, B.dip2px(context, 50));
+            setSize(mSize);
+            mColor = ta.getColor(R.styleable.ZLoadingView_ZLoadingView_loading_color, Color.parseColor("#333333"));
+            setColor(mColor);
+            mDuration = ta.getInt(R.styleable.ZLoadingView_ZLoadingView_loading_duration, 1500);
+            ta.recycle();
+        }
     }
 
     /**

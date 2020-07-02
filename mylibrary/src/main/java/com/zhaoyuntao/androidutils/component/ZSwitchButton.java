@@ -147,8 +147,8 @@ public class ZSwitchButton extends androidx.appcompat.widget.AppCompatCheckBox {
         //
         if (attrs != null) {
             TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.ZSwitchButton);//
-            float mWidthTmp = typedArray.getDimension(R.styleable.ZSwitchButton_w, -1);
-            float mHeightTmp = typedArray.getDimension(R.styleable.ZSwitchButton_h, -1);
+            float mWidthTmp = typedArray.getDimension(R.styleable.ZSwitchButton_ZSwitchButton_w, -1);
+            float mHeightTmp = typedArray.getDimension(R.styleable.ZSwitchButton_ZSwitchButton_h, -1);
             if (mWidthTmp != -1 && mHeightTmp != -1) {
                 float percentTmp = mWidthTmp / mHeightTmp;
                 if (percentTmp > percent) {
